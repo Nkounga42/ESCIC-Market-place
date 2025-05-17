@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Messagerie - ESCIC-Market</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Nunito', sans-serif;
+        }
+        .conversation-item:hover {
+            background-color: #f8fafc;
+        }
+        .conversation-active {
+            background-color: #f1f5f9;
+        }
+        .message-self {
+            background-color: #1e40af;
+            color: white;
+            border-radius: 18px 18px 0 18px;
+        }
+        .message-other {
+            background-color: #e2e8f0;
+            color: #1e293b;
+            border-radius: 18px 18px 18px 0;
+        }
+        .online-dot {
+            width: 8px;
+            height: 8px;
+            background-color: #10b981;
+            border-radius: 50%;
+        }
+        .unread-badge {
+            width: 8px;
+            height: 8px;
+            background-color: #3b82f6;
+            border-radius: 50%;
+        }
+        .emoji-picker {
+            position: absolute;
+            bottom: 60px;
+            right: 20px;
+            display: none;
+        }
+        @media (max-width: 768px) {
+            .chat-container {
+                display: none;
+            }
+            .chat-active {
+                display: block;
+            }
+            .conversation-list {
+                display: block;
+            }
+            .conversation-hidden {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <!-- Navigation -->
+    <nav class="bg-white shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center">
+                    <a href="#" class="flex-shrink-0 flex items-center">
+                        <i class="fas fa-store text-blue-600 text-xl mr-2"></i>
+                        <span class="font-bold text-blue-800">ESCIC-Market</span>
+                    </a>
+                </div>
+                <div class="hidden md:ml-6 md:flex md:items-center space-x-4">
+                    <a href="Vendeur.html" class="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-blue-600">
+                        <i class="fas fa-home mr-1"></i> Mon kiosque
+                    </a>
+                    <a href="Message.html" class="px-3 py-2 rounded-md text-sm font-medium bg-blue-100 text-blue-700">
+                        <i class="fas fa-comments mr-1"></i> Messagerie
+                    </a>
+                    <div class="relative">
+                        <button class="flex items-center space-x-1 focus:outline-none">
+                            <div class="w-8 h-8 rounded-full bg-blue-500 flex items-center justify-center text-white font-semibold">JD</div>
+                        </button>
+                    </div>
+                </div>
+                <div class="flex md:hidden items-center">
+                    <button id="mobile-menu-button" class="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Mobile Menu -->
+    <div id="mobile-menu" class="hidden md:hidden bg-white shadow-lg">
+        <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+            <a href="../Acheteur.html" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-blue-600 hover:bg-blue-50">
+                <i class="fas fa-home mr-2"></i> Mon kiosque
+            </a>
+            <a href="#" class="block px-3 py-2 rounded-md text-base font-medium bg-blue-100 text-blue-700">
+                <i class="fas fa-comments mr-2"></i> Messagerie
+            </a>
+            <a href="#" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-blue-600 hover:bg-blue-50">
+                <i class="fas fa-user mr-2"></i> Mon profil
+            </a>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        <div class="flex flex-col md:flex-row h-[calc(100vh-120px)] bg-white rounded-lg shadow-sm overflow-hidden">
+            <!-- Conversation List (Left Column) -->
+            <div id="conversation-list" class="conversation-list w-full md:w-1/3 border-r border-gray-200 flex flex-col">
+                <!-- Search Bar -->
+                <div class="p-4 border-b border-gray-200">
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <i class="fas fa-search text-gray-400"></i>
+                        </div>
+                        <input type="text" class="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md leading-5 bg-white placeholder-gray-500 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm" placeholder="Rechercher un étudiant ou un produit...">
+                    </div>
+                </div>
+
+                <!-- Conversations -->
+                <div class="flex-1 overflow-y-auto">
+                    <!-- Conversation Item 1 (Active) -->
+                    <div class="conversation-item conversation-active p-4 border-b border-gray-200 cursor-pointer flex items-center" data-chat="chat1">
+                        <div class="flex-shrink-0 relative">
+                            <img class="h-10 w-10 rounded-full" src="https://randomuser.me/api/portraits/women/42.jpg" alt="">
+                            <span class="online-dot absolute bottom-0 right-0"></span>
+                        </div>
+                        <div class="ml-3 flex-1 min-w-0">
+                            <div class="flex justify-between items-center">
+                                <p class="text-sm font-medium text-gray-900 truncate">Marie Dupont</p>
+                                <span class="text-xs text-gray-500">12:30</span>
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <p class="text-sm text-gray-500 truncate">Calculatrice FX-991EX</p>
+                                <div class="unread-badge"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Conversation Item 2 -->
+                    <div class="conversation-item p-4 border-b border-gray-200 cursor-pointer flex items-center" data-chat="chat2">
+                        <div class="flex-shrink-0">
+                            <img class="h-10 w-10 rounded-full" src="https://randomuser.me/api/portraits/men/32.jpg" alt="">
+                        </div>
+                        <div class="ml-3 flex-1 min-w-0">
+                            <div class="flex justify-between items-center">
+                                <p class="text-sm font-medium text-gray-900 truncate">Thomas Martin</p>
+                                <span class="text-xs text-gray-500">Hier</span>
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <p class="text-sm text-gray-500 truncate">Livre de finance</p>
+                                <div class="unread-badge"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Conversation Item 3 -->
+                    <div class="conversation-item p-4 border-b border-gray-200 cursor-pointer flex items-center" data-chat="chat3">
+                        <div class="flex-shrink-0 relative">
+                            <img class="h-10 w-10 rounded-full" src="https://randomuser.me/api/portraits/women/63.jpg" alt="">
+                            <span class="online-dot absolute bottom-0 right-0"></span>
+                        </div>
+                        <div class="ml-3 flex-1 min-w-0">
+                            <div class="flex justify-between items-center">
+                                <p class="text-sm font-medium text-gray-900 truncate">Sophie Leroy</p>
+                                <span class="text-xs text-gray-500">Lun.</span>
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <p class="text-sm text-gray-500 truncate">Veste en cuir</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Conversation Item 4 -->
+                    <div class="conversation-item p-4 border-b border-gray-200 cursor-pointer flex items-center" data-chat="chat4">
+                        <div class="flex-shrink-0">
+                            <img class="h-10 w-10 rounded-full" src="https://randomuser.me/api/portraits/men/75.jpg" alt="">
+                        </div>
+                        <div class="ml-3 flex-1 min-w-0">
+                            <div class="flex justify-between items-center">
+                                <p class="text-sm font-medium text-gray-900 truncate">Pierre Lambert</p>
+                                <span class="text-xs text-gray-500">12/05</span>
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <p class="text-sm text-gray-500 truncate">Casque audio</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Conversation Item 5 -->
+                    <div class="conversation-item p-4 border-b border-gray-200 cursor-pointer flex items-center" data-chat="chat5">
+                        <div class="flex-shrink-0">
+                            <img class="h-10 w-10 rounded-full" src="https://randomuser.me/api/portraits/women/85.jpg" alt="">
+                        </div>
+                        <div class="ml-3 flex-1 min-w-0">
+                            <div class="flex justify-between items-center">
+                                <p class="text-sm font-medium text-gray-900 truncate">Emma Bernard</p>
+                                <span class="text-xs text-gray-500">10/05</span>
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <p class="text-sm text-gray-500 truncate">Sac à dos</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Chat Container (Right Column) -->
+            <div id="chat-container" class="chat-container w-full md:w-2/3 flex flex-col">
+                <!-- Chat Header -->
+                <div class="p-4 border-b border-gray-200 flex items-center justify-between">
+                    <div class="flex items-center">
+                        <div class="flex-shrink-0 relative">
+                            <img class="h-10 w-10 rounded-full" src="https://randomuser.me/api/portraits/women/42.jpg" alt="">
+                            <span class="online-dot absolute bottom-0 right-0"></span>
+                        </div>
+                        <div class="ml-3">
+                            <p class="text-sm font-medium text-gray-900">Marie Dupont</p>
+                            <p class="text-xs text-gray-500">En ligne</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center space-x-4">
+                      
+                       
+                        
+                    </div>
+                </div>
+
+                <!-- Product Summary -->
+                <div class="bg-blue-50 p-3 border-b border-gray-200">
+                    <div class="flex items-center">
+                        <img class="h-12 w-12 rounded-md object-cover" src="https://m.media-amazon.com/images/I/71gB+QqXuYL._AC_UF1000,1000_QL80_.jpg" alt="Calculatrice FX-991EX">
+                        <div class="ml-3">
+                            <p class="text-sm font-medium text-gray-900">Calculatrice FX-991EX</p>
+                            <p class="text-xs text-gray-500">Prix: 15 000 FCFA</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Messages -->
+                <div id="messages-container" class="flex-1 p-4 overflow-y-auto bg-gray-50">
+                    <!-- Date Separator -->
+                    <div class="flex items-center my-4">
+                        <div class="flex-grow border-t border-gray-300"></div>
+                        <span class="flex-shrink mx-2 text-xs text-gray-500">Aujourd'hui</span>
+                        <div class="flex-grow border-t border-gray-300"></div>
+                    </div>
+
+                    <!-- Other's Message -->
+                    <div class="flex mb-4">
+                        <div class="flex-shrink-0 mr-3">
+                            <img class="h-8 w-8 rounded-full" src="https://randomuser.me/api/portraits/women/42.jpg" alt="">
+                        </div>
+                        <div>
+                            <div class="message-other px-4 py-2 max-w-xs md:max-w-md">
+                                <p>Bonjour, la calculatrice est-elle toujours disponible ?</p>
+                                <p class="text-xs text-gray-500 mt-1">10:24</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Self Message -->
+                    <div class="flex justify-end mb-4">
+                        <div>
+                            <div class="message-self px-4 py-2 max-w-xs md:max-w-md">
+                                <p>Oui, elle est toujours disponible !</p>
+                                <p class="text-xs text-gray-300 mt-1">10:26</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Other's Message -->
+                    <div class="flex mb-4">
+                        <div class="flex-shrink-0 mr-3">
+                            <img class="h-8 w-8 rounded-full" src="https://randomuser.me/api/portraits/women/42.jpg" alt="">
+                        </div>
+                        <div>
+                            <div class="message-other px-4 py-2 max-w-xs md:max-w-md">
+                                <p>Parfait ! Je peux venir la chercher aujourd'hui entre 12h et 14h devant la bibliothèque ?</p>
+                                <p class="text-xs text-gray-500 mt-1">10:27</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Self Message -->
+                    <div class="flex justify-end mb-4">
+                        <div>
+                            <div class="message-self px-4 py-2 max-w-xs md:max-w-md">
+                                <p>C'est parfait pour moi. Je serai là à 12h30 avec la calculatrice.</p>
+                                <p class="text-xs text-gray-300 mt-1">10:28</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Location Message -->
+                    <div class="flex mb-4">
+                        <div class="flex-shrink-0 mr-3">
+                            <img class="h-8 w-8 rounded-full" src="https://randomuser.me/api/portraits/women/42.jpg" alt="">
+                        </div>
+                        <div>
+                            <div class="bg-gray-100 rounded-lg px-4 py-2 max-w-xs md:max-w-md">
+                                <div class="flex items-center">
+                                    <i class="fas fa-map-marker-alt text-red-500 mr-2"></i>
+                                    <span class="font-medium">Devant la bibliothèque</span>
+                                </div>
+                                <p class="text-xs text-gray-500 mt-1">10:29</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Message Input -->
+                <div class="p-4 border-t border-gray-200">
+                    <div class="relative">
+                        <div class="absolute bottom-2 left-2 flex space-x-2">
+                            <button id="emoji-button" class="text-gray-400 hover:text-gray-600 focus:outline-none">
+                                <i class="far fa-smile"></i>
+                            </button>
+                            <button class="text-gray-400 hover:text-gray-600 focus:outline-none">
+                                <i class="fas fa-paperclip"></i>
+                            </button>
+                        </div>
+                        <textarea id="message-input" class="block w-full pl-12 pr-20 py-2 border border-gray-300 rounded-md leading-5 bg-white placeholder-gray-500 focus:outline-none focus:ring-blue-500 focus:border-blue-500 resize-none" rows="1" placeholder="Écrire un message..."></textarea>
+                        <div class="absolute bottom-2 right-2">
+                            <button id="send-button" class="inline-flex items-center px-3 py-1 border border-transparent text-sm leading-4 font-medium rounded-md text-white bg-green-500 hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
+                                <i class="fas fa-paper-plane"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div id="emoji-picker" class="emoji-picker bg-white shadow-lg rounded-lg p-2">
+                        <!-- Emoji picker would be implemented with a library in a real app -->
+                        <div class="grid grid-cols-8 gap-1">
+                            <span class="emoji-option text-xl cursor-pointer">😀</span>
+                            <span class="emoji-option text-xl cursor-pointer">😂</span>
+                            <span class="emoji-option text-xl cursor-pointer">😊</span>
+                            <span class="emoji-option text-xl cursor-pointer">😍</span>
+                            <span class="emoji-option text-xl cursor-pointer">👍</span>
+                            <span class="emoji-option text-xl cursor-pointer">👋</span>
+                            <span class="emoji-option text-xl cursor-pointer">❤️</span>
+                            <span class="emoji-option text-xl cursor-pointer">🙏</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Mobile menu toggle
+        const mobileMenuButton = document.getElementById('mobile-menu-button');
+        const mobileMenu = document.getElementById('mobile-menu');
+        
+        mobileMenuButton.addEventListener('click', function() {
+            mobileMenu.classList.toggle('hidden');
+        });
+
+        // Chat menu toggle
+        const chatMenuButton = document.getElementById('chat-menu-button');
+        const chatMenu = document.getElementById('chat-menu');
+        
+        chatMenuButton.addEventListener('click', function() {
+            chatMenu.classList.toggle('hidden');
+        });
+
+        // Emoji picker toggle
+        const emojiButton = document.getElementById('emoji-button');
+        const emojiPicker = document.getElementById('emoji-picker');
+        
+        emojiButton.addEventListener('click', function() {
+            emojiPicker.style.display = emojiPicker.style.display === 'block' ? 'none' : 'block';
+        });
+
+        // Close emoji picker when clicking outside
+        document.addEventListener('click', function(event) {
+            if (!emojiButton.contains(event.target) && !emojiPicker.contains(event.target)) {
+                emojiPicker.style.display = 'none';
+            }
+        });
+
+        // Emoji selection
+        const emojiOptions = document.querySelectorAll('.emoji-option');
+        const messageInput = document.getElementById('message-input');
+        
+        emojiOptions.forEach(emoji => {
+            emoji.addEventListener('click', function() {
+                messageInput.value += emoji.textContent;
+                messageInput.focus();
+            });
+        });
+
+        // Auto-resize textarea
+        messageInput.addEventListener('input', function() {
+            this.style.height = 'auto';
+            this.style.height = (this.scrollHeight) + 'px';
+        });
+
+        // Send message
+        const sendButton = document.getElementById('send-button');
+        
+        sendButton.addEventListener('click', function() {
+            const message = messageInput.value.trim();
+            if (message) {
+                // In a real app, this would send the message to the server
+                addMessage(message, true);
+                messageInput.value = '';
+                messageInput.style.height = 'auto';
+                
+                // Simulate reply after 1-3 seconds
+                setTimeout(() => {
+                    const replies = [
+                        "D'accord, merci !",
+                        "Parfait, à tout à l'heure !",
+                        "Je serai là à l'heure convenue",
+                        "Merci pour l'info"
+                    ];
+                    const randomReply = replies[Math.floor(Math.random() * replies.length)];
+                    addMessage(randomReply, false);
+                }, 1000 + Math.random() * 2000);
+            }
+        });
+
+        // Press Enter to send (Shift+Enter for new line)
+        messageInput.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                sendButton.click();
+            }
+        });
+
+        // Add message to chat
+        function addMessage(text, isSelf) {
+            const messagesContainer = document.getElementById('messages-container');
+            
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `flex ${isSelf ? 'justify-end' : ''} mb-4`;
+            
+            if (!isSelf) {
+                const avatarDiv = document.createElement('div');
+                avatarDiv.className = 'flex-shrink-0 mr-3';
+                avatarDiv.innerHTML = '<img class="h-8 w-8 rounded-full" src="https://randomuser.me/api/portraits/women/42.jpg" alt="">';
+                messageDiv.appendChild(avatarDiv);
+            }
+            
+            const contentDiv = document.createElement('div');
+            if (isSelf) {
+                contentDiv.className = 'message-self px-4 py-2 max-w-xs md:max-w-md';
+            } else {
+                contentDiv.className = 'message-other px-4 py-2 max-w-xs md:max-w-md';
+            }
+            
+            const textP = document.createElement('p');
+            textP.textContent = text;
+            
+            const timeP = document.createElement('p');
+            timeP.className = `text-xs ${isSelf ? 'text-gray-300' : 'text-gray-500'} mt-1`;
+            
+            const now = new Date();
+            const hours = now.getHours().toString().padStart(2, '0');
+            const minutes = now.getMinutes().toString().padStart(2, '0');
+            timeP.textContent = `${hours}:${minutes}`;
+            
+            contentDiv.appendChild(textP);
+            contentDiv.appendChild(timeP);
+            messageDiv.appendChild(contentDiv);
+            
+            messagesContainer.appendChild(messageDiv);
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
+
+        // Conversation selection (for mobile)
+        const conversationItems = document.querySelectorAll('.conversation-item');
+        const conversationList = document.getElementById('conversation-list');
+        const chatContainer = document.getElementById('chat-container');
+        
+        conversationItems.forEach(item => {
+            item.addEventListener('click', function() {
+                // Mark as read (remove unread badge)
+                const unreadBadge = this.querySelector('.unread-badge');
+                if (unreadBadge) {
+                    unreadBadge.remove();
+                }
+                
+                // Set active conversation
+                conversationItems.forEach(i => i.classList.remove('conversation-active'));
+                this.classList.add('conversation-active');
+                
+                // On mobile, switch to chat view
+                if (window.innerWidth < 768) {
+                    conversationList.classList.add('conversation-hidden');
+                    chatContainer.classList.add('chat-active');
+                    
+                    // Add back button to chat header
+                    const chatHeader = chatContainer.querySelector('.p-4');
+                    if (!chatHeader.querySelector('#back-button')) {
+                        const backButton = document.createElement('button');
+                        backButton.id = 'back-button';
+                        backButton.className = 'md:hidden text-gray-500 hover:text-gray-700 mr-2';
+                        backButton.innerHTML = '<i class="fas fa-arrow-left"></i>';
+                        backButton.addEventListener('click', function() {
+                            chatContainer.classList.remove('chat-active');
+                            conversationList.classList.remove('conversation-hidden');
+                        });
+                        chatHeader.insertBefore(backButton, chatHeader.firstChild);
+                    }
+                }
+            });
+        });
+
+        // Simulate receiving a new message
+        setTimeout(() => {
+            const randomMessages = [
+                "Bonjour, je suis intéressé par votre article",
+                "Est-ce que le prix est négociable ?",
+                "Pouvez-vous me donner plus de détails ?",
+                "Disponible pour une remise aujourd'hui ?"
+            ];
+            const randomMessage = randomMessages[Math.floor(Math.random() * randomMessages.length)];
+            
+            // Only add if user hasn't opened another conversation
+            if (document.querySelector('.conversation-active[data-chat="chat2"]')) {
+                addMessage(randomMessage, false);
+                
+                // Update conversation list with "new message" indicator
+                const conversationItem = document.querySelector('.conversation-item[data-chat="chat2"]');
+                if (!conversationItem.querySelector('.unread-badge')) {
+                    const unreadDiv = document.createElement('div');
+                    unreadDiv.className = 'unread-badge';
+                    conversationItem.querySelector('.flex-1.min-w-0 > div:last-child').appendChild(unreadDiv);
+                }
+            }
+        }, 8000);
+    </script>
+</body>
+</html>
