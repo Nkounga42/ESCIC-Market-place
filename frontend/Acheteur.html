@@ -34,6 +34,86 @@
             background-color: #3b82f6;
             border-radius: 10px;
         }
+        /* Styles pour les notifications */
+        .notification-badge {
+            position: absolute;
+            top: -6px;
+            right: -6px;
+            background-color: #ef4444; /* red-500 */
+            color: white;
+            border-radius: 50%;
+            width: 20px; /* Légèrement augmenté pour une meilleure visibilité */
+            height: 20px; /* Légèrement augmenté */
+            font-size: 11px; /* Ajusté */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid white;
+            font-weight: bold;
+        }
+        .notification-panel-container { /* Renommé pour éviter la confusion avec l'ID */
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        .notification-panel-container::-webkit-scrollbar {
+            width: 6px;
+        }
+        .notification-panel-container::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+        .notification-panel-container::-webkit-scrollbar-thumb {
+            background-color: #3b82f6; /* blue-600 */
+            border-radius: 10px;
+        }
+        .notification-item {
+            position: relative;
+            transition: all 0.2s ease;
+        }
+        .notification-item:hover {
+            background-color: #f3f4f6; /* gray-100 */
+        }
+        .notification-item.unread::before { /* Indicateur visuel pour non lu */
+            content: '';
+            position: absolute;
+            left: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background-color: #3b82f6; /* blue-600 */
+        }
+        .notification-dot { /* Peut être utilisé pour des indicateurs plus subtils */
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+        .notification-animation {
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0% {
+                box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); /* red-500 avec opacité */
+            }
+            70% {
+                box-shadow: 0 0 0 10px rgba(239, 68, 68, 0);
+            }
+            100% {
+                box-shadow: 0 0 0 0 rgba(239, 68, 68, 0);
+            }
+        }
+        /* Styles pour le toast (notification rapide en bas à droite) */
+        #toast {
+           z-index: 100; /* S'assurer qu'il est au-dessus d'autres éléments */
+        }
+        /* Styles pour le popup de notification */
+        #notificationPopup {
+            z-index: 100; /* S'assurer qu'il est au-dessus d'autres éléments */
+        }
+
     </style>
 </head>
 <body class="bg-gray-50">
@@ -58,10 +138,41 @@
                 <button class="md:hidden text-gray-600">
                     <i class="fas fa-search text-xl"></i>
                 </button>
+                
+                <div class="relative">
+                    <button id="notificationButton" class="relative text-gray-600 hover:text-blue-800">
+                        <i class="fas fa-bell text-xl"></i>
+                        <span id="notificationCount" class="notification-badge" style="display: none;">0</span>
+                    </button>
+                    
+                    <div id="notificationPanel" class="absolute right-0 mt-2 w-80 md:w-96 bg-white rounded-lg shadow-lg transition-all duration-300 transform scale-0 origin-top-right opacity-0 z-[60]">
+                        <div class="p-3 border-b border-gray-200 flex justify-between items-center">
+                            <h3 class="font-semibold text-gray-700">Notifications</h3>
+                            <div class="flex space-x-2">
+                                <button id="markAllAsRead" title="Tout marquer comme lu" class="text-sm text-blue-600 hover:text-blue-800">
+                                    <i class="fas fa-check-double"></i>
+                                </button>
+                                <button id="notificationSettings" title="Paramètres" class="text-gray-500 hover:text-gray-700">
+                                    <i class="fas fa-cog"></i>
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div id="notificationList" class="notification-panel-container">
+                            <p id="noNotificationsMessage" class="p-4 text-center text-gray-500">Aucune nouvelle notification.</p>
+                        </div>
+                        
+                        <div class="p-3 border-t border-gray-200 text-center">
+                            <a href="#" class="text-sm text-blue-600 hover:text-blue-800">Voir toutes les notifications</a>
+                        </div>
+                    </div>
+                </div>
+                
                 <button id="cartButton" class="relative text-gray-600 hover:text-blue-800">
                     <i class="fas fa-shopping-cart text-xl"></i>
                     <span id="cartCount" class="absolute -top-2 -right-2 bg-blue-600 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">0</span>
                 </button>
+                
                 <button class="text-gray-600 hover:text-blue-800">
                     <i class="fas fa-user text-xl"></i>
                 </button>
@@ -85,8 +196,7 @@
         </div>
     </header>
 
-    <div id="cartDrawer" class="fixed inset-y-0 right-0 w-full md:w-96 bg-white shadow-xl transform translate-x-full transition-transform duration-300 ease-in-out z-50">
-        <div class="h-full flex flex-col">
+    <div id="cartDrawer" class="fixed inset-y-0 right-0 w-full md:w-96 bg-white shadow-xl transform translate-x-full transition-transform duration-300 ease-in-out z-[70]"> <div class="h-full flex flex-col">
             <div class="bg-blue-800 text-white px-6 py-4 flex justify-between items-center">
                 <h2 class="text-xl font-bold">Mon Panier</h2>
                 <button id="closeCart" class="text-white hover:text-blue-200">
@@ -117,7 +227,20 @@
         </div>
     </div>
 
-    <div id="overlay" class="fixed inset-0 bg-black opacity-0 pointer-events-none transition-opacity duration-300 ease-in-out z-40"></div>
+    <div id="overlay" class="fixed inset-0 bg-black opacity-0 pointer-events-none transition-opacity duration-300 ease-in-out z-[55]"></div> <div id="notificationPopup" class="fixed bottom-5 right-5 bg-white rounded-lg shadow-xl p-4 w-80 transform translate-y-24 opacity-0 transition-all duration-500 ease-in-out z-[100] border-l-4 border-blue-500">
+        <div class="flex items-start">
+            <div class="flex-shrink-0 mr-3 pt-1">
+                <i id="notificationPopupIcon" class="fas fa-info-circle text-blue-500 text-xl"></i>
+            </div>
+            <div class="flex-1">
+                <h4 id="notificationPopupTitle" class="font-semibold text-gray-800">Nouvelle Notification</h4>
+                <p id="notificationPopupMessage" class="text-sm text-gray-600 mt-1">Contenu de la notification.</p>
+            </div>
+            <button id="closeNotificationPopup" class="text-gray-400 hover:text-gray-600 ml-2">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+    </div>
 
     <section class="relative bg-gradient-to-r from-blue-800 to-blue-600 text-white">
         <div class="container mx-auto px-4 py-16 md:py-24">
@@ -422,55 +545,83 @@
         </div>
     </footer>
 
-    <div id="toast" class="fixed bottom-4 right-4 bg-green-500 text-white px-4 py-2 rounded-lg shadow-lg transform translate-y-20 opacity-0 transition-all duration-300 flex items-center z-50">
-        <i class="fas fa-check-circle mr-2"></i>
+    <div id="toast" class="fixed bottom-4 right-4 bg-green-500 text-white px-4 py-2 rounded-lg shadow-lg transform translate-y-20 opacity-0 transition-all duration-300 flex items-center z-[100]">
+        <i id="toastIcon" class="fas fa-check-circle mr-2"></i>
         <span id="toastMessage">Article ajouté au panier</span>
     </div>
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // Cart functionality
+            // --- CART ELEMENTS ---
             const cartButton = document.getElementById('cartButton');
             const closeCartButton = document.getElementById('closeCart');
             const cartDrawer = document.getElementById('cartDrawer');
             const overlay = document.getElementById('overlay');
             const continueShoppingButton = document.getElementById('continueShoppingButton');
-            const cartCount = document.getElementById('cartCount');
-            const cartItemsContainer = document.getElementById('cartItems'); // Renommé pour plus de clarté
-            const emptyCartMessage = document.getElementById('emptyCart'); // Renommé pour plus de clarté
-            const cartSubtotalElement = document.getElementById('cartSubtotal'); // Renommé pour plus de clarté
+            const cartCountEl = document.getElementById('cartCount'); // Renommé pour clarté (Element)
+            const cartItemsContainer = document.getElementById('cartItems');
+            const emptyCartMessage = document.getElementById('emptyCart');
+            const cartSubtotalElement = document.getElementById('cartSubtotal');
             const checkoutButton = document.getElementById('checkoutButton');
             const addToCartButtons = document.querySelectorAll('.add-to-cart');
+            
+            // --- TOAST (Panier) ELEMENTS ---
             const toast = document.getElementById('toast');
-            const toastMessageElement = document.getElementById('toastMessage'); // Renommé pour plus de clarté
-            
-            // Cart data
+            const toastMessageElement = document.getElementById('toastMessage');
+            const toastIcon = document.getElementById('toastIcon');
+
+            // --- NOTIFICATION ELEMENTS ---
+            const notificationButton = document.getElementById('notificationButton');
+            const notificationPanel = document.getElementById('notificationPanel');
+            const notificationCountBadge = document.getElementById('notificationCount');
+            const notificationListContainer = document.getElementById('notificationList');
+            const noNotificationsMessage = document.getElementById('noNotificationsMessage');
+            const markAllAsReadButton = document.getElementById('markAllAsRead');
+            const notificationSettingsButton = document.getElementById('notificationSettings');
+
+            // --- REAL-TIME NOTIFICATION POPUP ELEMENTS ---
+            const notificationPopup = document.getElementById('notificationPopup');
+            const notificationPopupIcon = document.getElementById('notificationPopupIcon');
+            const notificationPopupTitle = document.getElementById('notificationPopupTitle');
+            const notificationPopupMessage = document.getElementById('notificationPopupMessage');
+            const closeNotificationPopupButton = document.getElementById('closeNotificationPopup');
+
+            // --- DATA ---
             let cart = JSON.parse(localStorage.getItem('escicCart')) || [];
+            let notifications = JSON.parse(localStorage.getItem('escicNotifications')) || [
+                // Données de notifications exemples (vous les chargeriez d'un backend normalement)
+                { id: 1, icon: 'fas fa-shopping-bag', title: 'Nouvelle commande reçue', message: 'Votre commande #12345 a été confirmée.', timestamp: new Date(Date.now() - 1000 * 60 * 5).toISOString(), read: false, link: '#' },
+                { id: 2, icon: 'fas fa-user-plus', title: 'Nouveau follower', message: 'Marie D. vous suit maintenant.', timestamp: new Date(Date.now() - 1000 * 60 * 60 * 2).toISOString(), read: true, link: '#' },
+                { id: 3, icon: 'fas fa-tag', title: 'Promotion spéciale', message: 'Profitez de -20% sur les livres cette semaine !', timestamp: new Date(Date.now() - 1000 * 60 * 60 * 24).toISOString(), read: false, link: '#' },
+                { id: 4, icon: 'fas fa-truck', title: 'Article expédié', message: 'Votre calculatrice a été expédiée.', timestamp: new Date(Date.now() - 1000 * 60 * 30).toISOString(), read: false, link: '#' },
+            ];
             
-            // Initialize cart
+            // --- INITIALIZATION ---
             updateCartDisplay();
-            
-            // Open cart drawer
-            cartButton.addEventListener('click', function() {
-                cartDrawer.classList.remove('translate-x-full');
-                overlay.classList.add('opacity-50');
-                overlay.classList.remove('pointer-events-none');
-                document.body.classList.add('overflow-hidden'); // Empêche le scroll de la page principale
-            });
-            
-            // Close cart drawer
-            function closeCart() {
-                cartDrawer.classList.add('translate-x-full');
-                overlay.classList.remove('opacity-50');
-                overlay.classList.add('pointer-events-none');
-                document.body.classList.remove('overflow-hidden'); // Réactive le scroll
-            }
-            
+            renderNotifications(); // Appel initial pour afficher les notifications
+
+            // ======================== CART FUNCTIONALITY ========================
+
+            cartButton.addEventListener('click', openCart);
             closeCartButton.addEventListener('click', closeCart);
-            overlay.addEventListener('click', closeCart);
+            overlay.addEventListener('click', () => { // Ferme le panier et le panel de notifications si ouverts
+                closeCart();
+                closeNotificationPanel();
+            });
             continueShoppingButton.addEventListener('click', closeCart);
             
-            // Add to cart functionality
+            function openCart() {
+                cartDrawer.classList.remove('translate-x-full');
+                showOverlay();
+                document.body.classList.add('overflow-hidden');
+            }
+
+            function closeCart() {
+                cartDrawer.classList.add('translate-x-full');
+                hideOverlayIfNotNeeded();
+                document.body.classList.remove('overflow-hidden');
+            }
+
             addToCartButtons.forEach(button => {
                 button.addEventListener('click', function() {
                     const id = this.dataset.id;
@@ -494,44 +645,43 @@
                 });
             });
             
-            // Update cart items display
             function updateCartDisplay() {
-                // Update cart count badge
                 const totalItems = cart.reduce((total, item) => total + item.quantity, 0);
-                cartCount.textContent = totalItems;
+                cartCountEl.textContent = totalItems;
+                cartCountEl.style.display = totalItems > 0 ? 'flex' : 'none'; // Afficher/cacher le badge du panier
 
-                // Clear current cart items
+
                 cartItemsContainer.innerHTML = ''; 
 
                 if (cart.length === 0) {
-                    cartItemsContainer.appendChild(emptyCartMessage); // Affiche le message si le panier est vide
-                    emptyCartMessage.style.display = 'flex'; // Assure que le message est visible
-                    checkoutButton.disabled = true; // Désactive le bouton de paiement
+                    cartItemsContainer.appendChild(emptyCartMessage);
+                    emptyCartMessage.style.display = 'flex';
+                    checkoutButton.disabled = true;
                     cartSubtotalElement.textContent = '0.00€';
                 } else {
-                    emptyCartMessage.style.display = 'none'; // Cache le message si des articles sont présents
-                    checkoutButton.disabled = false; // Active le bouton de paiement
+                    emptyCartMessage.style.display = 'none';
+                    checkoutButton.disabled = false;
 
                     let subtotal = 0;
                     cart.forEach(item => {
                         const itemElement = document.createElement('div');
-                        itemElement.classList.add('flex', 'items-center', 'justify-between', 'py-3', 'border-b');
+                        itemElement.classList.add('flex', 'items-center', 'justify-between', 'py-3', 'border-b', 'border-gray-200');
                         itemElement.innerHTML = `
                             <div class="flex items-center">
                                 <img src="${item.img}" alt="${item.name}" class="w-16 h-16 object-cover rounded mr-3">
                                 <div>
-                                    <h4 class="font-medium text-sm">${item.name}</h4>
+                                    <h4 class="font-medium text-sm text-gray-800">${item.name}</h4>
                                     <p class="text-xs text-gray-500">Vendu par: ${item.seller}</p>
                                     <p class="text-blue-600 font-semibold text-sm">${item.price.toFixed(2)}€</p>
                                 </div>
                             </div>
                             <div class="flex items-center">
-                                <div class="flex items-center border rounded">
+                                <div class="flex items-center border border-gray-300 rounded">
                                     <button class="quantity-change px-2 py-1 text-sm text-gray-600 hover:bg-gray-100" data-id="${item.id}" data-change="-1">-</button>
-                                    <span class="px-2 text-sm">${item.quantity}</span>
+                                    <span class="px-3 text-sm text-gray-700">${item.quantity}</span>
                                     <button class="quantity-change px-2 py-1 text-sm text-gray-600 hover:bg-gray-100" data-id="${item.id}" data-change="1">+</button>
                                 </div>
-                                <button class="remove-item ml-3 text-red-500 hover:text-red-700" data-id="${item.id}">
+                                <button class="remove-item ml-3 text-red-500 hover:text-red-700" title="Supprimer l'article" data-id="${item.id}">
                                     <i class="fas fa-trash-alt"></i>
                                 </button>
                             </div>
@@ -541,20 +691,17 @@
                     });
 
                     cartSubtotalElement.textContent = `${subtotal.toFixed(2)}€`;
-
-                    // Add event listeners for remove and quantity change buttons
                     addCartItemEventListeners();
                 }
             }
 
             function addCartItemEventListeners() {
-                // Remove item from cart
                 document.querySelectorAll('.remove-item').forEach(button => {
                     button.addEventListener('click', function() {
                         const itemId = this.dataset.id;
                         const itemToRemove = cart.find(item => item.id === itemId);
                         if (itemToRemove) {
-                             showToast(`"${itemToRemove.name}" retiré du panier`, 'bg-red-500');
+                             showToast(`"${itemToRemove.name}" retiré du panier`, 'bg-red-500', 'fas fa-trash-alt');
                         }
                         cart = cart.filter(item => item.id !== itemId);
                         saveCart();
@@ -562,7 +709,6 @@
                     });
                 });
 
-                // Change item quantity
                 document.querySelectorAll('.quantity-change').forEach(button => {
                     button.addEventListener('click', function() {
                         const itemId = this.dataset.id;
@@ -572,8 +718,7 @@
                         if (itemToUpdate) {
                             itemToUpdate.quantity += change;
                             if (itemToUpdate.quantity <= 0) {
-                                // If quantity drops to 0 or less, remove the item
-                                showToast(`"${itemToUpdate.name}" retiré du panier`, 'bg-red-500');
+                                showToast(`"${itemToUpdate.name}" retiré du panier`, 'bg-red-500', 'fas fa-trash-alt');
                                 cart = cart.filter(item => item.id !== itemId);
                             } else {
                                 showToast(`Quantité de "${itemToUpdate.name}" mise à jour`);
@@ -585,44 +730,271 @@
                 });
             }
 
-            // Save cart to localStorage
             function saveCart() {
                 localStorage.setItem('escicCart', JSON.stringify(cart));
             }
 
-            // Show toast notification
             let toastTimeout;
-            function showToast(message, bgColor = 'bg-green-500') {
+            function showToast(message, bgColor = 'bg-green-500', iconClass = 'fas fa-check-circle') {
                 toastMessageElement.textContent = message;
-                toast.classList.remove('bg-green-500', 'bg-red-500'); // Remove previous color classes
-                toast.classList.add(bgColor); // Add new color class
+                toast.className = `fixed bottom-4 right-4 text-white px-4 py-3 rounded-lg shadow-lg transform translate-y-20 opacity-0 transition-all duration-300 flex items-center z-[100] ${bgColor}`; // Réinitialise et applique la nouvelle couleur
+                toastIcon.className = `${iconClass} mr-2`;
+
 
                 toast.classList.remove('translate-y-20', 'opacity-0');
                 toast.classList.add('translate-y-0', 'opacity-100');
 
-                clearTimeout(toastTimeout); // Clear existing timeout if any
+                clearTimeout(toastTimeout);
                 toastTimeout = setTimeout(() => {
                     toast.classList.remove('translate-y-0', 'opacity-100');
                     toast.classList.add('translate-y-20', 'opacity-0');
-                }, 3000); // Toast disappears after 3 seconds
+                }, 3000);
             }
 
-            // Checkout button functionality (placeholder)
             checkoutButton.addEventListener('click', function() {
                 if (cart.length > 0) {
-                    // Ici, vous implémenteriez la logique de paiement
-                    // Par exemple, rediriger vers une page de paiement, afficher un modal, etc.
-                    showToast('Redirection vers la page de paiement...', 'bg-blue-500');
-                    // Pour l'exemple, on vide le panier après "paiement"
+                    showToast('Redirection vers la page de paiement...', 'bg-blue-500', 'fas fa-credit-card');
                     setTimeout(() => {
                         cart = [];
                         saveCart();
                         updateCartDisplay();
-                        closeCart(); // Ferme le panier après le "paiement"
-                        showToast('Merci pour votre commande ! Panier vidé.', 'bg-green-500');
+                        closeCart(); 
+                        showToast('Merci pour votre commande ! Panier vidé.', 'bg-green-500', 'fas fa-gift');
+                        // Simuler une notification de confirmation de commande
+                        addNotificationAndShowPopup({
+                            id: Date.now(), // ID unique
+                            icon: 'fas fa-receipt',
+                            title: 'Commande Confirmée',
+                            message: 'Votre commande a été passée avec succès !',
+                            timestamp: new Date().toISOString(),
+                            read: false,
+                            link: '#'
+                        });
                     }, 2000);
                 }
             });
+
+            // ======================== NOTIFICATION FUNCTIONALITY ========================
+
+            notificationButton.addEventListener('click', function(event) {
+                event.stopPropagation(); // Empêche la propagation au document qui fermerait le panel
+                toggleNotificationPanel();
+            });
+
+            markAllAsReadButton.addEventListener('click', function() {
+                notifications.forEach(notif => notif.read = true);
+                saveNotifications();
+                renderNotifications();
+                showToast('Toutes les notifications marquées comme lues', 'bg-blue-500', 'fas fa-check-double');
+            });
+
+            notificationSettingsButton.addEventListener('click', function() {
+                // Placeholder pour les paramètres de notification
+                showToast('Paramètres des notifications (à implémenter)', 'bg-yellow-500', 'fas fa-cog');
+                console.log("Paramètres des notifications cliqués.");
+            });
+
+            function toggleNotificationPanel() {
+                if (notificationPanel.classList.contains('scale-0')) {
+                    openNotificationPanel();
+                } else {
+                    closeNotificationPanel();
+                }
+            }
+
+            function openNotificationPanel() {
+                notificationPanel.classList.remove('scale-0', 'opacity-0');
+                notificationPanel.classList.add('scale-100', 'opacity-100');
+                showOverlay(); // Utilise le même overlay que le panier
+            }
+
+            function closeNotificationPanel() {
+                notificationPanel.classList.remove('scale-100', 'opacity-100');
+                notificationPanel.classList.add('scale-0', 'opacity-0');
+                hideOverlayIfNotNeeded();
+            }
+            
+            function formatTimeAgo(isoTimestamp) {
+                const date = new Date(isoTimestamp);
+                const now = new Date();
+                const seconds = Math.round((now - date) / 1000);
+                const minutes = Math.round(seconds / 60);
+                const hours = Math.round(minutes / 60);
+                const days = Math.round(hours / 24);
+
+                if (seconds < 60) return `${seconds} sec`;
+                if (minutes < 60) return `${minutes} min`;
+                if (hours < 24) return `${hours} h`;
+                return `${days} j`;
+            }
+
+            function renderNotifications() {
+                notificationListContainer.innerHTML = ''; // Clear previous notifications
+                const unreadCount = notifications.filter(n => !n.read).length;
+
+                if (unreadCount > 0) {
+                    notificationCountBadge.textContent = unreadCount > 9 ? '9+' : unreadCount;
+                    notificationCountBadge.style.display = 'flex';
+                    notificationCountBadge.classList.add('notification-animation');
+                } else {
+                    notificationCountBadge.style.display = 'none';
+                    notificationCountBadge.classList.remove('notification-animation');
+                }
+                
+                if (notifications.length === 0) {
+                    noNotificationsMessage.style.display = 'block';
+                } else {
+                    noNotificationsMessage.style.display = 'none';
+                    // Trier les notifications: non lues d'abord, puis par date (plus récentes en premier)
+                    const sortedNotifications = [...notifications].sort((a, b) => {
+                        if (a.read !== b.read) {
+                            return a.read ? 1 : -1; // Non lues en premier
+                        }
+                        return new Date(b.timestamp) - new Date(a.timestamp); // Puis par date décroissante
+                    });
+
+
+                    sortedNotifications.forEach(notif => {
+                        const item = document.createElement('a');
+                        item.href = notif.link || '#';
+                        item.classList.add('notification-item', 'block', 'p-3', 'hover:bg-gray-100', 'border-b', 'border-gray-100', 'cursor-pointer');
+                        if (!notif.read) {
+                            item.classList.add('unread', 'bg-blue-50'); // Fond légèrement bleuté pour non lu
+                        }
+                        item.innerHTML = `
+                            <div class="flex items-start">
+                                <div class="flex-shrink-0 mr-3 pt-1">
+                                    <i class="${notif.icon || 'fas fa-bell'} text-lg ${notif.read ? 'text-gray-400' : 'text-blue-600'}"></i>
+                                </div>
+                                <div class="flex-1">
+                                    <p class="text-sm font-medium text-gray-800">${notif.title}</p>
+                                    <p class="text-xs text-gray-600">${notif.message}</p>
+                                    <p class="text-xs ${notif.read ? 'text-gray-400' : 'text-blue-500'} mt-1">${formatTimeAgo(notif.timestamp)}</p>
+                                </div>
+                                ${!notif.read ? '<span class="notification-dot bg-blue-600 self-center ml-auto"></span>' : ''}
+                            </div>
+                        `;
+                        item.addEventListener('click', (e) => {
+                            if (!notif.read) {
+                                markNotificationAsRead(notif.id);
+                            }
+                            // Si le lien est juste '#', on évite le saut de page
+                            if (item.getAttribute('href') === '#') {
+                                e.preventDefault();
+                            }
+                            closeNotificationPanel(); // Ferme le panel après clic
+                            // Si vous voulez rediriger, la redirection se fera naturellement.
+                        });
+                        notificationListContainer.appendChild(item);
+                    });
+                }
+                saveNotifications(); // Sauvegarde au cas où l'ordre ou l'état a changé
+            }
+
+            function markNotificationAsRead(notificationId) {
+                const notification = notifications.find(n => n.id === notificationId);
+                if (notification && !notification.read) {
+                    notification.read = true;
+                    saveNotifications();
+                    renderNotifications(); // Re-render pour mettre à jour l'UI
+                }
+            }
+            
+            function saveNotifications() {
+                localStorage.setItem('escicNotifications', JSON.stringify(notifications));
+            }
+
+            // Clic en dehors du panel de notification pour le fermer
+            document.addEventListener('click', function(event) {
+                if (!notificationPanel.contains(event.target) && !notificationButton.contains(event.target)) {
+                    closeNotificationPanel();
+                }
+            });
+
+
+            // ======================== REAL-TIME NOTIFICATION POPUP ========================
+            let popupTimeout;
+            closeNotificationPopupButton.addEventListener('click', closeRealTimePopup);
+
+            function showRealTimePopup(title, message, icon = 'fas fa-info-circle', iconColor = 'text-blue-500', borderColor = 'border-blue-500') {
+                notificationPopupTitle.textContent = title;
+                notificationPopupMessage.textContent = message;
+                notificationPopupIcon.className = `${icon} ${iconColor} text-xl`;
+                notificationPopup.className = `fixed bottom-5 right-5 bg-white rounded-lg shadow-xl p-4 w-80 transform translate-y-24 opacity-0 transition-all duration-500 ease-in-out z-[100] border-l-4 ${borderColor}`;
+
+
+                notificationPopup.classList.remove('translate-y-24', 'opacity-0');
+                notificationPopup.classList.add('translate-y-0', 'opacity-100');
+
+                clearTimeout(popupTimeout);
+                popupTimeout = setTimeout(closeRealTimePopup, 6000); // Disparaît après 6 secondes
+            }
+
+            function closeRealTimePopup() {
+                notificationPopup.classList.remove('translate-y-0', 'opacity-100');
+                notificationPopup.classList.add('translate-y-24', 'opacity-0');
+            }
+
+            // Fonction pour ajouter une notification et afficher le popup
+            function addNotificationAndShowPopup(newNotifData) {
+                 // S'assurer que la nouvelle notif est au début pour la visibilité
+                notifications.unshift(newNotifData);
+                if (notifications.length > 20) { // Limiter le nombre de notifications stockées
+                    notifications.pop();
+                }
+                saveNotifications();
+                renderNotifications(); // Met à jour le panel
+                showRealTimePopup(
+                    newNotifData.title, 
+                    newNotifData.message, 
+                    newNotifData.icon, 
+                    newNotifData.read ? 'text-gray-400' : 'text-blue-600' // Adapter la couleur de l'icône
+                );
+            }
+
+            // --- OVERLAY MANAGEMENT (shared by cart and notification panel) ---
+            function showOverlay() {
+                overlay.classList.add('opacity-50');
+                overlay.classList.remove('pointer-events-none');
+            }
+
+            function hideOverlayIfNotNeeded() {
+                // Ne cache l'overlay que si le panier ET le panel de notif sont fermés
+                const isCartOpen = !cartDrawer.classList.contains('translate-x-full');
+                const isNotifPanelOpen = notificationPanel.classList.contains('scale-100');
+                if (!isCartOpen && !isNotifPanelOpen) {
+                    overlay.classList.remove('opacity-50');
+                    overlay.classList.add('pointer-events-none');
+                }
+            }
+
+
+            // --- SIMULATION DE NOUVELLES NOTIFICATIONS (pour démo) ---
+            setTimeout(() => {
+                 addNotificationAndShowPopup({
+                    id: Date.now(),
+                    icon: 'fas fa-comment-dots',
+                    title: 'Nouveau Message',
+                    message: 'Jean Dupont vous a envoyé un message.',
+                    timestamp: new Date().toISOString(),
+                    read: false,
+                    link: '#'
+                });
+            }, 10000); // Après 10 secondes
+
+             setTimeout(() => {
+                 addNotificationAndShowPopup({
+                    id: Date.now() + 1,
+                    icon: 'fas fa-exclamation-triangle',
+                    title: 'Alerte de Sécurité',
+                    message: 'Une nouvelle connexion a été détectée sur votre compte.',
+                    timestamp: new Date().toISOString(),
+                    read: false,
+                    link: '#',
+                    iconColor: 'text-yellow-500', // Personnalisation
+                    borderColor: 'border-yellow-500'
+                });
+            }, 20000); // Après 20 secondes
 
         });
     </script>
