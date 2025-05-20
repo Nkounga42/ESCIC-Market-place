@@ -135,68 +135,26 @@
             </div>
             
             <div class="flex items-center space-x-4">
-                <button class="md:hidden text-gray-600">
-                    <i class="fas fa-search text-xl"></i>
-                </button>
-                
-                <div class="relative">
-                    <button id="notificationButton" class="relative text-gray-600 hover:text-blue-800">
-                        <i class="fas fa-bell text-xl"></i>
-                        <span id="notificationCount" class="notification-badge" style="display: none;">0</span>
-                    </button>
-                    
-                    <div id="notificationPanel" class="absolute right-0 mt-2 w-80 md:w-96 bg-white rounded-lg shadow-lg transition-all duration-300 transform scale-0 origin-top-right opacity-0 z-[60]">
-                        <div class="p-3 border-b border-gray-200 flex justify-between items-center">
-                            <h3 class="font-semibold text-gray-700">Notifications</h3>
-                            <div class="flex space-x-2">
-                                <button id="markAllAsRead" title="Tout marquer comme lu" class="text-sm text-blue-600 hover:text-blue-800">
-                                    <i class="fas fa-check-double"></i>
-                                </button>
-                                <button id="notificationSettings" title="Paramètres" class="text-gray-500 hover:text-gray-700">
-                                    <i class="fas fa-cog"></i>
-                                </button>
-                            </div>
-                        </div>
-                        
-                        <div id="notificationList" class="notification-panel-container">
-                            <p id="noNotificationsMessage" class="p-4 text-center text-gray-500">Aucune nouvelle notification.</p>
-                        </div>
-                        
-                        <div class="p-3 border-t border-gray-200 text-center">
-                            <a href="#" class="text-sm text-blue-600 hover:text-blue-800">Voir toutes les notifications</a>
-                        </div>
-                    </div>
-                </div>
-                
-                <button id="cartButton" class="relative text-gray-600 hover:text-blue-800">
-                    <i class="fas fa-shopping-cart text-xl"></i>
+               
                     <span id="cartCount" class="absolute -top-2 -right-2 bg-blue-600 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">0</span>
                 </button>
-                
-                <button class="text-gray-600 hover:text-blue-800">
-                    <i class="fas fa-user text-xl"></i>
-                </button>
-                <button class="hidden md:block bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-full font-medium transition duration-300">
-                    <i class="fas fa-plus mr-1"></i> Vendre un article
-                </button>
+                <a href="Acheteur.html" class="hidden md:block text-gray-600 hover:text-blue-800 font-semibold transition">Accueil</a>
+                <a href="Vendeur.html" class="hidden md:block text-purple-700 hover:text-purple-900 font-semibold transition">Mon kiosque</a>
+                <a href="connection.html" id="logoutBtn" class="text-red-500 hover:text-red-700 font-semibold transition">Déconnexion</a>
                 <button class="md:hidden text-gray-600">
                     <i class="fas fa-bars text-xl"></i>
                 </button>
             </div>
         </div>
         
-        <div class="md:hidden bg-white px-4 py-2 border-t">
-            <div class="relative">
-                <input type="text" placeholder="Rechercher un article..." 
-                       class="w-full py-2 px-4 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
-                <button class="absolute right-3 top-2 text-gray-400">
-                    <i class="fas fa-search"></i>
-                </button>
-            </div>
+         
+            <a href="Acheteur.html" class="text-gray-600 font-semibold">Accueil</a>
+            <a href="Vendeur.html" class="text-purple-700 font-semibold">Kiosque</a>
         </div>
     </header>
 
-    <div id="cartDrawer" class="fixed inset-y-0 right-0 w-full md:w-96 bg-white shadow-xl transform translate-x-full transition-transform duration-300 ease-in-out z-[70]"> <div class="h-full flex flex-col">
+    <div id="cartDrawer" class="fixed inset-y-0 right-0 w-full md:w-96 bg-white shadow-xl transform translate-x-full transition-transform duration-300 ease-in-out z-[70]">
+        <div class="h-full flex flex-col">
             <div class="bg-blue-800 text-white px-6 py-4 flex justify-between items-center">
                 <h2 class="text-xl font-bold">Mon Panier</h2>
                 <button id="closeCart" class="text-white hover:text-blue-200">
@@ -223,11 +181,18 @@
                 <button id="continueShoppingButton" class="w-full mt-3 border border-blue-700 text-blue-700 hover:bg-blue-50 py-3 rounded-lg font-medium transition duration-300">
                     Continuer mes achats
                 </button>
+                <form id="orderForm" class="mt-6 hidden flex-col space-y-3">
+                    <input type="text" id="orderName" class="w-full border border-gray-300 rounded-md px-3 py-2" placeholder="Nom complet" required>
+                    <input type="tel" id="orderPhone" class="w-full border border-gray-300 rounded-md px-3 py-2" placeholder="Téléphone" required>
+                    <input type="text" id="orderAddress" class="w-full border border-gray-300 rounded-md px-3 py-2" placeholder="Adresse de livraison" required>
+                    <button type="submit" class="w-full bg-green-600 hover:bg-green-700 text-white py-2 rounded-md font-semibold transition">Valider la commande</button>
+                </form>
             </div>
         </div>
     </div>
 
-    <div id="overlay" class="fixed inset-0 bg-black opacity-0 pointer-events-none transition-opacity duration-300 ease-in-out z-[55]"></div> <div id="notificationPopup" class="fixed bottom-5 right-5 bg-white rounded-lg shadow-xl p-4 w-80 transform translate-y-24 opacity-0 transition-all duration-500 ease-in-out z-[100] border-l-4 border-blue-500">
+    <div id="overlay" class="fixed inset-0 bg-black opacity-0 pointer-events-none transition-opacity duration-300 ease-in-out z-[55]"></div>
+    <div id="notificationPopup" class="fixed bottom-5 right-5 bg-white rounded-lg shadow-xl p-4 w-80 transform translate-y-24 opacity-0 transition-all duration-500 ease-in-out z-[100] border-l-4 border-blue-500">
         <div class="flex items-start">
             <div class="flex-shrink-0 mr-3 pt-1">
                 <i id="notificationPopupIcon" class="fas fa-info-circle text-blue-500 text-xl"></i>
@@ -753,24 +718,31 @@
 
             checkoutButton.addEventListener('click', function() {
                 if (cart.length > 0) {
-                    showToast('Redirection vers la page de paiement...', 'bg-blue-500', 'fas fa-credit-card');
-                    setTimeout(() => {
-                        cart = [];
-                        saveCart();
-                        updateCartDisplay();
-                        closeCart(); 
-                        showToast('Merci pour votre commande ! Panier vidé.', 'bg-green-500', 'fas fa-gift');
-                        // Simuler une notification de confirmation de commande
-                        addNotificationAndShowPopup({
-                            id: Date.now(), // ID unique
-                            icon: 'fas fa-receipt',
-                            title: 'Commande Confirmée',
-                            message: 'Votre commande a été passée avec succès !',
-                            timestamp: new Date().toISOString(),
-                            read: false,
-                            link: '#'
-                        });
-                    }, 2000);
+                    // Affiche le formulaire de validation de commande
+                    document.getElementById('orderForm').classList.remove('hidden');
+                    checkoutButton.disabled = true;
+                }
+            });
+
+            // Validation du formulaire de commande
+            const orderForm = document.getElementById('orderForm');
+            orderForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                // Récupère les infos saisies
+                const name = document.getElementById('orderName').value.trim();
+                const phone = document.getElementById('orderPhone').value.trim();
+                const address = document.getElementById('orderAddress').value.trim();
+                if (name && phone && address) {
+                    showToast('Commande validée ! Merci '+name, 'bg-green-600', 'fas fa-check');
+                    cart = [];
+                    saveCart();
+                    updateCartDisplay();
+                    closeCart();
+                    // Réinitialise le formulaire
+                    orderForm.reset();
+                    orderForm.classList.add('hidden');
+                } else {
+                    showToast('Merci de remplir tous les champs', 'bg-red-500', 'fas fa-exclamation-triangle');
                 }
             });
 
@@ -995,6 +967,14 @@
                     borderColor: 'border-yellow-500'
                 });
             }, 20000); // Après 20 secondes
+
+            var logoutBtn = document.getElementById('logoutBtn');
+            if (logoutBtn) {
+                logoutBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    window.location.href = '../login/connection.html';
+                });
+            }
 
         });
     </script>

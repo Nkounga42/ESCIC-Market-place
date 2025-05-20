@@ -89,7 +89,7 @@
             <div class="flex items-center">
                 <img src="https://via.placeholder.com/40" alt="Profile" class="w-10 h-10 rounded-full mr-3">
                 <div>
-                    <p class="font-semibold">Marie Dupont</p>
+                    <p class="font-semibold">Yoane pequene</p>
                     <p class="text-xs text-gray-500">Vendeur actif</p>
                 </div>
             </div>
@@ -112,10 +112,15 @@
                 <i class="fas fa-cog mr-3 text-gray-600"></i>
                 <span>Paramètres</span>
             </a>
-            <a href="#" class="menu-item flex items-center p-3 rounded-lg mt-4 text-red-500">
+            <a href="profil.html" class="menu-item flex items-center p-3 rounded-lg">
+                <i class="fas fa-user mr-3 text-blue-700"></i>
+                <span>Profil</span>
+            </a>
+            <a href="connection.html" class="menu-item flex items-center p-3 rounded-lg mt-4 text-red-500">
                 <i class="fas fa-sign-out-alt mr-3"></i>
                 <span>Déconnexion</span>
             </a>
+            
         </nav>
     </div>
 
@@ -126,7 +131,7 @@
                 <div class="flex items-center">
                     <img src="https://via.placeholder.com/40" alt="Profile" class="w-10 h-10 rounded-full mr-3">
                     <div>
-                        <p class="font-semibold">Marie Dupont</p>
+                        <p class="font-semibold">Yoane pequene</p>
                         <p class="text-xs text-gray-500">Vendeur actif</p>
                     </div>
                 </div>
@@ -137,35 +142,45 @@
                     <span>Mon kiosque</span>
                 </a>
                 <a href="Message.html" class="menu-item flex items-center p-3 rounded-lg">
-                   
+                    <i class="fas fa-comments mr-3 text-blue-600"></i>
                     <span>Messages</span>
                 </a>
-                <a href="#" class="menu-item flex items-center p-3 rounded-lg">
+                <a href="evaluation.html" class="menu-item flex items-center p-3 rounded-lg">
                     <i class="fas fa-star mr-3 text-yellow-500"></i>
                     <span>Évaluations</span>
                 </a>
-                <a href="#" class="menu-item flex items-center p-3 rounded-lg">
+                <a href="parametre.html" class="menu-item flex items-center p-3 rounded-lg">
                     <i class="fas fa-cog mr-3 text-gray-600"></i>
                     <span>Paramètres</span>
                 </a>
-                <a href="#" class="menu-item flex items-center p-3 rounded-lg mt-4 text-red-500">
+                <a href="profil.html" class="menu-item flex items-center p-3 rounded-lg">
+                    <i class="fas fa-user mr-3 text-blue-700"></i>
+                    <span>Profil</span>
+                </a> 
+                <a href="Ajouter.html" class="menu-item flex items-center p-3 rounded-lg">
+                    <i class="fas fa-plus mr-2"></i>
+                    <span>Ajouter un nouvel article</span>
+                </a>
+                  <a href="recherche.html" class="menu-item flex items-center p-3 rounded-lg">
+                    <svg class="mr-3 w-5 h-5 text-blue-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="8" stroke="currentColor" stroke-width="2" fill="none"></circle><line x1="21" y1="21" x2="16.65" y2="16.65" stroke="currentColor" stroke-width="2" stroke-linecap="round"></line></svg>
+                    <span>Recherche</span>
+                </a>
+                <a href="connection.html" class="menu-item flex items-center p-3 rounded-lg mt-4 text-red-500">
                     <i class="fas fa-sign-out-alt mr-3"></i>
                     <span>Déconnexion</span>
                 </a>
+              
             </nav>
         </div>
     </div>
 
     <!-- Main Content -->
     <div class="md:pl-64">
-        <!-- Header -->
-        <div class="bg-white shadow-sm">
-            <div class="px-4 py-4 md:px-6">
-                <div class="flex justify-between items-center">
-                    <h1 class="text-2xl font-bold text-blue-800">Bienvenue Marie 👋</h1>
-                    <a class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-full font-medium transition duration-300 flex items-center" href="Ajouter.html">
-                        <i class="fas fa-plus mr-2"></i> Ajouter un nouvel article
-                    </a>
+        <!-- Header amélioré -->
+        <div class="bg-white shadow-sm sticky top-0 z-50">
+            <div class="px-4 py-4 md:px-6 flex justify-between items-center">
+                <h1 class="text-2xl font-bold text-blue-800">Bienvenue Yoane pequene </h1>
+                <div class="flex items-center space-x-4"
                 </div>
             </div>
         </div>
@@ -272,10 +287,10 @@
                                     <span class="product-status status-available">Disponible</span>
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                    <button class="text-blue-600 hover:text-blue-900 mr-3">
+                                    <button class="text-blue-600 hover:text-blue-900 mr-3 transition-transform transform hover:scale-110">
                                         <i class="fas fa-edit"></i>
                                     </button>
-                                    <button class="text-red-500 hover:text-red-700">
+                                    <button class="text-red-500 hover:text-red-700 transition-transform transform hover:scale-110">
                                         <i class="fas fa-trash-alt"></i>
                                     </button>
                                 </td>
@@ -299,10 +314,10 @@
                                     <span class="product-status status-reserved">Réservé</span>
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                    <button class="text-blue-600 hover:text-blue-900 mr-3">
+                                    <button class="text-blue-600 hover:text-blue-900 mr-3 transition-transform transform hover:scale-110">
                                         <i class="fas fa-edit"></i>
                                     </button>
-                                    <button class="text-red-500 hover:text-red-700">
+                                    <button class="text-red-500 hover:text-red-700 transition-transform transform hover:scale-110">
                                         <i class="fas fa-trash-alt"></i>
                                     </button>
                                 </td>
@@ -326,10 +341,10 @@
                                     <span class="product-status status-sold">Vendu</span>
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                    <button class="text-blue-600 hover:text-blue-900 mr-3">
+                                    <button class="text-blue-600 hover:text-blue-900 mr-3 transition-transform transform hover:scale-110">
                                         <i class="fas fa-edit"></i>
                                     </button>
-                                    <button class="text-red-500 hover:text-red-700">
+                                    <button class="text-red-500 hover:text-red-700 transition-transform transform hover:scale-110">
                                         <i class="fas fa-trash-alt"></i>
                                     </button>
                                 </td>
@@ -544,6 +559,11 @@
             if (event.target === addProductModal) {
                 addProductModal.classList.add('hidden');
             }
+        });
+
+        document.getElementById('logoutBtn').addEventListener('click', function(e) {
+            e.preventDefault();
+            window.location.href = '../login/connection.html';
         });
     </script>
 </body>

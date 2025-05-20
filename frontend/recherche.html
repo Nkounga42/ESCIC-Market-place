@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Recherche - ESCIC-Market</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-gray-50 min-h-screen">
+  <!-- Header -->
+  <div class="bg-white shadow-sm sticky top-0 z-30">
+    <div class="max-w-4xl mx-auto px-4 py-4 flex items-center justify-between">
+      <a href="Vendeur.html" class="text-blue-700 font-bold text-lg flex items-center"><i class="fas fa-arrow-left mr-2"></i>Retour</a>
+      <h1 class="text-2xl font-bold text-blue-800">Recherche</h1>
+      <div></div>
+    </div>
+  </div>
+  <!-- Search Bar -->
+  <div class="max-w-2xl mx-auto px-4 mt-8 mb-8">
+    <div class="flex items-center shadow rounded-lg overflow-hidden">
+      <input type="text" id="searchInput" class="flex-1 px-4 py-3 border-0 focus:ring-0 focus:outline-none text-lg" placeholder="Rechercher un article, un vendeur...">
+      <button class="bg-blue-700 hover:bg-blue-800 text-white px-6 py-3 font-semibold"><i class="fas fa-search"></i></button>
+    </div>
+  </div>
+  <!-- Grille d'articles façon Instagram -->
+  <div class="max-w-4xl mx-auto px-4">
+    <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+      <div class="aspect-w-1 aspect-h-1 bg-gray-100 rounded-lg overflow-hidden shadow relative group">
+        <img src="https://images.unsplash.com/photo-1544947950-fa07a98d237f?ixlib=rb-4.0.3&auto=format&fit=crop&w=687&q=80" alt="Article 1" class="object-cover w-full h-full group-hover:scale-105 transition-transform duration-200">
+      </div>
+      <div class="aspect-w-1 aspect-h-1 bg-gray-100 rounded-lg overflow-hidden shadow relative group">
+        <img src="https://images.unsplash.com/photo-1541963463532-d68292c34b19?ixlib=rb-4.0.3&auto=format&fit=crop&w=688&q=80" alt="Article 2" class="object-cover w-full h-full group-hover:scale-105 transition-transform duration-200">
+      </div>
+      <div class="aspect-w-1 aspect-h-1 bg-gray-100 rounded-lg overflow-hidden shadow relative group">
+        <img src="https://images.unsplash.com/photo-1603302576837-37561b2e2302?ixlib=rb-4.0.3&auto=format&fit=crop&w=1468&q=80" alt="Article 3" class="object-cover w-full h-full group-hover:scale-105 transition-transform duration-200">
+      </div>
+      <div class="aspect-w-1 aspect-h-1 bg-gray-100 rounded-lg overflow-hidden shadow relative group">
+        <img src="https://images.unsplash.com/photo-1589998059171-988d322dfad6?ixlib=rb-4.0.3&auto=format&fit=crop&w=1470&q=80" alt="Article 4" class="object-cover w-full h-full group-hover:scale-105 transition-transform duration-200">
+      </div>
+      <div class="aspect-w-1 aspect-h-1 bg-gray-100 rounded-lg overflow-hidden shadow relative group">
+        <img src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?ixlib=rb-4.0.3&auto=format&fit=crop&w=1471&q=80" alt="Article 5" class="object-cover w-full h-full group-hover:scale-105 transition-transform duration-200">
+      </div>
+      <div class="aspect-w-1 aspect-h-1 bg-gray-100 rounded-lg overflow-hidden shadow relative group">
+        <img src="https://images.unsplash.com/photo-1519125323398-675f0ddb6308?ixlib=rb-4.0.3&auto=format&fit=crop&w=1470&q=80" alt="Article 6" class="object-cover w-full h-full group-hover:scale-105 transition-transform duration-200">
+      </div>
+    </div>
+  </div>
+</body>
+</html>
