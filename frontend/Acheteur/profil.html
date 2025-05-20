@@ -1,0 +1,789 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mon Profil - ESCIC-Market</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f3f4f6; /* bg-gray-100 */
+        }
+        .profile-section {
+            background-color: #ffffff;
+            border-radius: 0.5rem; /* rounded-lg */
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); /* shadow-md */
+            padding: 1.5rem; /* p-6 */
+            margin-bottom: 1.5rem; /* mb-6 */
+        }
+        .section-title {
+            font-size: 1.5rem; /* text-2xl */
+            font-weight: 700; /* font-bold */
+            color: #1e3a8a; /* text-blue-800 */
+            margin-bottom: 1rem; /* mb-4 */
+        }
+        .item-card {
+            border: 1px solid #e5e7eb; /* border-gray-200 */
+            border-radius: 0.5rem; /* rounded-lg */
+            overflow: hidden;
+            background-color: #ffffff;
+        }
+        .item-card img {
+            width: 100%;
+            height: 12rem; /* h-48 */
+            object-fit: cover;
+        }
+        .item-card-body {
+            padding: 1rem; /* p-4 */
+        }
+        .item-card-title {
+            font-weight: 600; /* font-semibold */
+            color: #1f2937; /* text-gray-900 */
+            margin-bottom: 0.25rem; /* mb-1 */
+        }
+        .item-card-price {
+            font-weight: 700; /* font-bold */
+            color: #2563eb; /* text-blue-600 */
+        }
+    </style>
+</head>
+<body>
+    <header class="bg-white shadow-sm sticky top-0 z-50">
+        <div class="container mx-auto px-4 py-3 flex items-center justify-between">
+            <div class="flex items-center">
+                <a href="DOCTYPE html.html" class="flex items-center">
+                    <img src="https://via.placeholder.com/40" alt="ESCIC-Market Logo" class="h-10 mr-2">
+                    <span class="text-xl font-bold text-blue-800 hidden md:block">ESCIC-Market</span>
+                </a>
+            </div>
+            
+            <div class="flex-1 mx-4 hidden md:block">
+                <div class="relative">
+                    <input type="text" placeholder="Rechercher un article (ex : calculatrice, livre, snack...)" 
+                           class="w-full py-2 px-4 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                    <button class="absolute right-3 top-2 text-gray-400">
+                        <i class="fas fa-search"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <div class="flex items-center space-x-4">
+                <button class="md:hidden text-gray-600">
+                    <i class="fas fa-search text-xl"></i>
+                </button>
+                
+                <div class="relative">
+                    <button id="notificationButton" class="relative text-gray-600 hover:text-blue-800">
+                        <i class="fas fa-bell text-xl"></i>
+                        <span id="notificationCount" class="notification-badge" style="display: none;">0</span>
+                    </button>
+                    <div id="notificationPanel" class="absolute right-0 mt-2 w-80 md:w-96 bg-white rounded-lg shadow-lg transition-all duration-300 transform scale-0 origin-top-right opacity-0 z-[60]">
+                        <div class="p-3 border-b border-gray-200 flex justify-between items-center">
+                            <h3 class="font-semibold text-gray-700">Notifications</h3>
+                            <div class="flex space-x-2">
+                                <button id="markAllAsRead" title="Tout marquer comme lu" class="text-sm text-blue-600 hover:text-blue-800">
+                                    <i class="fas fa-check-double"></i>
+                                </button>
+                                <button id="notificationSettings" title="Paramètres" class="text-gray-500 hover:text-gray-700">
+                                    <i class="fas fa-cog"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div id="notificationList" class="notification-panel-container">
+                            <p id="noNotificationsMessage" class="p-4 text-center text-gray-500">Aucune nouvelle notification.</p>
+                        </div>
+                        <div class="p-3 border-t border-gray-200 text-center">
+                            <a href="#" class="text-sm text-blue-600 hover:text-blue-800">Voir toutes les notifications</a>
+                        </div>
+                    </div>
+                </div>
+                
+                <button id="cartButton" class="relative text-gray-600 hover:text-blue-800">
+                    <i class="fas fa-shopping-cart text-xl"></i>
+                    <span id="cartCount" class="absolute -top-2 -right-2 bg-blue-600 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">0</span>
+                </button>
+                
+                <a href="profile.html" class="text-gray-600 hover:text-blue-800">
+                    <i class="fas fa-user text-xl"></i>
+                </a>
+                <button class="hidden md:block bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-full font-medium transition duration-300">
+                    <i class="fas fa-plus mr-1"></i> Vendre un article
+                </button>
+                <button class="md:hidden text-gray-600">
+                    <i class="fas fa-bars text-xl"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main class="container mx-auto px-4 py-8">
+        <h1 class="text-4xl font-bold text-blue-800 mb-8 text-center">Mon Profil</h1>
+
+        <section class="profile-section">
+            <h2 class="section-title">Informations Personnelles</h2>
+            <div class="flex items-center mb-4">
+                <img src="https://via.placeholder.com/100" alt="Avatar de l'utilisateur" class="w-24 h-24 rounded-full object-cover mr-4 border-4 border-blue-200">
+                <div>
+                    <p class="text-xl font-semibold text-gray-800">John Doe</p>
+                    <p class="text-gray-600">john.doe@escic.com</p>
+                    <p class="text-gray-600">Promo 2025</p>
+                </div>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-gray-700 text-sm font-bold mb-2" for="name">Nom Complet</label>
+                    <input type="text" id="name" value="John Doe" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" disabled>
+                </div>
+                <div>
+                    <label class="block text-gray-700 text-sm font-bold mb-2" for="email">Email</label>
+                    <input type="email" id="email" value="john.doe@escic.com" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" disabled>
+                </div>
+                <div>
+                    <label class="block text-gray-700 text-sm font-bold mb-2" for="promo">Promotion</label>
+                    <input type="text" id="promo" value="2025" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" disabled>
+                </div>
+                <div>
+                    <label class="block text-gray-700 text-sm font-bold mb-2" for="phone">Téléphone</label>
+                    <input type="text" id="phone" value="+242 01 23 45 67" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" disabled>
+                </div>
+            </div>
+            <button class="mt-6 bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
+                Modifier le profil
+            </button>
+        </section>
+
+        <section class="profile-section">
+            <h2 class="section-title">Historique des Achats</h2>
+            <div id="purchaseHistoryList" class="space-y-4">
+                <div class="flex items-center justify-between p-4 border border-gray-200 rounded-lg shadow-sm">
+                    <div class="flex items-center">
+                        <img src="https://images.unsplash.com/photo-1544947950-fa07a98d237f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=687&q=80" alt="Calculatrice scientifique" class="w-16 h-16 object-cover rounded mr-4">
+                        <div>
+                            <p class="font-semibold text-gray-800">Calculatrice scientifique</p>
+                            <p class="text-sm text-gray-600">Achetée le 15 mai 2024</p>
+                        </div>
+                    </div>
+                    <div class="text-right">
+                        <p class="font-bold text-blue-700">25.00€</p>
+                        <span class="text-xs text-green-600 bg-green-100 px-2 py-1 rounded-full">Livrée</span>
+                    </div>
+                </div>
+                <div class="flex items-center justify-between p-4 border border-gray-200 rounded-lg shadow-sm">
+                    <div class="flex items-center">
+                        <img src="https://images.unsplash.com/photo-1541963463532-d68292c34b19?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=688&q=80" alt="Livre de marketing" class="w-16 h-16 object-cover rounded mr-4">
+                        <div>
+                            <p class="font-semibold text-gray-800">Marketing Digital 5e édition</p>
+                            <p class="text-sm text-gray-600">Achetée le 10 avril 2024</p>
+                        </div>
+                    </div>
+                    <div class="text-right">
+                        <p class="font-bold text-blue-700">18.00€</p>
+                        <span class="text-xs text-blue-600 bg-blue-100 px-2 py-1 rounded-full">En attente</span>
+                    </div>
+                </div>
+                </div>
+        </section>
+
+        <section class="profile-section">
+            <h2 class="section-title">Articles Favoris <i class="fas fa-heart text-red-500 ml-2"></i></h2>
+            <div id="favoriteItemsGrid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                <div class="item-card">
+                    <img src="https://images.unsplash.com/photo-1603302576837-37561b2e2302?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1468&q=80" alt="Casque Audio Sans Fil">
+                    <div class="item-card-body">
+                        <h3 class="item-card-title">Casque Audio Sans Fil</h3>
+                        <p class="item-card-price">45.00€</p>
+                        <button class="mt-2 text-red-500 hover:text-red-700 text-sm">
+                            <i class="fas fa-trash-alt mr-1"></i> Retirer des favoris
+                        </button>
+                    </div>
+                </div>
+                <div class="item-card">
+                    <img src="https://images.unsplash.com/photo-1589998059171-988d322dfad6?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80" alt="Comptabilité Financière">
+                    <div class="item-card-body">
+                        <h3 class="item-card-title">Comptabilité Financière</h3>
+                        <p class="item-card-price">22.00€</p>
+                        <button class="mt-2 text-red-500 hover:text-red-700 text-sm">
+                            <i class="fas fa-trash-alt mr-1"></i> Retirer des favoris
+                        </button>
+                    </div>
+                </div>
+                </div>
+        </section>
+    </main>
+
+    <footer class="bg-blue-900 text-white py-10">
+        <div class="container mx-auto px-4">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div>
+                    <h3 class="text-xl font-bold mb-4">ESCIC-Market</h3>
+                    <p class="text-blue-200 mb-4">La plateforme d'échange entre étudiants de l'ESCIC.</p>
+                    <div class="flex space-x-4">
+                        <a href="#" class="text-white hover:text-blue-300"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#" class="text-white hover:text-blue-300"><i class="fab fa-instagram"></i></a>
+                        <a href="#" class="text-white hover:text-blue-300"><i class="fab fa-twitter"></i></a>
+                    </div>
+                </div>
+                
+                <div>
+                    <h3 class="text-lg font-semibold mb-4">Liens rapides</h3>
+                    <ul class="space-y-2">
+                        <li><a href="DOCTYPE html.html" class="text-blue-200 hover:text-white">Accueil</a></li>
+                        <li><a href="#" class="text-blue-200 hover:text-white">Catégories</a></li>
+                        <li><a href="#" class="text-blue-200 hover:text-white">Vendre un article</a></li>
+                        <li><a href="profile.html" class="text-blue-200 hover:text-white">Mon compte</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h3 class="text-lg font-semibold mb-4">Contact</h3>
+                    <p class="text-blue-200 mb-2"><i class="fas fa-map-marker-alt mr-2"></i> Campus ESCIC, Pointe-Noire</p>
+                    <p class="text-blue-200 mb-2"><i class="fas fa-envelope mr-2"></i> contact@escic-market.fr</p>
+                    <p class="text-blue-200"><i class="fas fa-phone mr-2"></i> 01 23 45 67 89</p>
+                </div>
+            </div>
+            
+            <div class="border-t border-blue-800 mt-8 pt-6 text-center text-blue-300 text-sm">
+                <p>&copy; 2023 ESCIC-Market. Tous droits réservés.</p>
+            </div>
+        </div>
+    </footer>
+
+    <div id="cartDrawer" class="fixed inset-y-0 right-0 w-full md:w-96 bg-white shadow-xl transform translate-x-full transition-transform duration-300 ease-in-out z-[70]">
+        <div class="h-full flex flex-col">
+            <div class="bg-blue-800 text-white px-6 py-4 flex justify-between items-center">
+                <h2 class="text-xl font-bold">Mon Panier</h2>
+                <button id="closeCart" class="text-white hover:text-blue-200">
+                    <i class="fas fa-times text-xl"></i>
+                </button>
+            </div>
+            <div id="cartItems" class="flex-1 overflow-y-auto p-4">
+                <div id="emptyCart" class="flex flex-col items-center justify-center h-64 text-center text-gray-500">
+                    <i class="fas fa-shopping-cart text-5xl mb-4"></i>
+                    <p class="text-xl font-medium mb-2">Votre panier est vide</p>
+                    <p>Ajoutez des articles pour les voir ici</p>
+                </div>
+            </div>
+            <div class="bg-gray-50 p-6 border-t">
+                <div class="flex justify-between mb-4">
+                    <span class="font-medium text-gray-600">Sous-total:</span>
+                    <span id="cartSubtotal" class="font-bold">0.00€</span>
+                </div>
+                <button id="checkoutButton" class="w-full bg-blue-700 hover:bg-blue-800 text-white py-3 rounded-lg font-medium transition duration-300 disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+                    Procéder au paiement
+                </button>
+                <button id="continueShoppingButton" class="w-full mt-3 border border-blue-700 text-blue-700 hover:bg-blue-50 py-3 rounded-lg font-medium transition duration-300">
+                    Continuer mes achats
+                </button>
+            </div>
+        </div>
+    </div>
+    <div id="overlay" class="fixed inset-0 bg-black opacity-0 pointer-events-none transition-opacity duration-300 ease-in-out z-[55]"></div>
+    <div id="notificationPopup" class="fixed bottom-5 right-5 bg-white rounded-lg shadow-xl p-4 w-80 transform translate-y-24 opacity-0 transition-all duration-500 ease-in-out z-[100] border-l-4 border-blue-500">
+        <div class="flex items-start">
+            <div class="flex-shrink-0 mr-3 pt-1">
+                <i id="notificationPopupIcon" class="fas fa-info-circle text-blue-500 text-xl"></i>
+            </div>
+            <div class="flex-1">
+                <h4 id="notificationPopupTitle" class="font-semibold text-gray-800">Nouvelle Notification</h4>
+                <p id="notificationPopupMessage" class="text-sm text-gray-600 mt-1">Contenu de la notification.</p>
+            </div>
+            <button id="closeNotificationPopup" class="text-gray-400 hover:text-gray-600 ml-2">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+    </div>
+    <div id="toast" class="fixed bottom-4 right-4 bg-green-500 text-white px-4 py-2 rounded-lg shadow-lg transform translate-y-20 opacity-0 transition-all duration-300 flex items-center z-[100]">
+        <i id="toastIcon" class="fas fa-check-circle mr-2"></i>
+        <span id="toastMessage">Article ajouté au panier</span>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Re-include essential JS from your main page if you want cart and notification functionality
+            // on the profile page as well. Or, extract common JS into a separate file.
+            // For simplicity, copying the relevant parts here.
+
+            // --- CART ELEMENTS ---
+            const cartButton = document.getElementById('cartButton');
+            const closeCartButton = document.getElementById('closeCart');
+            const cartDrawer = document.getElementById('cartDrawer');
+            const overlay = document.getElementById('overlay');
+            const continueShoppingButton = document.getElementById('continueShoppingButton');
+            const cartCountEl = document.getElementById('cartCount'); 
+            const cartItemsContainer = document.getElementById('cartItems');
+            const emptyCartMessage = document.getElementById('emptyCart');
+            const cartSubtotalElement = document.getElementById('cartSubtotal');
+            const checkoutButton = document.getElementById('checkoutButton');
+            
+            // --- TOAST (Panier) ELEMENTS ---
+            const toast = document.getElementById('toast');
+            const toastMessageElement = document.getElementById('toastMessage');
+            const toastIcon = document.getElementById('toastIcon');
+
+            // --- NOTIFICATION ELEMENTS ---
+            const notificationButton = document.getElementById('notificationButton');
+            const notificationPanel = document.getElementById('notificationPanel');
+            const notificationCountBadge = document.getElementById('notificationCount');
+            const notificationListContainer = document.getElementById('notificationList');
+            const noNotificationsMessage = document.getElementById('noNotificationsMessage');
+            const markAllAsReadButton = document.getElementById('markAllAsRead');
+            const notificationSettingsButton = document.getElementById('notificationSettings');
+
+            // --- REAL-TIME NOTIFICATION POPUP ELEMENTS ---
+            const notificationPopup = document.getElementById('notificationPopup');
+            const notificationPopupIcon = document.getElementById('notificationPopupIcon');
+            const notificationPopupTitle = document.getElementById('notificationPopupTitle');
+            const notificationPopupMessage = document.getElementById('notificationPopupMessage');
+            const closeNotificationPopupButton = document.getElementById('closeNotificationPopup');
+
+            // --- DATA ---
+            let cart = JSON.parse(localStorage.getItem('escicCart')) || [];
+            let notifications = JSON.parse(localStorage.getItem('escicNotifications')) || []; // Load from localStorage
+
+            // --- INITIALIZATION ---
+            updateCartDisplay();
+            renderNotifications();
+
+            // ======================== CART FUNCTIONALITY (copied from main page) ========================
+            cartButton.addEventListener('click', openCart);
+            closeCartButton.addEventListener('click', closeCart);
+            overlay.addEventListener('click', () => { 
+                closeCart();
+                closeNotificationPanel();
+            });
+            continueShoppingButton.addEventListener('click', closeCart);
+            
+            function openCart() {
+                cartDrawer.classList.remove('translate-x-full');
+                showOverlay();
+                document.body.classList.add('overflow-hidden');
+            }
+
+            function closeCart() {
+                cartDrawer.classList.add('translate-x-full');
+                hideOverlayIfNotNeeded();
+                document.body.classList.remove('overflow-hidden');
+            }
+
+            function updateCartDisplay() {
+                const totalItems = cart.reduce((total, item) => total + item.quantity, 0);
+                cartCountEl.textContent = totalItems;
+                cartCountEl.style.display = totalItems > 0 ? 'flex' : 'none';
+
+                cartItemsContainer.innerHTML = ''; 
+
+                if (cart.length === 0) {
+                    cartItemsContainer.appendChild(emptyCartMessage);
+                    emptyCartMessage.style.display = 'flex';
+                    checkoutButton.disabled = true;
+                    cartSubtotalElement.textContent = '0.00€';
+                } else {
+                    emptyCartMessage.style.display = 'none';
+                    checkoutButton.disabled = false;
+
+                    let subtotal = 0;
+                    cart.forEach(item => {
+                        const itemElement = document.createElement('div');
+                        itemElement.classList.add('flex', 'items-center', 'justify-between', 'py-3', 'border-b', 'border-gray-200');
+                        itemElement.innerHTML = `
+                            <div class="flex items-center">
+                                <img src="${item.img}" alt="${item.name}" class="w-16 h-16 object-cover rounded mr-3">
+                                <div>
+                                    <h4 class="font-medium text-sm text-gray-800">${item.name}</h4>
+                                    <p class="text-xs text-gray-500">Vendu par: ${item.seller}</p>
+                                    <p class="text-blue-600 font-semibold text-sm">${item.price.toFixed(2)}€</p>
+                                </div>
+                            </div>
+                            <div class="flex items-center">
+                                <div class="flex items-center border border-gray-300 rounded">
+                                    <button class="quantity-change px-2 py-1 text-sm text-gray-600 hover:bg-gray-100" data-id="${item.id}" data-change="-1">-</button>
+                                    <span class="px-3 text-sm text-gray-700">${item.quantity}</span>
+                                    <button class="quantity-change px-2 py-1 text-sm text-gray-600 hover:bg-gray-100" data-id="${item.id}" data-change="1">+</button>
+                                </div>
+                                <button class="remove-item ml-3 text-red-500 hover:text-red-700" title="Supprimer l'article" data-id="${item.id}">
+                                    <i class="fas fa-trash-alt"></i>
+                                </button>
+                            </div>
+                        `;
+                        cartItemsContainer.appendChild(itemElement);
+                        subtotal += item.price * item.quantity;
+                    });
+
+                    cartSubtotalElement.textContent = `${subtotal.toFixed(2)}€`;
+                    addCartItemEventListeners();
+                }
+            }
+
+            function addCartItemEventListeners() {
+                document.querySelectorAll('.remove-item').forEach(button => {
+                    button.addEventListener('click', function() {
+                        const itemId = this.dataset.id;
+                        const itemToRemove = cart.find(item => item.id === itemId);
+                        if (itemToRemove) {
+                             showToast(`"${itemToRemove.name}" retiré du panier`, 'bg-red-500', 'fas fa-trash-alt');
+                        }
+                        cart = cart.filter(item => item.id !== itemId);
+                        saveCart();
+                        updateCartDisplay();
+                    });
+                });
+
+                document.querySelectorAll('.quantity-change').forEach(button => {
+                    button.addEventListener('click', function() {
+                        const itemId = this.dataset.id;
+                        const change = parseInt(this.dataset.change);
+                        const itemToUpdate = cart.find(item => item.id === itemId);
+
+                        if (itemToUpdate) {
+                            itemToUpdate.quantity += change;
+                            if (itemToUpdate.quantity <= 0) {
+                                showToast(`"${itemToUpdate.name}" retiré du panier`, 'bg-red-500', 'fas fa-trash-alt');
+                                cart = cart.filter(item => item.id !== itemId);
+                            } else {
+                                showToast(`Quantité de "${itemToUpdate.name}" mise à jour`);
+                            }
+                            saveCart();
+                            updateCartDisplay();
+                        }
+                    });
+                });
+            }
+
+            function saveCart() {
+                localStorage.setItem('escicCart', JSON.stringify(cart));
+            }
+
+            let toastTimeout;
+            function showToast(message, bgColor = 'bg-green-500', iconClass = 'fas fa-check-circle') {
+                toastMessageElement.textContent = message;
+                toast.className = `fixed bottom-4 right-4 text-white px-4 py-3 rounded-lg shadow-lg transform translate-y-20 opacity-0 transition-all duration-300 flex items-center z-[100] ${bgColor}`; 
+                toastIcon.className = `${iconClass} mr-2`;
+
+
+                toast.classList.remove('translate-y-20', 'opacity-0');
+                toast.classList.add('translate-y-0', 'opacity-100');
+
+                clearTimeout(toastTimeout);
+                toastTimeout = setTimeout(() => {
+                    toast.classList.remove('translate-y-0', 'opacity-100');
+                    toast.classList.add('translate-y-20', 'opacity-0');
+                }, 3000);
+            }
+
+            checkoutButton.addEventListener('click', function() {
+                if (cart.length > 0) {
+                    showToast('Redirection vers la page de paiement...', 'bg-blue-500', 'fas fa-credit-card');
+                    setTimeout(() => {
+                        cart = [];
+                        saveCart();
+                        updateCartDisplay();
+                        closeCart(); 
+                        showToast('Merci pour votre commande ! Panier vidé.', 'bg-green-500', 'fas fa-gift');
+                        addNotificationAndShowPopup({
+                            id: Date.now(), 
+                            icon: 'fas fa-receipt',
+                            title: 'Commande Confirmée',
+                            message: 'Votre commande a été passée avec succès !',
+                            timestamp: new Date().toISOString(),
+                            read: false,
+                            link: '#'
+                        });
+                    }, 2000);
+                }
+            });
+
+            // ======================== NOTIFICATION FUNCTIONALITY (copied from main page) ========================
+
+            notificationButton.addEventListener('click', function(event) {
+                event.stopPropagation();
+                toggleNotificationPanel();
+            });
+
+            markAllAsReadButton.addEventListener('click', function() {
+                notifications.forEach(notif => notif.read = true);
+                saveNotifications();
+                renderNotifications();
+                showToast('Toutes les notifications marquées comme lues', 'bg-blue-500', 'fas fa-check-double');
+            });
+
+            notificationSettingsButton.addEventListener('click', function() {
+                showToast('Paramètres des notifications (à implémenter)', 'bg-yellow-500', 'fas fa-cog');
+                console.log("Paramètres des notifications cliqués.");
+            });
+
+            function toggleNotificationPanel() {
+                if (notificationPanel.classList.contains('scale-0')) {
+                    openNotificationPanel();
+                } else {
+                    closeNotificationPanel();
+                }
+            }
+
+            function openNotificationPanel() {
+                notificationPanel.classList.remove('scale-0', 'opacity-0');
+                notificationPanel.classList.add('scale-100', 'opacity-100');
+                showOverlay();
+            }
+
+            function closeNotificationPanel() {
+                notificationPanel.classList.remove('scale-100', 'opacity-100');
+                notificationPanel.classList.add('scale-0', 'opacity-0');
+                hideOverlayIfNotNeeded();
+            }
+            
+            function formatTimeAgo(isoTimestamp) {
+                const date = new Date(isoTimestamp);
+                const now = new Date();
+                const seconds = Math.round((now - date) / 1000);
+                const minutes = Math.round(seconds / 60);
+                const hours = Math.round(minutes / 60);
+                const days = Math.round(hours / 24);
+
+                if (seconds < 60) return `${seconds} sec`;
+                if (minutes < 60) return `${minutes} min`;
+                if (hours < 24) return `${hours} h`;
+                return `${days} j`;
+            }
+
+            function renderNotifications() {
+                notificationListContainer.innerHTML = '';
+                const unreadCount = notifications.filter(n => !n.read).length;
+
+                if (unreadCount > 0) {
+                    notificationCountBadge.textContent = unreadCount > 9 ? '9+' : unreadCount;
+                    notificationCountBadge.style.display = 'flex';
+                    notificationCountBadge.classList.add('notification-animation');
+                } else {
+                    notificationCountBadge.style.display = 'none';
+                    notificationCountBadge.classList.remove('notification-animation');
+                }
+                
+                if (notifications.length === 0) {
+                    noNotificationsMessage.style.display = 'block';
+                } else {
+                    noNotificationsMessage.style.display = 'none';
+                    const sortedNotifications = [...notifications].sort((a, b) => {
+                        if (a.read !== b.read) {
+                            return a.read ? 1 : -1;
+                        }
+                        return new Date(b.timestamp) - new Date(a.timestamp);
+                    });
+
+
+                    sortedNotifications.forEach(notif => {
+                        const item = document.createElement('a');
+                        item.href = notif.link || '#';
+                        item.classList.add('notification-item', 'block', 'p-3', 'hover:bg-gray-100', 'border-b', 'border-gray-100', 'cursor-pointer');
+                        if (!notif.read) {
+                            item.classList.add('unread', 'bg-blue-50'); 
+                        }
+                        item.innerHTML = `
+                            <div class="flex items-start">
+                                <div class="flex-shrink-0 mr-3 pt-1">
+                                    <i class="${notif.icon || 'fas fa-bell'} text-lg ${notif.read ? 'text-gray-400' : 'text-blue-600'}"></i>
+                                </div>
+                                <div class="flex-1">
+                                    <p class="text-sm font-medium text-gray-800">${notif.title}</p>
+                                    <p class="text-xs text-gray-600">${notif.message}</p>
+                                    <p class="text-xs ${notif.read ? 'text-gray-400' : 'text-blue-500'} mt-1">${formatTimeAgo(notif.timestamp)}</p>
+                                </div>
+                                ${!notif.read ? '<span class="notification-dot bg-blue-600 self-center ml-auto"></span>' : ''}
+                            </div>
+                        `;
+                        item.addEventListener('click', (e) => {
+                            if (!notif.read) {
+                                markNotificationAsRead(notif.id);
+                            }
+                            if (item.getAttribute('href') === '#') {
+                                e.preventDefault();
+                            }
+                            closeNotificationPanel();
+                        });
+                        notificationListContainer.appendChild(item);
+                    });
+                }
+                saveNotifications();
+            }
+
+            function markNotificationAsRead(notificationId) {
+                const notification = notifications.find(n => n.id === notificationId);
+                if (notification && !notification.read) {
+                    notification.read = true;
+                    saveNotifications();
+                    renderNotifications();
+                }
+            }
+            
+            function saveNotifications() {
+                localStorage.setItem('escicNotifications', JSON.stringify(notifications));
+            }
+
+            document.addEventListener('click', function(event) {
+                if (!notificationPanel.contains(event.target) && !notificationButton.contains(event.target)) {
+                    closeNotificationPanel();
+                }
+            });
+
+
+            // ======================== REAL-TIME NOTIFICATION POPUP (copied from main page) ========================
+            let popupTimeout;
+            closeNotificationPopupButton.addEventListener('click', closeRealTimePopup);
+
+            function showRealTimePopup(title, message, icon = 'fas fa-info-circle', iconColor = 'text-blue-500', borderColor = 'border-blue-500') {
+                notificationPopupTitle.textContent = title;
+                notificationPopupMessage.textContent = message;
+                notificationPopupIcon.className = `${icon} ${iconColor} text-xl`;
+                notificationPopup.className = `fixed bottom-5 right-5 bg-white rounded-lg shadow-xl p-4 w-80 transform translate-y-24 opacity-0 transition-all duration-500 ease-in-out z-[100] border-l-4 ${borderColor}`;
+
+
+                notificationPopup.classList.remove('translate-y-24', 'opacity-0');
+                notificationPopup.classList.add('translate-y-0', 'opacity-100');
+
+                clearTimeout(popupTimeout);
+                popupTimeout = setTimeout(closeRealTimePopup, 6000);
+            }
+
+            function closeRealTimePopup() {
+                notificationPopup.classList.remove('translate-y-0', 'opacity-100');
+                notificationPopup.classList.add('translate-y-24', 'opacity-0');
+            }
+
+            function addNotificationAndShowPopup(newNotifData) {
+                notifications.unshift(newNotifData);
+                if (notifications.length > 20) {
+                    notifications.pop();
+                }
+                saveNotifications();
+                renderNotifications();
+                showRealTimePopup(
+                    newNotifData.title, 
+                    newNotifData.message, 
+                    newNotifData.icon, 
+                    newNotifData.read ? 'text-gray-400' : 'text-blue-600'
+                );
+            }
+
+            // --- OVERLAY MANAGEMENT (copied from main page) ---
+            function showOverlay() {
+                overlay.classList.add('opacity-50');
+                overlay.classList.remove('pointer-events-none');
+            }
+
+            function hideOverlayIfNotNeeded() {
+                const isCartOpen = !cartDrawer.classList.contains('translate-x-full');
+                const isNotifPanelOpen = notificationPanel.classList.contains('scale-100');
+                if (!isCartOpen && !isNotifPanelOpen) {
+                    overlay.classList.remove('opacity-50');
+                    overlay.classList.add('pointer-events-none');
+                }
+            }
+
+            // ======================== PROFILE PAGE SPECIFIC FUNCTIONALITY ========================
+
+            // Mock Data for demonstration
+            let purchaseHistory = JSON.parse(localStorage.getItem('escicPurchaseHistory')) || [
+                { id: 1, name: 'Calculatrice scientifique', date: '2024-05-15', price: 25.00, status: 'Livrée', img: 'https://images.unsplash.com/photo-1544947950-fa07a98d237f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=687&q=80' },
+                { id: 2, name: 'Marketing Digital 5e édition', date: '2024-04-10', price: 18.00, status: 'En attente', img: 'https://images.unsplash.com/photo-1541963463532-d68292c34b19?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=688&q=80' },
+                { id: 3, name: 'Pack Boissons Énergisantes', date: '2024-03-20', price: 12.00, status: 'Livrée', img: 'https://images.unsplash.com/photo-1560343090-f0409e92791a?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1528&q=80' }
+            ];
+
+            let favoriteItems = JSON.parse(localStorage.getItem('escicFavoriteItems')) || [
+                { id: 1, name: 'Casque Audio Sans Fil', price: 45.00, img: 'https://images.unsplash.com/photo-1603302576837-37561b2e2302?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1468&q=80' },
+                { id: 2, name: 'Comptabilité Financière', price: 22.00, img: 'https://images.unsplash.com/photo-1589998059171-988d322dfad6?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80' },
+                { id: 3, name: 'Montre Connectée', price: 65.00, img: 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1399&q=80' }
+            ];
+
+            const purchaseHistoryList = document.getElementById('purchaseHistoryList');
+            const favoriteItemsGrid = document.getElementById('favoriteItemsGrid');
+
+            function renderPurchaseHistory() {
+                purchaseHistoryList.innerHTML = '';
+                if (purchaseHistory.length === 0) {
+                    purchaseHistoryList.innerHTML = '<p class="text-center text-gray-500">Aucun achat effectué pour le moment.</p>';
+                } else {
+                    purchaseHistory.forEach(item => {
+                        const itemElement = document.createElement('div');
+                        itemElement.classList.add('flex', 'items-center', 'justify-between', 'p-4', 'border', 'border-gray-200', 'rounded-lg', 'shadow-sm');
+                        itemElement.innerHTML = `
+                            <div class="flex items-center">
+                                <img src="${item.img}" alt="${item.name}" class="w-16 h-16 object-cover rounded mr-4">
+                                <div>
+                                    <p class="font-semibold text-gray-800">${item.name}</p>
+                                    <p class="text-sm text-gray-600">Achetée le ${new Date(item.date).toLocaleDateString('fr-FR')}</p>
+                                </div>
+                            </div>
+                            <div class="text-right">
+                                <p class="font-bold text-blue-700">${item.price.toFixed(2)}€</p>
+                                <span class="text-xs ${item.status === 'Livrée' ? 'text-green-600 bg-green-100' : 'text-blue-600 bg-blue-100'} px-2 py-1 rounded-full">${item.status}</span>
+                            </div>
+                        `;
+                        purchaseHistoryList.appendChild(itemElement);
+                    });
+                }
+            }
+
+            function renderFavoriteItems() {
+                favoriteItemsGrid.innerHTML = '';
+                if (favoriteItems.length === 0) {
+                    favoriteItemsGrid.innerHTML = '<p class="text-center text-gray-500 col-span-full">Aucun article favori pour le moment.</p>';
+                } else {
+                    favoriteItems.forEach(item => {
+                        const itemElement = document.createElement('div');
+                        itemElement.classList.add('item-card');
+                        itemElement.innerHTML = `
+                            <img src="${item.img}" alt="${item.name}">
+                            <div class="item-card-body">
+                                <h3 class="item-card-title">${item.name}</h3>
+                                <p class="item-card-price">${item.price.toFixed(2)}€</p>
+                                <button class="remove-favorite mt-2 text-red-500 hover:text-red-700 text-sm" data-id="${item.id}">
+                                    <i class="fas fa-trash-alt mr-1"></i> Retirer des favoris
+                                </button>
+                            </div>
+                        `;
+                        favoriteItemsGrid.appendChild(itemElement);
+                    });
+                    addFavoriteItemEventListeners();
+                }
+            }
+
+            function addFavoriteItemEventListeners() {
+                document.querySelectorAll('.remove-favorite').forEach(button => {
+                    button.addEventListener('click', function() {
+                        const itemId = parseInt(this.dataset.id);
+                        favoriteItems = favoriteItems.filter(item => item.id !== itemId);
+                        localStorage.setItem('escicFavoriteItems', JSON.stringify(favoriteItems));
+                        renderFavoriteItems();
+                        showToast('Article retiré des favoris', 'bg-red-500', 'fas fa-heart-crack');
+                    });
+                });
+            }
+
+            // Initial render of profile data
+            renderPurchaseHistory();
+            renderFavoriteItems();
+
+            // Simulate adding a new favorite item (e.g., from main page's "Add to Cart" button if it had a "Add to Favorites" functionality)
+            // For testing, you can uncomment this to add a new favorite after 5 seconds
+            /*
+            setTimeout(() => {
+                const newFavorite = {
+                    id: 4, 
+                    name: 'Souris Gamer', 
+                    price: 30.00, 
+                    img: 'https://images.unsplash.com/photo-1615632943714-d035414f08e4?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80'
+                };
+                if (!favoriteItems.find(item => item.id === newFavorite.id)) {
+                    favoriteItems.push(newFavorite);
+                    localStorage.setItem('escicFavoriteItems', JSON.stringify(favoriteItems));
+                    renderFavoriteItems();
+                    showToast(`"${newFavorite.name}" ajouté aux favoris!`, 'bg-pink-500', 'fas fa-heart');
+                }
+            }, 5000);
+            */
+        });
+    </script>
+</body>
+</html>
