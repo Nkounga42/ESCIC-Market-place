@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Espace Vendeur - ESCIC-Market</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Nunito', sans-serif;
+        }
+        .dashboard-card {
+            transition: all 0.3s ease;
+        }
+        .dashboard-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+        }
+        .product-status {
+            font-size: 0.75rem;
+            padding: 0.25rem 0.5rem;
+            border-radius: 1rem;
+        }
+        .status-available {
+            background-color: #D1FAE5;
+            color: #065F46;
+        }
+        .status-reserved {
+            background-color: #FEF3C7;
+            color: #92400E;
+        }
+        .status-sold {
+            background-color: #E5E7EB;
+            color: #4B5563;
+        }
+        .menu-item {
+            transition: all 0.2s ease;
+        }
+        .menu-item:hover {
+            background-color: #EFF6FF;
+            border-left: 3px solid #3B82F6;
+        }
+        .active-menu-item {
+            background-color: #EFF6FF;
+            border-left: 3px solid #3B82F6;
+            color: #1E40AF;
+        }
+        .chat-bubble {
+            border-radius: 1rem;
+            max-width: 70%;
+        }
+        .chat-bubble.sender {
+            background-color: #3B82F6;
+            color: white;
+            border-bottom-right-radius: 0.25rem;
+        }
+        .chat-bubble.receiver {
+            background-color: #E5E7EB;
+            color: #1F2937;
+            border-bottom-left-radius: 0.25rem;
+        }
+        .mobile-menu {
+            transform: translateX(-100%);
+            transition: transform 0.3s ease;
+        }
+        .mobile-menu.open {
+            transform: translateX(0);
+        }
+        .backdrop {
+            background-color: rgba(0, 0, 0, 0.5);
+            transition: opacity 0.3s ease;
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <!-- Mobile Menu Button -->
+    <button id="mobileMenuButton" class="md:hidden fixed top-4 left-4 z-50 bg-white p-2 rounded-full shadow-lg">
+        <i class="fas fa-bars text-blue-800 text-xl"></i>
+    </button>
+
+    <!-- Mobile Menu Backdrop -->
+    <div id="mobileBackdrop" class="fixed inset-0 bg-black bg-opacity-50 z-40 hidden"></div>
+
+    <!-- Mobile Menu -->
+    <div id="mobileMenu" class="mobile-menu fixed inset-y-0 left-0 z-50 w-64 bg-white shadow-lg overflow-y-auto">
+        <div class="p-4 border-b border-gray-200">
+            <div class="flex items-center">
+                <img src="https://via.placeholder.com/40" alt="Profile" class="w-10 h-10 rounded-full mr-3">
+                <div>
+                    <p class="font-semibold">Marie Dupont</p>
+                    <p class="text-xs text-gray-500">Vendeur actif</p>
+                </div>
+            </div>
+        </div>
+        <nav class="p-2">
+            <a href="#" class="menu-item active-menu-item flex items-center p-3 rounded-lg">
+                <i class="fas fa-home mr-3 text-blue-800"></i>
+                <span>Mon kiosque</span>
+            </a>
+           
+            <a href="Message.html" class="menu-item flex items-center p-3 rounded-lg">
+                <i class="fas fa-comments mr-3 text-blue-600"></i>
+                <span>Messages</span>
+            </a>
+            <a href="#" class="menu-item flex items-center p-3 rounded-lg">
+                <i class="fas fa-star mr-3 text-yellow-500"></i>
+                <span>Évaluations</span>
+            </a>
+            <a href="#" class="menu-item flex items-center p-3 rounded-lg">
+                <i class="fas fa-cog mr-3 text-gray-600"></i>
+                <span>Paramètres</span>
+            </a>
+            <a href="#" class="menu-item flex items-center p-3 rounded-lg mt-4 text-red-500">
+                <i class="fas fa-sign-out-alt mr-3"></i>
+                <span>Déconnexion</span>
+            </a>
+        </nav>
+    </div>
+
+    <!-- Desktop Sidebar -->
+    <div class="hidden md:flex md:w-64 md:flex-col md:fixed md:inset-y-0">
+        <div class="flex flex-col flex-grow border-r border-gray-200 bg-white overflow-y-auto">
+            <div class="p-4 border-b border-gray-200">
+                <div class="flex items-center">
+                    <img src="https://via.placeholder.com/40" alt="Profile" class="w-10 h-10 rounded-full mr-3">
+                    <div>
+                        <p class="font-semibold">Marie Dupont</p>
+                        <p class="text-xs text-gray-500">Vendeur actif</p>
+                    </div>
+                </div>
+            </div>
+            <nav class="flex-1 p-2">
+                <a href="#" class="menu-item active-menu-item flex items-center p-3 rounded-lg">
+                    <i class="fas fa-home mr-3 text-blue-800"></i>
+                    <span>Mon kiosque</span>
+                </a>
+                <a href="Message.html" class="menu-item flex items-center p-3 rounded-lg">
+                   
+                    <span>Messages</span>
+                </a>
+                <a href="#" class="menu-item flex items-center p-3 rounded-lg">
+                    <i class="fas fa-star mr-3 text-yellow-500"></i>
+                    <span>Évaluations</span>
+                </a>
+                <a href="#" class="menu-item flex items-center p-3 rounded-lg">
+                    <i class="fas fa-cog mr-3 text-gray-600"></i>
+                    <span>Paramètres</span>
+                </a>
+                <a href="#" class="menu-item flex items-center p-3 rounded-lg mt-4 text-red-500">
+                    <i class="fas fa-sign-out-alt mr-3"></i>
+                    <span>Déconnexion</span>
+                </a>
+            </nav>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="md:pl-64">
+        <!-- Header -->
+        <div class="bg-white shadow-sm">
+            <div class="px-4 py-4 md:px-6">
+                <div class="flex justify-between items-center">
+                    <h1 class="text-2xl font-bold text-blue-800">Bienvenue Marie 👋</h1>
+                    <a class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-full font-medium transition duration-300 flex items-center" href="Ajouter.html">
+                        <i class="fas fa-plus mr-2"></i> Ajouter un nouvel article
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Dashboard Content -->
+        <div class="p-4 md:p-6">
+            <!-- Stats Cards -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+                <div class="dashboard-card bg-white rounded-lg shadow p-4">
+                    <div class="flex items-center">
+                        <div class="p-3 rounded-full bg-blue-100 text-blue-800 mr-4">
+                            <i class="fas fa-box-open text-xl"></i>
+                        </div>
+                        <div>
+                            <p class="text-sm text-gray-500">Articles en vente</p>
+                            <p class="text-2xl font-bold">8</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="dashboard-card bg-white rounded-lg shadow p-4">
+                    <div class="flex items-center">
+                        <div class="p-3 rounded-full bg-green-100 text-green-800 mr-4">
+                            <i class="fas fa-shopping-cart text-xl"></i>
+                        </div>
+                        <div>
+                            <p class="text-sm text-gray-500">Ventes totales</p>
+                            <p class="text-2xl font-bold">12</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="dashboard-card bg-white rounded-lg shadow p-4">
+                    <div class="flex items-center">
+                        <div class="p-3 rounded-full bg-yellow-100 text-yellow-800 mr-4">
+                            <i class="fas fa-clock text-xl"></i>
+                        </div>
+                        <div>
+                            <p class="text-sm text-gray-500">Réservations</p>
+                            <p class="text-2xl font-bold">3</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="dashboard-card bg-white rounded-lg shadow p-4">
+                    <div class="flex items-center">
+                        <div class="p-3 rounded-full bg-purple-100 text-purple-800 mr-4">
+                            <i class="fas fa-star text-xl"></i>
+                        </div>
+                        <div>
+                            <p class="text-sm text-gray-500">Note moyenne</p>
+                            <div class="flex items-center">
+                                <p class="text-2xl font-bold mr-2">4.8</p>
+                                <div class="flex">
+                                    <i class="fas fa-star text-yellow-400"></i>
+                                    <i class="fas fa-star text-yellow-400"></i>
+                                    <i class="fas fa-star text-yellow-400"></i>
+                                    <i class="fas fa-star text-yellow-400"></i>
+                                    <i class="fas fa-star-half-alt text-yellow-400"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Products Section -->
+            <div class="bg-white rounded-lg shadow overflow-hidden mb-6">
+                <div class="p-4 border-b border-gray-200 flex justify-between items-center">
+                    <h2 class="text-lg font-semibold text-gray-800">Mes produits</h2>
+                    <div class="flex items-center">
+                        <select class="border border-gray-300 rounded-md px-3 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            <option>Tous les statuts</option>
+                            <option>Disponible</option>
+                            <option>Réservé</option>
+                            <option>Vendu</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Produit</th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Prix</th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Statut</th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody class="bg-white divide-y divide-gray-200">
+                            <tr>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <div class="flex items-center">
+                                        <div class="flex-shrink-0 h-10 w-10">
+                                            <img class="h-10 w-10 rounded-full object-cover" src="https://images.unsplash.com/photo-1544947950-fa07a98d237f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=687&q=80" alt="">
+                                        </div>
+                                        <div class="ml-4">
+                                            <div class="text-sm font-medium text-gray-900">Calculatrice Casio FX-991EX</div>
+                                            <div class="text-sm text-gray-500">Ajouté le 12/05/2023</div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <div class="text-sm text-gray-900 font-semibold">8 000 FCFA</div>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <span class="product-status status-available">Disponible</span>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                    <button class="text-blue-600 hover:text-blue-900 mr-3">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                    <button class="text-red-500 hover:text-red-700">
+                                        <i class="fas fa-trash-alt"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <div class="flex items-center">
+                                        <div class="flex-shrink-0 h-10 w-10">
+                                            <img class="h-10 w-10 rounded-full object-cover" src="https://images.unsplash.com/photo-1541963463532-d68292c34b19?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=688&q=80" alt="">
+                                        </div>
+                                        <div class="ml-4">
+                                            <div class="text-sm font-medium text-gray-900">Marketing Digital 5e édition</div>
+                                            <div class="text-sm text-gray-500">Ajouté le 05/05/2023</div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <div class="text-sm text-gray-900 font-semibold">5 500 FCFA</div>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <span class="product-status status-reserved">Réservé</span>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                    <button class="text-blue-600 hover:text-blue-900 mr-3">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                    <button class="text-red-500 hover:text-red-700">
+                                        <i class="fas fa-trash-alt"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <div class="flex items-center">
+                                        <div class="flex-shrink-0 h-10 w-10">
+                                            <img class="h-10 w-10 rounded-full object-cover" src="https://images.unsplash.com/photo-1603302576837-37561b2e2302?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1468&q=80" alt="">
+                                        </div>
+                                        <div class="ml-4">
+                                            <div class="text-sm font-medium text-gray-900">Casque Audio JBL Tune 500BT</div>
+                                            <div class="text-sm text-gray-500">Ajouté le 28/04/2023</div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <div class="text-sm text-gray-900 font-semibold">15 000 FCFA</div>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <span class="product-status status-sold">Vendu</span>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                    <button class="text-blue-600 hover:text-blue-900 mr-3">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                    <button class="text-red-500 hover:text-red-700">
+                                        <i class="fas fa-trash-alt"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Reservations Section -->
+            <div class="bg-white rounded-lg shadow overflow-hidden mb-6">
+                <div class="p-4 border-b border-gray-200">
+                    <h2 class="text-lg font-semibold text-gray-800">Demandes de réservation</h2>
+                </div>
+                <div class="divide-y divide-gray-200">
+                    <div class="p-4 hover:bg-gray-50">
+                        <div class="flex items-start">
+                            <img class="h-10 w-10 rounded-full mr-4" src="https://via.placeholder.com/40" alt="Aminata T.">
+                            <div class="flex-1">
+                                <div class="flex justify-between">
+                                    <h3 class="text-sm font-medium text-gray-900">Aminata T.</h3>
+                                    <span class="text-xs text-gray-500">15 mai 2023</span>
+                                </div>
+                                <p class="text-sm text-gray-600 mt-1">Livre "Compta L2" - 5 500 FCFA</p>
+                                <p class="text-sm text-gray-800 mt-2">"Bonjour, je suis intéressée par votre livre. Peut-on se voir demain à 12h à la cafétéria ?"</p>
+                                <div class="mt-3 flex space-x-2">
+                                    <button class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded-md text-sm">
+                                        <i class="fas fa-reply mr-1"></i> Répondre
+                                    </button>
+                                    <button class="bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded-md text-sm">
+                                        <i class="fas fa-check mr-1"></i> Confirmer
+                                    </button>
+                                    <button class="bg-gray-200 hover:bg-gray-300 text-gray-800 px-3 py-1 rounded-md text-sm">
+                                        <i class="fas fa-times mr-1"></i> Refuser
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="p-4 hover:bg-gray-50">
+                        <div class="flex items-start">
+                            <img class="h-10 w-10 rounded-full mr-4" src="https://via.placeholder.com/40" alt="Yacine D.">
+                            <div class="flex-1">
+                                <div class="flex justify-between">
+                                    <h3 class="text-sm font-medium text-gray-900">Yacine D.</h3>
+                                    <span class="text-xs text-gray-500">10 mai 2023</span>
+                                </div>
+                                <p class="text-sm text-gray-600 mt-1">Calculatrice Casio FX-991EX - 8 000 FCFA</p>
+                                <p class="text-sm text-gray-800 mt-2">"Salut, tu seras disponible aujourd'hui vers 17h pour que je puisse voir la calculatrice ?"</p>
+                                <div class="mt-3 flex space-x-2">
+                                    <button class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded-md text-sm">
+                                        <i class="fas fa-reply mr-1"></i> Répondre
+                                    </button>
+                                    <button class="bg-gray-200 hover:bg-gray-300 text-gray-800 px-3 py-1 rounded-md text-sm">
+                                        <i class="fas fa-check-circle mr-1"></i> Marquer comme remis
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Ratings Section -->
+            <div class="bg-white rounded-lg shadow overflow-hidden">
+                <div class="p-4 border-b border-gray-200">
+                    <h2 class="text-lg font-semibold text-gray-800">Évaluations reçues</h2>
+                </div>
+                <div class="p-4">
+                    <div class="bg-blue-50 rounded-lg p-4 mb-4">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-lg font-bold">⭐ 4.8/5</p>
+                                <p class="text-sm text-gray-600">Basé sur 10 ventes</p>
+                            </div>
+                            <div class="flex">
+                                <i class="fas fa-star text-yellow-400"></i>
+                                <i class="fas fa-star text-yellow-400"></i>
+                                <i class="fas fa-star text-yellow-400"></i>
+                                <i class="fas fa-star text-yellow-400"></i>
+                                <i class="fas fa-star-half-alt text-yellow-400"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="space-y-4">
+                        <div class="border-b border-gray-200 pb-4">
+                            <div class="flex items-center mb-2">
+                                <img class="h-8 w-8 rounded-full mr-2" src="https://via.placeholder.com/32" alt="Yacine">
+                                <span class="font-medium">Yacine</span>
+                                <div class="ml-2 flex">
+                                    <i class="fas fa-star text-yellow-400 text-sm"></i>
+                                    <i class="fas fa-star text-yellow-400 text-sm"></i>
+                                    <i class="fas fa-star text-yellow-400 text-sm"></i>
+                                    <i class="fas fa-star text-yellow-400 text-sm"></i>
+                                    <i class="fas fa-star text-yellow-400 text-sm"></i>
+                                </div>
+                            </div>
+                            <p class="text-sm text-gray-800">"Vendeur super sympa et ponctuel ! La calculatrice est exactement comme décrite."</p>
+                            <p class="text-xs text-gray-500 mt-1">12 mai 2023 - Casio FX-991EX</p>
+                        </div>
+                        <div class="border-b border-gray-200 pb-4">
+                            <div class="flex items-center mb-2">
+                                <img class="h-8 w-8 rounded-full mr-2" src="https://via.placeholder.com/32" alt="Grace">
+                                <span class="font-medium">Grace</span>
+                                <div class="ml-2 flex">
+                                    <i class="fas fa-star text-yellow-400 text-sm"></i>
+                                    <i class="fas fa-star text-yellow-400 text-sm"></i>
+                                    <i class="fas fa-star text-yellow-400 text-sm"></i>
+                                    <i class="fas fa-star text-yellow-400 text-sm"></i>
+                                    <i class="fas fa-star text-yellow-400 text-sm"></i>
+                                </div>
+                            </div>
+                            <p class="text-sm text-gray-800">"Produit nickel. Livraison rapide et vendeur très professionnel."</p>
+                            <p class="text-xs text-gray-500 mt-1">5 mai 2023 - Marketing Digital</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    
+    
+    <!-- Chat Modal -->
+    <div id="chatModal" class="fixed bottom-0 right-0 mb-4 mr-4 w-80 bg-white rounded-t-lg shadow-xl hidden z-50">
+        <div class="bg-blue-600 text-white px-4 py-3 rounded-t-lg flex justify-between items-center">
+            <h3 class="font-medium">Chat avec Aminata</h3>
+            <button id="closeChat" class="text-white hover:text-gray-200">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="p-4 h-64 overflow-y-auto">
+            <div class="space-y-3">
+                <div class="flex justify-start">
+                    <div class="chat-bubble receiver">
+                        <p class="text-sm">Bonjour, je suis intéressée par votre livre. Peut-on se voir demain à 12h à la cafétéria ?</p>
+                        <p class="text-xs text-gray-600 mt-1">15 mai, 14:32</p>
+                    </div>
+                </div>
+                <div class="flex justify-end">
+                    <div class="chat-bubble sender">
+                        <p class="text-sm">Bonjour Aminata, oui c'est possible. Je serai là à midi avec le livre.</p>
+                        <p class="text-xs text-blue-200 mt-1">15 mai, 14:35</p>
+                    </div>
+                </div>
+                <div class="flex justify-start">
+                    <div class="chat-bubble receiver">
+                        <p class="text-sm">Parfait, merci beaucoup ! À demain alors.</p>
+                        <p class="text-xs text-gray-600 mt-1">15 mai, 14:36</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="p-3 border-t border-gray-200">
+            <div class="flex">
+                <input type="text" placeholder="Écrire un message..." class="flex-1 border border-gray-300 rounded-l-md px-3 py-2 focus:outline-none focus:ring-1 focus:ring-blue-500">
+                <button class="bg-blue-600 text-white px-3 py-2 rounded-r-md hover:bg-blue-700">
+                    <i class="fas fa-paper-plane"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Mobile menu toggle
+        const mobileMenuButton = document.getElementById('mobileMenuButton');
+        const mobileMenu = document.getElementById('mobileMenu');
+        const mobileBackdrop = document.getElementById('mobileBackdrop');
+
+        mobileMenuButton.addEventListener('click', () => {
+            mobileMenu.classList.toggle('open');
+            mobileBackdrop.classList.toggle('hidden');
+        });
+
+        mobileBackdrop.addEventListener('click', () => {
+            mobileMenu.classList.remove('open');
+            mobileBackdrop.classList.add('hidden');
+        });
+
+        // Add product modal
+        const addProductModal = document.getElementById('addProductModal');
+        const cancelAddProduct = document.getElementById('cancelAddProduct');
+        const addProductButtons = document.querySelectorAll('button.bg-green-500, button.bg-green-600');
+
+        addProductButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                addProductModal.classList.remove('hidden');
+            });
+        });
+
+        cancelAddProduct.addEventListener('click', () => {
+            addProductModal.classList.add('hidden');
+        });
+
+        // Chat modal
+        const chatModal = document.getElementById('chatModal');
+        const closeChat = document.getElementById('closeChat');
+        const replyButtons = document.querySelectorAll('button.bg-blue-600');
+
+        replyButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                chatModal.classList.remove('hidden');
+            });
+        });
+
+        closeChat.addEventListener('click', () => {
+            chatModal.classList.add('hidden');
+        });
+
+        // Click outside modals to close
+        window.addEventListener('click', (event) => {
+            if (event.target === addProductModal) {
+                addProductModal.classList.add('hidden');
+            }
+        });
+    </script>
+</body>
+</html>

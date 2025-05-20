@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Récupération de mot de passe - ESCIC Market</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <style>
+      body {
+        font-family: "Nunito", sans-serif;
+        background-color: #f3f4f6;
+      }
+    </style>
+  </head>
+  <body class="min-h-screen flex items-center justify-center p-4">
+    <div class="max-w-md w-full">
+      <!-- Logo ou Titre -->
+      <div class="text-center mb-8">
+        <h1 class="text-3xl font-bold text-blue-800">ESCIC Market</h1>
+        <p class="text-gray-600 mt-2">Récupération de mot de passe</p>
+      </div>
+
+      <!-- Formulaire -->
+      <div class="bg-white p-8 rounded-lg shadow-md">
+        <div id="step1" class="space-y-6">
+          <div
+            id="error-message"
+            class="hidden bg-red-100 text-red-700 p-3 rounded-md text-sm"
+          ></div>
+          <div
+            id="success-message"
+            class="hidden bg-green-100 text-green-700 p-3 rounded-md text-sm"
+          ></div>
+
+          <p class="text-gray-600 text-sm">
+            Entrez votre adresse email universitaire (@escic.edu). Nous vous
+            enverrons un lien pour réinitialiser votre mot de passe.
+          </p>
+
+          <form id="forgot-password-form" class="space-y-4">
+            <div>
+              <label
+                for="email"
+                class="block text-sm font-medium text-gray-700 mb-1"
+              >
+                Email universitaire
+              </label>
+              <div class="relative">
+                <input
+                  type="email"
+                  id="email"
+                  name="email"
+                  required
+                  class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  placeholder="votre.nom@escic.edu"
+                />
+                <div
+                  class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none"
+                >
+                  <i class="fas fa-envelope text-gray-400"></i>
+                </div>
+              </div>
+            </div>
+
+            <button
+              type="submit"
+              id="submit-btn"
+              class="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors"
+            >
+              <span id="spinner" class="hidden">
+                <i class="fas fa-spinner fa-spin mr-2"></i>
+              </span>
+              <span id="btn-text">Envoyer le lien de réinitialisation</span>
+            </button>
+          </form>
+
+          <div class="text-center text-sm">
+            <a href="login.html" class="text-blue-600 hover:text-blue-800">
+              <i class="fas fa-arrow-left mr-1"></i>
+              Retour à la connexion
+            </a>
+          </div>
+        </div>
+
+        <!-- Étape 2 : Vérification du code -->
+        <div id="step2" class="space-y-6 hidden">
+          <div
+            id="code-error-message"
+            class="hidden bg-red-100 text-red-700 p-3 rounded-md text-sm"
+          ></div>
+
+          <p class="text-gray-600 text-sm">
+            Un code de vérification a été envoyé à votre adresse email. Veuillez
+            l'entrer ci-dessous.
+          </p>
+
+          <form id="verify-code-form" class="space-y-4">
+            <div>
+              <label
+                for="verification-code"
+                class="block text-sm font-medium text-gray-700 mb-1"
+              >
+                Code de vérification
+              </label>
+              <input
+                type="text"
+                id="verification-code"
+                name="verification-code"
+                required
+                maxlength="6"
+                class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                placeholder="Entrez le code à 6 chiffres"
+              />
+            </div>
+
+            <button
+              type="submit"
+              id="verify-btn"
+              class="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors"
+            >
+              <span id="verify-spinner" class="hidden">
+                <i class="fas fa-spinner fa-spin mr-2"></i>
+              </span>
+              <span id="verify-btn-text">Vérifier le code</span>
+            </button>
+          </form>
+        </div>
+
+        <!-- Étape 3 : Nouveau mot de passe -->
+        <div id="step3" class="space-y-6 hidden">
+          <form id="reset-password-form" class="space-y-4">
+            <div>
+              <label
+                for="new-password"
+                class="block text-sm font-medium text-gray-700 mb-1"
+              >
+                Nouveau mot de passe
+              </label>
+              <input
+                type="password"
+                id="new-password"
+                name="new-password"
+                required
+                class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              />
+            </div>
+
+            <div>
+              <label
+                for="confirm-password"
+                class="block text-sm font-medium text-gray-700 mb-1"
+              >
+                Confirmer le mot de passe
+              </label>
+              <input
+                type="password"
+                id="confirm-password"
+                name="confirm-password"
+                required
+                class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              />
+            </div>
+
+            <button
+              type="submit"
+              id="reset-btn"
+              class="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors"
+            >
+              <span id="reset-spinner" class="hidden">
+                <i class="fas fa-spinner fa-spin mr-2"></i>
+              </span>
+              <span id="reset-btn-text">Réinitialiser le mot de passe</span>
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <script>
+    // Variables globales
+    let userEmail = '';
+
+    // Fonctions utilitaires
+     
+
+    function isStrongPassword(password) {
+        return password.length >= 8 && 
+               /[A-Z]/.test(password) && 
+               /[a-z]/.test(password) && 
+               /[0-9]/.test(password);
+    }
+
+    // Gestion de l'étape 1 : Demande de réinitialisation
+    document.getElementById("forgot-password-form").addEventListener("submit", async function (e) {
+        e.preventDefault();
+
+        const spinner = document.getElementById("spinner");
+        const btnText = document.getElementById("btn-text");
+        const submitBtn = document.getElementById("submit-btn");
+        const errorMessage = document.getElementById("error-message");
+        const successMessage = document.getElementById("success-message");
+        const email = document.getElementById("email").value;
+
+         
+        try {
+            // Afficher le spinner
+            spinner.classList.remove("hidden");
+            btnText.textContent = "Envoi en cours...";
+            submitBtn.disabled = true;
+            errorMessage.classList.add("hidden");
+            successMessage.classList.add("hidden");
+
+            // Appel à l'API
+            const response = await fetch("http://localhost:3000/api/auth/forgot-password", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ email }),
+            });
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                throw new Error(data.message || "Une erreur est survenue");
+            }
+
+            // Stocker l'email et passer à l'étape suivante
+            userEmail = email;
+            sessionStorage.setItem('resetEmail', email);
+            sessionStorage.setItem('resetStep', '2');
+            
+            // Passer à l'étape 2
+            document.getElementById('step1').classList.add('hidden');
+            document.getElementById('step2').classList.remove('hidden');
+
+            // Afficher le message de succès
+            successMessage.textContent = "Un code de réinitialisation a été envoyé à votre adresse email.";
+            successMessage.classList.remove("hidden");
+
+        } catch (error) {
+            errorMessage.textContent = error.message;
+            errorMessage.classList.remove("hidden");
+        } finally {
+            spinner.classList.add("hidden");
+            btnText.textContent = "Envoyer le code de réinitialisation";
+            submitBtn.disabled = false;
+        }
+    });
+
+    // Gestion de l'étape 2 : Vérification du code
+    document.getElementById('verify-code-form').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        
+        const code = document.getElementById('verification-code').value;
+        const errorMessage = document.getElementById('code-error-message');
+        const verifyBtn = document.getElementById('verify-btn');
+        const verifySpinner = document.getElementById('verify-spinner');
+        const verifyBtnText = document.getElementById('verify-btn-text');
+
+        try {
+            verifySpinner.classList.remove('hidden');
+            verifyBtnText.textContent = 'Vérification...';
+            verifyBtn.disabled = true;
+            errorMessage.classList.add('hidden');
+
+            const response = await fetch('http://localhost:3000/api/auth/verify-code', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ 
+                    email: userEmail,
+                    code: code.trim()
+                })
+            });
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                throw new Error(data.message || 'Code invalide');
+            }
+
+            // Passer à l'étape 3
+            sessionStorage.setItem('resetStep', '3');
+            document.getElementById('step2').classList.add('hidden');
+            document.getElementById('step3').classList.remove('hidden');
+
+        } catch (error) {
+            errorMessage.textContent = error.message;
+            errorMessage.classList.remove('hidden');
+        } finally {
+            verifySpinner.classList.add('hidden');
+            verifyBtnText.textContent = 'Vérifier le code';
+            verifyBtn.disabled = false;
+        }
+    });
+
+    // Gestion de l'étape 3 : Réinitialisation du mot de passe
+    document.getElementById('reset-password-form').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        
+        const newPassword = document.getElementById('new-password').value;
+        const confirmPassword = document.getElementById('confirm-password').value;
+        const resetBtn = document.getElementById('reset-btn');
+        const resetSpinner = document.getElementById('reset-spinner');
+        const resetBtnText = document.getElementById('reset-btn-text');
+
+        // Validation des mots de passe
+        if (newPassword !== confirmPassword) {
+            alert('Les mots de passe ne correspondent pas');
+            return;
+        }
+
+        if (!isStrongPassword(newPassword)) {
+            alert('Le mot de passe doit contenir au moins 8 caractères, une majuscule, une minuscule et un chiffre');
+            return;
+        }
+
+        try {
+            resetSpinner.classList.remove('hidden');
+            resetBtnText.textContent = 'Réinitialisation...';
+            resetBtn.disabled = true;
+
+            const response = await fetch('http://localhost:3000/api/auth/reset-password', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ 
+                    email: userEmail,
+                    password: newPassword 
+                })
+            });
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                throw new Error(data.message);
+            }
+
+            // Nettoyage du stockage
+            sessionStorage.removeItem('resetEmail');
+            sessionStorage.removeItem('resetStep');
+
+            alert('Mot de passe réinitialisé avec succès');
+            window.location.href = '/login.html';
+
+        } catch (error) {
+            alert(error.message);
+        } finally {
+            resetSpinner.classList.add('hidden');
+            resetBtnText.textContent = 'Réinitialiser le mot de passe';
+            resetBtn.disabled = false;
+        }
+    });
+
+    // Gestion de la persistance entre les rechargements de page
+    window.addEventListener('load', function() {
+        const savedEmail = sessionStorage.getItem('resetEmail');
+        const currentStep = sessionStorage.getItem('resetStep');
+
+        if (savedEmail && currentStep) {
+            userEmail = savedEmail;
+            document.getElementById('step1').classList.add('hidden');
+            document.getElementById(`step${currentStep}`).classList.remove('hidden');
+        }
+    });
+</script>
+  </body>
+</html>
