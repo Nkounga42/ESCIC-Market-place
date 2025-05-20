@@ -37,16 +37,13 @@
     </style>
 </head>
 <body class="bg-gray-50">
-    <!-- Header -->
     <header class="bg-white shadow-sm sticky top-0 z-50">
         <div class="container mx-auto px-4 py-3 flex items-center justify-between">
-            <!-- Logo -->
             <div class="flex items-center">
                 <img src="https://via.placeholder.com/40" alt="ESCIC-Market Logo" class="h-10 mr-2">
                 <span class="text-xl font-bold text-blue-800 hidden md:block">ESCIC-Market</span>
             </div>
             
-            <!-- Search Bar -->
             <div class="flex-1 mx-4 hidden md:block">
                 <div class="relative">
                     <input type="text" placeholder="Rechercher un article (ex : calculatrice, livre, snack...)" 
@@ -57,14 +54,13 @@
                 </div>
             </div>
             
-            <!-- Icons -->
             <div class="flex items-center space-x-4">
                 <button class="md:hidden text-gray-600">
                     <i class="fas fa-search text-xl"></i>
                 </button>
-                <button class="relative text-gray-600 hover:text-blue-800">
+                <button id="cartButton" class="relative text-gray-600 hover:text-blue-800">
                     <i class="fas fa-shopping-cart text-xl"></i>
-                    <span class="absolute -top-2 -right-2 bg-blue-600 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">3</span>
+                    <span id="cartCount" class="absolute -top-2 -right-2 bg-blue-600 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">0</span>
                 </button>
                 <button class="text-gray-600 hover:text-blue-800">
                     <i class="fas fa-user text-xl"></i>
@@ -72,14 +68,12 @@
                 <button class="hidden md:block bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-full font-medium transition duration-300">
                     <i class="fas fa-plus mr-1"></i> Vendre un article
                 </button>
-                <!-- Mobile menu button -->
                 <button class="md:hidden text-gray-600">
                     <i class="fas fa-bars text-xl"></i>
                 </button>
             </div>
         </div>
         
-        <!-- Mobile Search -->
         <div class="md:hidden bg-white px-4 py-2 border-t">
             <div class="relative">
                 <input type="text" placeholder="Rechercher un article..." 
@@ -91,7 +85,40 @@
         </div>
     </header>
 
-    <!-- Hero Section -->
+    <div id="cartDrawer" class="fixed inset-y-0 right-0 w-full md:w-96 bg-white shadow-xl transform translate-x-full transition-transform duration-300 ease-in-out z-50">
+        <div class="h-full flex flex-col">
+            <div class="bg-blue-800 text-white px-6 py-4 flex justify-between items-center">
+                <h2 class="text-xl font-bold">Mon Panier</h2>
+                <button id="closeCart" class="text-white hover:text-blue-200">
+                    <i class="fas fa-times text-xl"></i>
+                </button>
+            </div>
+            
+            <div id="cartItems" class="flex-1 overflow-y-auto p-4">
+                <div id="emptyCart" class="flex flex-col items-center justify-center h-64 text-center text-gray-500">
+                    <i class="fas fa-shopping-cart text-5xl mb-4"></i>
+                    <p class="text-xl font-medium mb-2">Votre panier est vide</p>
+                    <p>Ajoutez des articles pour les voir ici</p>
+                </div>
+            </div>
+            
+            <div class="bg-gray-50 p-6 border-t">
+                <div class="flex justify-between mb-4">
+                    <span class="font-medium text-gray-600">Sous-total:</span>
+                    <span id="cartSubtotal" class="font-bold">0.00€</span>
+                </div>
+                <button id="checkoutButton" class="w-full bg-blue-700 hover:bg-blue-800 text-white py-3 rounded-lg font-medium transition duration-300 disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+                    Procéder au paiement
+                </button>
+                <button id="continueShoppingButton" class="w-full mt-3 border border-blue-700 text-blue-700 hover:bg-blue-50 py-3 rounded-lg font-medium transition duration-300">
+                    Continuer mes achats
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div id="overlay" class="fixed inset-0 bg-black opacity-0 pointer-events-none transition-opacity duration-300 ease-in-out z-40"></div>
+
     <section class="relative bg-gradient-to-r from-blue-800 to-blue-600 text-white">
         <div class="container mx-auto px-4 py-16 md:py-24">
             <div class="max-w-2xl">
@@ -109,11 +136,9 @@
         </div>
     </section>
 
-    <!-- Categories Section -->
     <section class="container mx-auto px-4 py-12">
         <h2 class="text-3xl font-bold text-center mb-10 text-blue-800">Parcourir par catégorie</h2>
         <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
-            <!-- Category Card 1 -->
             <div class="category-card bg-white rounded-xl shadow-md overflow-hidden transition duration-300 cursor-pointer">
                 <div class="h-32 bg-blue-50 flex items-center justify-center">
                     <i class="fas fa-book text-4xl text-blue-600"></i>
@@ -123,7 +148,6 @@
                 </div>
             </div>
             
-            <!-- Category Card 2 -->
             <div class="category-card bg-white rounded-xl shadow-md overflow-hidden transition duration-300 cursor-pointer">
                 <div class="h-32 bg-green-50 flex items-center justify-center">
                     <i class="fas fa-tshirt text-4xl text-green-600"></i>
@@ -133,7 +157,6 @@
                 </div>
             </div>
             
-            <!-- Category Card 3 -->
             <div class="category-card bg-white rounded-xl shadow-md overflow-hidden transition duration-300 cursor-pointer">
                 <div class="h-32 bg-purple-50 flex items-center justify-center">
                     <i class="fas fa-headphones text-4xl text-purple-600"></i>
@@ -143,7 +166,6 @@
                 </div>
             </div>
             
-            <!-- Category Card 4 -->
             <div class="category-card bg-white rounded-xl shadow-md overflow-hidden transition duration-300 cursor-pointer">
                 <div class="h-32 bg-yellow-50 flex items-center justify-center">
                     <i class="fas fa-cookie-bite text-4xl text-yellow-600"></i>
@@ -153,7 +175,6 @@
                 </div>
             </div>
             
-            <!-- Category Card 5 -->
             <div class="category-card bg-white rounded-xl shadow-md overflow-hidden transition duration-300 cursor-pointer">
                 <div class="h-32 bg-red-50 flex items-center justify-center">
                     <i class="fas fa-ticket-alt text-4xl text-red-600"></i>
@@ -163,7 +184,6 @@
                 </div>
             </div>
             
-            <!-- Category Card 6 -->
             <div class="category-card bg-white rounded-xl shadow-md overflow-hidden transition duration-300 cursor-pointer">
                 <div class="h-32 bg-indigo-50 flex items-center justify-center">
                     <i class="fas fa-briefcase text-4xl text-indigo-600"></i>
@@ -175,7 +195,6 @@
         </div>
     </section>
 
-    <!-- Trending Products Section -->
     <section class="bg-gray-50 py-12">
         <div class="container mx-auto px-4">
             <div class="flex justify-between items-center mb-8">
@@ -186,7 +205,6 @@
             <div class="relative">
                 <div class="scroll-container overflow-x-auto pb-4">
                     <div class="flex space-x-6 w-max">
-                        <!-- Product Card 1 -->
                         <div class="product-card bg-white rounded-lg shadow-md overflow-hidden w-64 flex-shrink-0 transition duration-300">
                             <div class="h-48 bg-gray-100 relative">
                                 <img src="https://images.unsplash.com/photo-1544947950-fa07a98d237f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=687&q=80" 
@@ -203,13 +221,17 @@
                                         <span class="text-xs text-gray-500">Marie D.</span>
                                     </div>
                                 </div>
-                                <button class="mt-3 w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-md text-sm font-medium transition duration-300">
-                                    Réserver
+                                <button class="add-to-cart mt-3 w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-md text-sm font-medium transition duration-300"
+                                        data-id="1"
+                                        data-name="Calculatrice scientifique"
+                                        data-price="25"
+                                        data-img="https://images.unsplash.com/photo-1544947950-fa07a98d237f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=687&q=80"
+                                        data-seller="Marie D.">
+                                    Ajouter au panier
                                 </button>
                             </div>
                         </div>
                         
-                        <!-- Product Card 2 -->
                         <div class="product-card bg-white rounded-lg shadow-md overflow-hidden w-64 flex-shrink-0 transition duration-300">
                             <div class="h-48 bg-gray-100">
                                 <img src="https://images.unsplash.com/photo-1541963463532-d68292c34b19?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=688&q=80" 
@@ -225,13 +247,17 @@
                                         <span class="text-xs text-gray-500">Thomas L.</span>
                                     </div>
                                 </div>
-                                <button class="mt-3 w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-md text-sm font-medium transition duration-300">
-                                    Réserver
+                                <button class="add-to-cart mt-3 w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-md text-sm font-medium transition duration-300"
+                                        data-id="2"
+                                        data-name="Marketing Digital 5e édition"
+                                        data-price="18"
+                                        data-img="https://images.unsplash.com/photo-1541963463532-d68292c34b19?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=688&q=80"
+                                        data-seller="Thomas L.">
+                                    Ajouter au panier
                                 </button>
                             </div>
                         </div>
                         
-                        <!-- Product Card 3 -->
                         <div class="product-card bg-white rounded-lg shadow-md overflow-hidden w-64 flex-shrink-0 transition duration-300">
                             <div class="h-48 bg-gray-100">
                                 <img src="https://images.unsplash.com/photo-1603302576837-37561b2e2302?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1468&q=80" 
@@ -247,13 +273,17 @@
                                         <span class="text-xs text-gray-500">Alexandre P.</span>
                                     </div>
                                 </div>
-                                <button class="mt-3 w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-md text-sm font-medium transition duration-300">
-                                    Réserver
+                                <button class="add-to-cart mt-3 w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-md text-sm font-medium transition duration-300"
+                                        data-id="3"
+                                        data-name="Casque Audio Sans Fil"
+                                        data-price="45"
+                                        data-img="https://images.unsplash.com/photo-1603302576837-37561b2e2302?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1468&q=80"
+                                        data-seller="Alexandre P.">
+                                    Ajouter au panier
                                 </button>
                             </div>
                         </div>
                         
-                        <!-- Product Card 4 -->
                         <div class="product-card bg-white rounded-lg shadow-md overflow-hidden w-64 flex-shrink-0 transition duration-300">
                             <div class="h-48 bg-gray-100">
                                 <img src="https://images.unsplash.com/photo-1560343090-f0409e92791a?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1528&q=80" 
@@ -269,8 +299,13 @@
                                         <span class="text-xs text-gray-500">Sophie M.</span>
                                     </div>
                                 </div>
-                                <button class="mt-3 w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-md text-sm font-medium transition duration-300">
-                                    Réserver
+                                <button class="add-to-cart mt-3 w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-md text-sm font-medium transition duration-300"
+                                        data-id="4"
+                                        data-name="Pack Boissons Énergisantes"
+                                        data-price="12"
+                                        data-img="https://images.unsplash.com/photo-1560343090-f0409e92791a?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1528&q=80"
+                                        data-seller="Sophie M.">
+                                    Ajouter au panier
                                 </button>
                             </div>
                         </div>
@@ -284,7 +319,6 @@
         </div>
     </section>
 
-    <!-- New Products Section -->
     <section class="container mx-auto px-4 py-12">
         <div class="flex justify-between items-center mb-8">
             <h2 class="text-3xl font-bold text-blue-800">Nouveaux articles ajoutés <span class="text-green-500">📦</span></h2>
@@ -292,7 +326,6 @@
         </div>
         
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            <!-- New Product 1 -->
             <div class="product-card bg-white rounded-lg shadow-md overflow-hidden transition duration-300">
                 <div class="h-56 bg-gray-100 relative">
                     <img src="https://images.unsplash.com/photo-1589998059171-988d322dfad6?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80" 
@@ -309,13 +342,17 @@
                             <span class="text-xs text-gray-500">Julien R.</span>
                         </div>
                     </div>
-                    <button class="mt-3 w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-md text-sm font-medium transition duration-300">
-                        Voir l'article
+                    <button class="add-to-cart mt-3 w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-md text-sm font-medium transition duration-300"
+                            data-id="5"
+                            data-name="Comptabilité Financière"
+                            data-price="22"
+                            data-img="https://images.unsplash.com/photo-1589998059171-988d322dfad6?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80"
+                            data-seller="Julien R.">
+                        Ajouter au panier
                     </button>
                 </div>
             </div>
             
-            <!-- New Product 2 -->
             <div class="product-card bg-white rounded-lg shadow-md overflow-hidden transition duration-300">
                 <div class="h-56 bg-gray-100">
                     <img src="https://images.unsplash.com/photo-1523275335684-37898b6baf30?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1399&q=80" 
@@ -331,8 +368,13 @@
                             <span class="text-xs text-gray-500">Élodie K.</span>
                         </div>
                     </div>
-                    <button class="mt-3 w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-md text-sm font-medium transition duration-300">
-                        Voir l'article
+                    <button class="add-to-cart mt-3 w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-md text-sm font-medium transition duration-300"
+                            data-id="6"
+                            data-name="Montre Connectée"
+                            data-price="65"
+                            data-img="https://images.unsplash.com/photo-1523275335684-37898b6baf30?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1399&q=80"
+                            data-seller="Élodie K.">
+                        Ajouter au panier
                     </button>
                 </div>
             </div>
@@ -343,7 +385,6 @@
         </button>
     </section>
 
-    <!-- Footer -->
     <footer class="bg-blue-900 text-white py-10">
         <div class="container mx-auto px-4">
             <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -369,7 +410,7 @@
                 
                 <div>
                     <h3 class="text-lg font-semibold mb-4">Contact</h3>
-                    <p class="text-blue-200 mb-2"><i class="fas fa-map-marker-alt mr-2"></i> Campus ESCIC, 75008 Paris</p>
+                    <p class="text-blue-200 mb-2"><i class="fas fa-map-marker-alt mr-2"></i> Campus ESCIC, Pointe-Noire</p>
                     <p class="text-blue-200 mb-2"><i class="fas fa-envelope mr-2"></i> contact@escic-market.fr</p>
                     <p class="text-blue-200"><i class="fas fa-phone mr-2"></i> 01 23 45 67 89</p>
                 </div>
@@ -380,5 +421,210 @@
             </div>
         </div>
     </footer>
+
+    <div id="toast" class="fixed bottom-4 right-4 bg-green-500 text-white px-4 py-2 rounded-lg shadow-lg transform translate-y-20 opacity-0 transition-all duration-300 flex items-center z-50">
+        <i class="fas fa-check-circle mr-2"></i>
+        <span id="toastMessage">Article ajouté au panier</span>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Cart functionality
+            const cartButton = document.getElementById('cartButton');
+            const closeCartButton = document.getElementById('closeCart');
+            const cartDrawer = document.getElementById('cartDrawer');
+            const overlay = document.getElementById('overlay');
+            const continueShoppingButton = document.getElementById('continueShoppingButton');
+            const cartCount = document.getElementById('cartCount');
+            const cartItemsContainer = document.getElementById('cartItems'); // Renommé pour plus de clarté
+            const emptyCartMessage = document.getElementById('emptyCart'); // Renommé pour plus de clarté
+            const cartSubtotalElement = document.getElementById('cartSubtotal'); // Renommé pour plus de clarté
+            const checkoutButton = document.getElementById('checkoutButton');
+            const addToCartButtons = document.querySelectorAll('.add-to-cart');
+            const toast = document.getElementById('toast');
+            const toastMessageElement = document.getElementById('toastMessage'); // Renommé pour plus de clarté
+            
+            // Cart data
+            let cart = JSON.parse(localStorage.getItem('escicCart')) || [];
+            
+            // Initialize cart
+            updateCartDisplay();
+            
+            // Open cart drawer
+            cartButton.addEventListener('click', function() {
+                cartDrawer.classList.remove('translate-x-full');
+                overlay.classList.add('opacity-50');
+                overlay.classList.remove('pointer-events-none');
+                document.body.classList.add('overflow-hidden'); // Empêche le scroll de la page principale
+            });
+            
+            // Close cart drawer
+            function closeCart() {
+                cartDrawer.classList.add('translate-x-full');
+                overlay.classList.remove('opacity-50');
+                overlay.classList.add('pointer-events-none');
+                document.body.classList.remove('overflow-hidden'); // Réactive le scroll
+            }
+            
+            closeCartButton.addEventListener('click', closeCart);
+            overlay.addEventListener('click', closeCart);
+            continueShoppingButton.addEventListener('click', closeCart);
+            
+            // Add to cart functionality
+            addToCartButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const id = this.dataset.id;
+                    const name = this.dataset.name;
+                    const price = parseFloat(this.dataset.price);
+                    const img = this.dataset.img;
+                    const seller = this.dataset.seller;
+                    
+                    const existingItem = cart.find(item => item.id === id);
+                    
+                    if (existingItem) {
+                        existingItem.quantity += 1;
+                        showToast(`Quantité de "${name}" augmentée (${existingItem.quantity})`);
+                    } else {
+                        cart.push({ id, name, price, img, seller, quantity: 1 });
+                        showToast(`"${name}" ajouté au panier`);
+                    }
+                    
+                    saveCart();
+                    updateCartDisplay();
+                });
+            });
+            
+            // Update cart items display
+            function updateCartDisplay() {
+                // Update cart count badge
+                const totalItems = cart.reduce((total, item) => total + item.quantity, 0);
+                cartCount.textContent = totalItems;
+
+                // Clear current cart items
+                cartItemsContainer.innerHTML = ''; 
+
+                if (cart.length === 0) {
+                    cartItemsContainer.appendChild(emptyCartMessage); // Affiche le message si le panier est vide
+                    emptyCartMessage.style.display = 'flex'; // Assure que le message est visible
+                    checkoutButton.disabled = true; // Désactive le bouton de paiement
+                    cartSubtotalElement.textContent = '0.00€';
+                } else {
+                    emptyCartMessage.style.display = 'none'; // Cache le message si des articles sont présents
+                    checkoutButton.disabled = false; // Active le bouton de paiement
+
+                    let subtotal = 0;
+                    cart.forEach(item => {
+                        const itemElement = document.createElement('div');
+                        itemElement.classList.add('flex', 'items-center', 'justify-between', 'py-3', 'border-b');
+                        itemElement.innerHTML = `
+                            <div class="flex items-center">
+                                <img src="${item.img}" alt="${item.name}" class="w-16 h-16 object-cover rounded mr-3">
+                                <div>
+                                    <h4 class="font-medium text-sm">${item.name}</h4>
+                                    <p class="text-xs text-gray-500">Vendu par: ${item.seller}</p>
+                                    <p class="text-blue-600 font-semibold text-sm">${item.price.toFixed(2)}€</p>
+                                </div>
+                            </div>
+                            <div class="flex items-center">
+                                <div class="flex items-center border rounded">
+                                    <button class="quantity-change px-2 py-1 text-sm text-gray-600 hover:bg-gray-100" data-id="${item.id}" data-change="-1">-</button>
+                                    <span class="px-2 text-sm">${item.quantity}</span>
+                                    <button class="quantity-change px-2 py-1 text-sm text-gray-600 hover:bg-gray-100" data-id="${item.id}" data-change="1">+</button>
+                                </div>
+                                <button class="remove-item ml-3 text-red-500 hover:text-red-700" data-id="${item.id}">
+                                    <i class="fas fa-trash-alt"></i>
+                                </button>
+                            </div>
+                        `;
+                        cartItemsContainer.appendChild(itemElement);
+                        subtotal += item.price * item.quantity;
+                    });
+
+                    cartSubtotalElement.textContent = `${subtotal.toFixed(2)}€`;
+
+                    // Add event listeners for remove and quantity change buttons
+                    addCartItemEventListeners();
+                }
+            }
+
+            function addCartItemEventListeners() {
+                // Remove item from cart
+                document.querySelectorAll('.remove-item').forEach(button => {
+                    button.addEventListener('click', function() {
+                        const itemId = this.dataset.id;
+                        const itemToRemove = cart.find(item => item.id === itemId);
+                        if (itemToRemove) {
+                             showToast(`"${itemToRemove.name}" retiré du panier`, 'bg-red-500');
+                        }
+                        cart = cart.filter(item => item.id !== itemId);
+                        saveCart();
+                        updateCartDisplay();
+                    });
+                });
+
+                // Change item quantity
+                document.querySelectorAll('.quantity-change').forEach(button => {
+                    button.addEventListener('click', function() {
+                        const itemId = this.dataset.id;
+                        const change = parseInt(this.dataset.change);
+                        const itemToUpdate = cart.find(item => item.id === itemId);
+
+                        if (itemToUpdate) {
+                            itemToUpdate.quantity += change;
+                            if (itemToUpdate.quantity <= 0) {
+                                // If quantity drops to 0 or less, remove the item
+                                showToast(`"${itemToUpdate.name}" retiré du panier`, 'bg-red-500');
+                                cart = cart.filter(item => item.id !== itemId);
+                            } else {
+                                showToast(`Quantité de "${itemToUpdate.name}" mise à jour`);
+                            }
+                            saveCart();
+                            updateCartDisplay();
+                        }
+                    });
+                });
+            }
+
+            // Save cart to localStorage
+            function saveCart() {
+                localStorage.setItem('escicCart', JSON.stringify(cart));
+            }
+
+            // Show toast notification
+            let toastTimeout;
+            function showToast(message, bgColor = 'bg-green-500') {
+                toastMessageElement.textContent = message;
+                toast.classList.remove('bg-green-500', 'bg-red-500'); // Remove previous color classes
+                toast.classList.add(bgColor); // Add new color class
+
+                toast.classList.remove('translate-y-20', 'opacity-0');
+                toast.classList.add('translate-y-0', 'opacity-100');
+
+                clearTimeout(toastTimeout); // Clear existing timeout if any
+                toastTimeout = setTimeout(() => {
+                    toast.classList.remove('translate-y-0', 'opacity-100');
+                    toast.classList.add('translate-y-20', 'opacity-0');
+                }, 3000); // Toast disappears after 3 seconds
+            }
+
+            // Checkout button functionality (placeholder)
+            checkoutButton.addEventListener('click', function() {
+                if (cart.length > 0) {
+                    // Ici, vous implémenteriez la logique de paiement
+                    // Par exemple, rediriger vers une page de paiement, afficher un modal, etc.
+                    showToast('Redirection vers la page de paiement...', 'bg-blue-500');
+                    // Pour l'exemple, on vide le panier après "paiement"
+                    setTimeout(() => {
+                        cart = [];
+                        saveCart();
+                        updateCartDisplay();
+                        closeCart(); // Ferme le panier après le "paiement"
+                        showToast('Merci pour votre commande ! Panier vidé.', 'bg-green-500');
+                    }, 2000);
+                }
+            });
+
+        });
+    </script>
 </body>
 </html>
