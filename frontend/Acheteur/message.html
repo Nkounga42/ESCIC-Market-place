@@ -427,7 +427,183 @@
             </div>
         </div>
     </div>
+    <div class="flex h-screen bg-gray-100">
+        <!-- Conversation List -->
+        <div class="w-1/3 bg-white border-r">
+            <div class="p-4 border-b">
+                <div class="relative">
+                    <input type="text" id="searchMessages" placeholder="Search messages..." 
+                           class="w-full p-2 pl-8 border rounded-lg">
+                    <i class="fas fa-search absolute left-3 top-3 text-gray-400"></i>
+                </div>
+            </div>
+            
+            <div class="overflow-y-auto h-[calc(100vh-80px)]" id="conversationList">
+                <!-- Conversations will be populated here -->
+            </div>
+        </div>
+    
+        <!-- Message Content -->
+        <div class="flex-1 flex flex-col">
+            <div class="p-4 border-b bg-white flex justify-between items-center" id="conversationHeader">
+                <div class="flex items-center">
+                    <div class="w-10 h-10 rounded-full bg-blue-500 flex items-center justify-center text-white">
+                        <span id="activeUserInitials">JD</span>
+                    </div>
+                    <div class="ml-3">
+                        <h3 class="font-semibold" id="activeUserName">John Doe</h3>
+                        <p class="text-sm text-gray-500" id="activeUserStatus">Online</p>
+                    </div>
+                </div>
+                <div class="flex space-x-3">
+                    <button id="markAsReadBtn" class="text-gray-600 hover:text-blue-600">
+                        <i class="fas fa-check-double"></i>
+                    </button>
+                    <button id="archiveBtn" class="text-gray-600 hover:text-blue-600">
+                        <i class="fas fa-archive"></i>
+                    </button>
+                    <button id="deleteBtn" class="text-gray-600 hover:text-red-600">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </div>
+            </div>
+    
+            <div class="flex-1 overflow-y-auto p-4" id="messageContainer">
+                <!-- Messages will be populated here -->
+            </div>
+        </div>
+    </div>
 
+    <script>
+        // Message Management
+        document.addEventListener('DOMContentLoaded', function() {
+            const conversations = JSON.parse(localStorage.getItem('escicMessages')) || [];
+            const conversationList = document.getElementById('conversationList');
+            const messageContainer = document.getElementById('messageContainer');
+            const searchInput = document.getElementById('searchMessages');
+            let activeConversation = null;
+        
+            // Initialize conversations
+            function renderConversations(filter = '') {
+                conversationList.innerHTML = '';
+                conversations
+                    .filter(conv => conv.sender.toLowerCase().includes(filter.toLowerCase()))
+                    .forEach(conv => {
+                        const div = document.createElement('div');
+                        div.className = `p-4 border-b hover:bg-gray-50 cursor-pointer ${conv.id === activeConversation?.id ? 'bg-blue-50' : ''}`;
+                        div.innerHTML = `
+                            <div class="flex justify-between items-center">
+                                <h4 class="font-semibold ${!conv.read ? 'text-blue-600' : ''}">${conv.sender}</h4>
+                                <span class="text-xs text-gray-500">${formatDate(conv.timestamp)}</span>
+                            </div>
+                            <p class="text-sm text-gray-600 truncate">${conv.content}</p>
+                        `;
+                        div.onclick = () => loadConversation(conv);
+                        conversationList.appendChild(div);
+                    });
+            }
+        
+            // Load conversation messages
+            function loadConversation(conversation) {
+                activeConversation = conversation;
+                document.getElementById('activeUserName').textContent = conversation.sender;
+                renderConversations(); // Refresh list to show active state
+                
+                // Show messages
+                messageContainer.innerHTML = `
+                    <div class="flex flex-col space-y-4">
+                        <div class="flex flex-col space-y-2">
+                            <div class="bg-blue-100 p-3 rounded-lg self-end max-w-md">
+                                <p class="text-sm">${conversation.content}</p>
+                                <span class="text-xs text-gray-500">${formatDate(conversation.timestamp)}</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+        
+                if (!conversation.read) {
+                    markAsRead(conversation.id);
+                }
+            }
+        
+            // Message actions
+            document.getElementById('markAsReadBtn').onclick = () => {
+                if (activeConversation) {
+                    markAsRead(activeConversation.id);
+                }
+            };
+        
+            document.getElementById('archiveBtn').onclick = () => {
+                if (activeConversation) {
+                    archiveConversation(activeConversation.id);
+                }
+            };
+        
+            document.getElementById('deleteBtn').onclick = () => {
+                if (activeConversation) {
+                    deleteConversation(activeConversation.id);
+                }
+            };
+        
+            // Helper functions
+            function markAsRead(id) {
+                const conversation = conversations.find(c => c.id === id);
+                if (conversation) {
+                    conversation.read = true;
+                    saveConversations();
+                    renderConversations();
+                    updateUnreadCount();
+                }
+            }
+        
+            function archiveConversation(id) {
+                const conversation = conversations.find(c => c.id === id);
+                if (conversation) {
+                    conversation.archived = true;
+                    saveConversations();
+                    renderConversations();
+                }
+            }
+        
+            function deleteConversation(id) {
+                const index = conversations.findIndex(c => c.id === id);
+                if (index > -1) {
+                    conversations.splice(index, 1);
+                    saveConversations();
+                    renderConversations();
+                    messageContainer.innerHTML = '';
+                    activeConversation = null;
+                }
+            }
+        
+            function saveConversations() {
+                localStorage.setItem('escicMessages', JSON.stringify(conversations));
+            }
+        
+            function updateUnreadCount() {
+                const unreadCount = conversations.filter(c => !c.read).length;
+                // Update badge in floating button if it exists
+                const badge = document.getElementById('messageCount');
+                if (badge) {
+                    badge.textContent = unreadCount;
+                    badge.style.display = unreadCount > 0 ? 'flex' : 'none';
+                }
+            }
+        
+            function formatDate(timestamp) {
+                return new Date(timestamp).toLocaleString();
+            }
+        
+            // Search functionality
+            searchInput.addEventListener('input', (e) => {
+                renderConversations(e.target.value);
+            });
+        
+            // Initial render
+            renderConversations();
+            updateUnreadCount();
+        });
+        </script>
     <script>
         // Mobile menu toggle
         const mobileMenuButton = document.getElementById('mobile-menu-button');
@@ -612,6 +788,185 @@
                 }
             }
         }, 8000);
+    </script>
+    <!-- Remove the duplicate conversation list and message content sections at the bottom -->
+<!-- Keep only the first implementation (around line 442) -->
+
+<!-- Update the message management script -->
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Initialize message data structure
+        const mockMessages = [
+            {
+                id: 1,
+                sender: 'Marie Dupont',
+                avatar: 'https://randomuser.me/api/portraits/women/42.jpg',
+                content: 'Bonjour, la calculatrice est-elle toujours disponible ?',
+                timestamp: new Date(),
+                read: false,
+                product: {
+                    name: 'Calculatrice FX-991EX',
+                    price: '15 000 FCFA',
+                    image: 'https://m.media-amazon.com/images/I/71gB+QqXuYL._AC_UF1000,1000_QL80_.jpg'
+                }
+            },
+            {
+                id: 2,
+                sender: 'Thomas Martin',
+                avatar: 'https://randomuser.me/api/portraits/men/32.jpg',
+                content: 'Je suis intéressé par le livre de finance',
+                timestamp: new Date(Date.now() - 86400000),
+                read: false
+            }
+        ];
+    
+        // Initialize localStorage if empty
+        if (!localStorage.getItem('escicMessages')) {
+            localStorage.setItem('escicMessages', JSON.stringify(mockMessages));
+        }
+    
+        const conversations = JSON.parse(localStorage.getItem('escicMessages'));
+        let activeConversation = null;
+    
+        // Update conversation list
+        function renderConversations(filter = '') {
+            const conversationList = document.querySelector('#conversation-list .overflow-y-auto');
+            conversationList.innerHTML = '';
+    
+            conversations
+                .filter(conv => conv.sender.toLowerCase().includes(filter.toLowerCase()))
+                .forEach(conv => {
+                    const div = document.createElement('div');
+                    div.className = `conversation-item p-4 border-b border-gray-200 cursor-pointer flex items-center ${conv.id === activeConversation?.id ? 'conversation-active' : ''}`;
+                    div.innerHTML = `
+                        <div class="flex-shrink-0 relative">
+                            <img class="h-10 w-10 rounded-full" src="${conv.avatar}" alt="">
+                            ${!conv.read ? '<span class="online-dot absolute bottom-0 right-0"></span>' : ''}
+                        </div>
+                        <div class="ml-3 flex-1 min-w-0">
+                            <div class="flex justify-between items-center">
+                                <p class="text-sm font-medium text-gray-900 truncate">${conv.sender}</p>
+                                <span class="text-xs text-gray-500">${formatDate(conv.timestamp)}</span>
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <p class="text-sm text-gray-500 truncate">${conv.content}</p>
+                                ${!conv.read ? '<div class="unread-badge"></div>' : ''}
+                            </div>
+                        </div>
+                    `;
+                    div.onclick = () => loadConversation(conv);
+                    conversationList.appendChild(div);
+                });
+    
+            updateUnreadCount();
+        }
+    
+        // Load conversation messages
+        function loadConversation(conversation) {
+            activeConversation = conversation;
+            
+            // Update header
+            const header = document.querySelector('#chat-container .p-4');
+            header.querySelector('img').src = conversation.avatar;
+            header.querySelector('.text-sm.font-medium').textContent = conversation.sender;
+    
+            // Update product summary if exists
+            const productSummary = document.querySelector('.bg-blue-50');
+            if (conversation.product) {
+                productSummary.style.display = 'block';
+                productSummary.querySelector('img').src = conversation.product.image;
+                productSummary.querySelector('.font-medium').textContent = conversation.product.name;
+                productSummary.querySelector('.text-xs').textContent = `Prix: ${conversation.product.price}`;
+            } else {
+                productSummary.style.display = 'none';
+            }
+    
+            if (!conversation.read) {
+                markAsRead(conversation.id);
+            }
+    
+            renderConversations();
+        }
+    
+        // Message actions
+        document.getElementById('markAsReadBtn')?.addEventListener('click', () => {
+            if (activeConversation) markAsRead(activeConversation.id);
+        });
+    
+        document.getElementById('archiveBtn')?.addEventListener('click', () => {
+            if (activeConversation) archiveConversation(activeConversation.id);
+        });
+    
+        document.getElementById('deleteBtn')?.addEventListener('click', () => {
+            if (activeConversation) deleteConversation(activeConversation.id);
+        });
+    
+        // Helper functions
+        function markAsRead(id) {
+            const conversation = conversations.find(c => c.id === id);
+            if (conversation) {
+                conversation.read = true;
+                saveConversations();
+                renderConversations();
+            }
+        }
+    
+        function archiveConversation(id) {
+            const conversation = conversations.find(c => c.id === id);
+            if (conversation) {
+                conversation.archived = true;
+                saveConversations();
+                renderConversations();
+            }
+        }
+    
+        function deleteConversation(id) {
+            const index = conversations.findIndex(c => c.id === id);
+            if (index > -1) {
+                conversations.splice(index, 1);
+                saveConversations();
+                renderConversations();
+                if (activeConversation?.id === id) {
+                    activeConversation = null;
+                    document.getElementById('messages-container').innerHTML = '';
+                }
+            }
+        }
+    
+        function saveConversations() {
+            localStorage.setItem('escicMessages', JSON.stringify(conversations));
+        }
+    
+        function updateUnreadCount() {
+            const unreadCount = conversations.filter(c => !c.read).length;
+            const badges = document.querySelectorAll('#messageCount');
+            badges.forEach(badge => {
+                badge.textContent = unreadCount;
+                badge.style.display = unreadCount > 0 ? 'flex' : 'none';
+            });
+        }
+    
+        function formatDate(timestamp) {
+            const date = new Date(timestamp);
+            const now = new Date();
+            const diff = now - date;
+            
+            if (diff < 86400000) { // Less than 24 hours
+                return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            } else if (diff < 604800000) { // Less than 7 days
+                return ['Dim.', 'Lun.', 'Mar.', 'Mer.', 'Jeu.', 'Ven.', 'Sam.'][date.getDay()];
+            } else {
+                return date.toLocaleDateString();
+            }
+        }
+    
+        // Search functionality
+        document.querySelector('input[placeholder="Rechercher un étudiant ou un produit..."]')
+            .addEventListener('input', (e) => renderConversations(e.target.value));
+    
+        // Initial render
+        renderConversations();
+    });
     </script>
 </body>
 </html>
