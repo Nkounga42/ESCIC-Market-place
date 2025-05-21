@@ -7,71 +7,112 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="profil.html">
     <style>
         body {
             font-family: 'Poppins', sans-serif;
             scroll-behavior: smooth;
         }
-
-        .star-rating {
-            color: #fbbf24;
-            cursor: pointer;
-        }
-
-        .rating-modal {
-            background-color: rgba(0, 0, 0, 0.5);
-            z-index: 100;
-        }
-
-        /* Payment Method Styles */
-        .payment-method-card {
-            transition: all 0.3s ease;
-        }
-
-        .payment-method-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        }
-
         .product-card:hover {
             transform: translateY(-5px);
             box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
         }
-
-        /* Notification Panel Styles */
-        #notificationPanel {
-        max-height: 80vh;
-        display: flex;
-        flex-direction: column;
-    }
-
-    #notificationList {
-        max-height: 60vh;
-        overflow-y: auto;
-        scrollbar-width: thin;
-        scrollbar-color: #3b82f6 #f1f1f1;
-    }
-
-    #notificationList::-webkit-scrollbar {
-        width: 6px;
-    }
-
-    #notificationList::-webkit-scrollbar-track {
-        background: #f1f1f1;
-        border-radius: 10px;
-    }
-
-    #notificationList::-webkit-scrollbar-thumb {
-        background-color: #3b82f6;
-        border-radius: 10px;
-    }
-
-    .notification-panel-container {
-        overflow-y: auto;
-        max-height: calc(80vh - 120px);
-    }
-    </style>
+        .category-card:hover {
+            transform: scale(1.03);
+        }
+        .scroll-container {
+            scrollbar-width: thin;
+            scrollbar-color: #3b82f6 #f1f1f1;
+        }
+        .scroll-container::-webkit-scrollbar {
+            height: 6px;
+        }
+        .scroll-container::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+        .scroll-container::-webkit-scrollbar-thumb {
+            background-color: #3b82f6;
+            border-radius: 10px;
+        }
+        /* Styles pour les notifications */
+        .notification-badge {
+            position: absolute;
+            top: -6px;
+            right: -6px;
+            background-color: #ef4444; /* red-500 */
+            color: white;
+            border-radius: 50%;
+            width: 20px; /* Légèrement augmenté pour une meilleure visibilité */
+            height: 20px; /* Légèrement augmenté */
+            font-size: 11px; /* Ajusté */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid white;
+            font-weight: bold;
+        }
+        .notification-panel-container { /* Renommé pour éviter la confusion avec l'ID */
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        .notification-panel-container::-webkit-scrollbar {
+            width: 6px;
+        }
+        .notification-panel-container::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+        .notification-panel-container::-webkit-scrollbar-thumb {
+            background-color: #3b82f6; /* blue-600 */
+            border-radius: 10px;
+        }
+        .notification-item {
+            position: relative;
+            transition: all 0.2s ease;
+        }
+        .notification-item:hover {
+            background-color: #f3f4f6; /* gray-100 */
+        }
+        .notification-item.unread::before { /* Indicateur visuel pour non lu */
+            content: '';
+            position: absolute;
+            left: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background-color: #3b82f6; /* blue-600 */
+        }
+        .notification-dot { /* Peut être utilisé pour des indicateurs plus subtils */
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+        .notification-animation {
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0% {
+                box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); /* red-500 avec opacité */
+            }
+            70% {
+                box-shadow: 0 0 0 10px rgba(239, 68, 68, 0);
+            }
+            100% {
+                box-shadow: 0 0 0 0 rgba(239, 68, 68, 0);
+            }
+        }
+        /* Styles pour le toast (notification rapide en bas à droite) */
+        #toast {
+           z-index: 100; /* S'assurer qu'il est au-dessus d'autres éléments */
+        }
+        /* Styles pour le popup de notification */
+        #notificationPopup {
+            z-index: 100; /* S'assurer qu'il est au-dessus d'autres éléments */
+        }
 
     </style>
 </head>
@@ -105,7 +146,7 @@
                     </button>
                     
                     <div id="notificationPanel" class="absolute right-0 mt-2 w-80 md:w-96 bg-white rounded-lg shadow-lg transition-all duration-300 transform scale-0 origin-top-right opacity-0 z-[60]">
-                        <div class="p-3 border-b border-gray-200 flex justify-between items-center sticky top-0 bg-white">
+                        <div class="p-3 border-b border-gray-200 flex justify-between items-center">
                             <h3 class="font-semibold text-gray-700">Notifications</h3>
                             <div class="flex space-x-2">
                                 <button id="markAllAsRead" title="Tout marquer comme lu" class="text-sm text-blue-600 hover:text-blue-800">
@@ -121,10 +162,11 @@
                             <p id="noNotificationsMessage" class="p-4 text-center text-gray-500">Aucune nouvelle notification.</p>
                         </div>
                         
-                        <div class="p-3 border-t border-gray-200 text-center sticky bottom-0 bg-white">
+                        <div class="p-3 border-t border-gray-200 text-center">
                             <a href="#" class="text-sm text-blue-600 hover:text-blue-800">Voir toutes les notifications</a>
                         </div>
                     </div>
+                </div>
                 
                 <button id="cartButton" class="relative text-gray-600 hover:text-blue-800">
                     <i class="fas fa-shopping-cart text-xl"></i>
@@ -175,45 +217,6 @@
                     <span class="font-medium text-gray-600">Sous-total:</span>
                     <span id="cartSubtotal" class="font-bold">0.00€</span>
                 </div>
-                <div class="bg-gray-50 p-6 border-t">
-                    <div class="flex justify-between mb-4">
-                        <span class="font-medium text-gray-600">Sous-total:</span>
-                        <span id="cartSubtotal" class="font-bold">0.00€</span>
-                    </div>
-                    <div class="mb-4">
-                        <h4 class="font-medium text-gray-700 mb-2">Méthode de paiement</h4>
-                        <div class="grid grid-cols-2 gap-2">
-                            <div class="payment-method-card border rounded-lg p-3 cursor-pointer hover:border-blue-500" data-payment="mobile-money">
-                                <img src="https://via.placeholder.com/40" alt="Mobile Money" class="w-8 h-8 mb-2">
-                                <span class="text-sm">Mobile Money</span>
-                            </div>
-                            <div class="payment-method-card border rounded-lg p-3 cursor-pointer hover:border-blue-500" data-payment="airtel-money">
-                                <img src="https://via.placeholder.com/40" alt="Airtel Money" class="w-8 h-8 mb-2">
-                                <span class="text-sm">Airtel Money</span>
-                            </div>
-                        </div>
-                        
-                    <!-- Rating Modal -->
-    <div id="ratingModal" class="rating-modal fixed inset-0 flex items-center justify-center hidden">
-        <div class="bg-white rounded-lg p-6 w-96 shadow-xl">
-            <h3 class="text-xl font-bold mb-4">Évaluer le vendeur</h3>
-            <div class="mb-4">
-                <p class="text-gray-600 mb-2">Vendeur: <span id="ratingSellerName">-</span></p>
-                <div class="star-rating flex space-x-1">
-                    <i class="fas fa-star" data-rating="1"></i>
-                    <i class="fas fa-star" data-rating="2"></i>
-                    <i class="fas fa-star" data-rating="3"></i>
-                    <i class="fas fa-star" data-rating="4"></i>
-                    <i class="fas fa-star" data-rating="5"></i>
-                </div>
-            </div>
-            <textarea id="ratingComment" class="w-full p-2 border rounded-lg mb-4" placeholder="Votre commentaire (optionnel)"></textarea>
-            <div class="flex justify-end space-x-2">
-                <button id="cancelRating" class="px-4 py-2 border rounded-lg hover:bg-gray-100">Annuler</button>
-                <button id="submitRating" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">Envoyer</button>
-            </div>
-        </div>
-    </div>
                 <button id="checkoutButton" class="w-full bg-blue-700 hover:bg-blue-800 text-white py-3 rounded-lg font-medium transition duration-300 disabled:opacity-50 disabled:cursor-not-allowed" disabled>
                     Procéder au paiement
                 </button>
@@ -223,6 +226,8 @@
             </div>
         </div>
     </div>
+
+    
 
     <div id="overlay" class="fixed inset-0 bg-black opacity-0 pointer-events-none transition-opacity duration-300 ease-in-out z-[55]"></div> <div id="notificationPopup" class="fixed bottom-5 right-5 bg-white rounded-lg shadow-xl p-4 w-80 transform translate-y-24 opacity-0 transition-all duration-500 ease-in-out z-[100] border-l-4 border-blue-500">
         <div class="flex items-start">
@@ -605,54 +610,6 @@
                 closeCart();
                 closeNotificationPanel();
             });
-            // Rating System
-            const ratingModal = document.getElementById('ratingModal');
-            const stars = document.querySelectorAll('.star-rating i');
-            const ratingSellerName = document.getElementById('ratingSellerName');
-            let currentRating = 0;
-
-            stars.forEach(star => {
-                star.addEventListener('mouseover', function() {
-                    const rating = this.dataset.rating;
-                    highlightStars(rating);
-                });
-
-                star.addEventListener('click', function() {
-                    currentRating = this.dataset.rating;
-                    highlightStars(currentRating);
-                });
-            });
-
-            function highlightStars(rating) {
-                stars.forEach(star => {
-                    star.style.color = star.dataset.rating <= rating ? '#fbbf24' : '#d1d5db';
-                });
-            }
-
-            document.getElementById('cancelRating').addEventListener('click', () => {
-                ratingModal.classList.add('hidden');
-                currentRating = 0;
-                highlightStars(0);
-            });
-
-            document.getElementById('submitRating').addEventListener('click', () => {
-                const comment = document.getElementById('ratingComment').value;
-                showToast(`Merci pour votre évaluation (${currentRating} étoiles)!`);
-                ratingModal.classList.add('hidden');
-            });
-
-            // Payment Methods
-            const paymentMethods = document.querySelectorAll('.payment-method-card');
-            let selectedPayment = null;
-
-            paymentMethods.forEach(method => {
-                method.addEventListener('click', function() {
-                    paymentMethods.forEach(m => m.classList.remove('border-blue-500'));
-                    this.classList.add('border-blue-500');
-                    selectedPayment = this.dataset.payment;
-                    checkoutButton.disabled = false;
-                });
-            });
             continueShoppingButton.addEventListener('click', closeCart);
             
             function openCart() {
@@ -796,23 +753,25 @@
                 }, 3000);
             }
 
-           // Modify the existing checkout button click handler
-           checkoutButton.addEventListener('click', function() {
-                if (cart.length > 0 && selectedPayment) {
-                    showToast('Traitement du paiement...', 'bg-blue-500', 'fas fa-spinner fa-spin');
-                    
+            checkoutButton.addEventListener('click', function() {
+                if (cart.length > 0) {
+                    showToast('Redirection vers la page de paiement...', 'bg-blue-500', 'fas fa-credit-card');
                     setTimeout(() => {
-                        showToast('Paiement réussi!', 'bg-green-500', 'fas fa-check-circle');
-                        
-                        setTimeout(() => {
-                            ratingModal.classList.remove('hidden');
-                            ratingSellerName.textContent = cart[0].seller;
-                        }, 1000);
-
                         cart = [];
                         saveCart();
                         updateCartDisplay();
-                        closeCart();
+                        closeCart(); 
+                        showToast('Merci pour votre commande ! Panier vidé.', 'bg-green-500', 'fas fa-gift');
+                        // Simuler une notification de confirmation de commande
+                        addNotificationAndShowPopup({
+                            id: Date.now(), // ID unique
+                            icon: 'fas fa-receipt',
+                            title: 'Commande Confirmée',
+                            message: 'Votre commande a été passée avec succès !',
+                            timestamp: new Date().toISOString(),
+                            read: false,
+                            link: '#'
+                        });
                     }, 2000);
                 }
             });
@@ -1040,7 +999,87 @@
             }, 20000); // Après 20 secondes
 
         });
-        
+        // ... existing code ...
+
+// Add this in the script section where other notification functions are defined
+function sendToInbox(notification) {
+    // Create message object
+    const message = {
+        id: Date.now(),
+        sender: notification.sender || 'System',
+        recipient: 'user', // Replace with actual user ID
+        subject: notification.title,
+        content: notification.message,
+        timestamp: new Date().toISOString(),
+        read: false,
+        type: 'notification'
+    };
+
+    // Store in local storage for now (in real app, this would be a server call)
+    const messages = JSON.parse(localStorage.getItem('escicMessages')) || [];
+    messages.push(message);
+    localStorage.setItem('escicMessages', JSON.stringify(messages));
+
+    // Update inbox badge in Messages page
+    const inboxCount = document.querySelector('#messageCount');
+    if (inboxCount) {
+        inboxCount.textContent = messages.filter(m => !m.read).length;
+    }
+
+    // Redirect to messages page if clicked
+    notificationPopup.addEventListener('click', function() {
+        window.location.href = 'message.html';
+    });
+}
+
+// Modify the existing notification handling
+function showNotification(notification) {
+    // Existing notification display code...
+    
+    // Add this line to send to inbox
+    sendToInbox(notification);
+    
+    notificationPopupTitle.textContent = notification.title;
+    notificationPopupMessage.textContent = notification.message;
+    notificationPopup.classList.remove('translate-y-24', 'opacity-0');
+    
+    // Auto-hide after 5 seconds
+    setTimeout(() => {
+        closeNotificationPopup();
+    }, 5000);
+}
     </script>
+    <script>
+        // Update message count from localStorage
+        function updateMessageCount() {
+            const messages = JSON.parse(localStorage.getItem('escicMessages')) || [];
+            const unreadCount = messages.filter(msg => !msg.read).length;
+            const messageCountBadge = document.getElementById('messageCount');
+            
+            if (unreadCount > 0) {
+                messageCountBadge.textContent = unreadCount;
+                messageCountBadge.style.display = 'flex';
+            } else {
+                messageCountBadge.style.display = 'none';
+            }
+        }
+    
+        // Initial load
+        updateMessageCount();
+    
+        // Update count every 30 seconds
+        setInterval(updateMessageCount, 30000);
+    
+        // Listen for storage changes (in case messages are marked as read in another tab)
+        window.addEventListener('storage', function(e) {
+            if (e.key === 'escicMessages') {
+                updateMessageCount();
+            }
+        });
+    </script>
+    <a href="message.html" class="fixed bottom-20 right-6 bg-blue-600 hover:bg-blue-700 text-white rounded-full p-4 shadow-lg transition-all duration-300 hover:scale-110 z-50">
+        <i class="fas fa-comments text-xl"></i>
+        <span id="messageCount" class="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">0</span>
+    </a>
 </body>
 </html>
