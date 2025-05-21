@@ -13,123 +13,65 @@
             font-family: 'Poppins', sans-serif;
             scroll-behavior: smooth;
         }
+
         .star-rating {
             color: #fbbf24;
             cursor: pointer;
         }
+
         .rating-modal {
             background-color: rgba(0, 0, 0, 0.5);
             z-index: 100;
         }
+
         /* Payment Method Styles */
         .payment-method-card {
             transition: all 0.3s ease;
         }
+
         .payment-method-card:hover {
             transform: translateY(-2px);
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         }
+
         .product-card:hover {
             transform: translateY(-5px);
             box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
         }
-        .category-card:hover {
-            transform: scale(1.03);
-        }
-        .scroll-container {
-            scrollbar-width: thin;
-            scrollbar-color: #3b82f6 #f1f1f1;
-        }
-        .scroll-container::-webkit-scrollbar {
-            height: 6px;
-        }
-        .scroll-container::-webkit-scrollbar-track {
-            background: #f1f1f1;
-            border-radius: 10px;
-        }
-        .scroll-container::-webkit-scrollbar-thumb {
-            background-color: #3b82f6;
-            border-radius: 10px;
-        }
-        /* Styles pour les notifications */
-        .notification-badge {
-            position: absolute;
-            top: -6px;
-            right: -6px;
-            background-color: #ef4444; /* red-500 */
-            color: white;
-            border-radius: 50%;
-            width: 20px; /* Légèrement augmenté pour une meilleure visibilité */
-            height: 20px; /* Légèrement augmenté */
-            font-size: 11px; /* Ajusté */
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border: 2px solid white;
-            font-weight: bold;
-        }
-        .notification-panel-container { /* Renommé pour éviter la confusion avec l'ID */
-            max-height: 400px;
-            overflow-y: auto;
-        }
-        .notification-panel-container::-webkit-scrollbar {
-            width: 6px;
-        }
-        .notification-panel-container::-webkit-scrollbar-track {
-            background: #f1f1f1;
-            border-radius: 10px;
-        }
-        .notification-panel-container::-webkit-scrollbar-thumb {
-            background-color: #3b82f6; /* blue-600 */
-            border-radius: 10px;
-        }
-        .notification-item {
-            position: relative;
-            transition: all 0.2s ease;
-        }
-        .notification-item:hover {
-            background-color: #f3f4f6; /* gray-100 */
-        }
-        .notification-item.unread::before { /* Indicateur visuel pour non lu */
-            content: '';
-            position: absolute;
-            left: 10px;
-            top: 50%;
-            transform: translateY(-50%);
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            background-color: #3b82f6; /* blue-600 */
-        }
-        .notification-dot { /* Peut être utilisé pour des indicateurs plus subtils */
-            display: inline-block;
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            margin-right: 8px;
-        }
-        .notification-animation {
-            animation: pulse 2s infinite;
-        }
-        @keyframes pulse {
-            0% {
-                box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); /* red-500 avec opacité */
-            }
-            70% {
-                box-shadow: 0 0 0 10px rgba(239, 68, 68, 0);
-            }
-            100% {
-                box-shadow: 0 0 0 0 rgba(239, 68, 68, 0);
-            }
-        }
-        /* Styles pour le toast (notification rapide en bas à droite) */
-        #toast {
-           z-index: 100; /* S'assurer qu'il est au-dessus d'autres éléments */
-        }
-        /* Styles pour le popup de notification */
-        #notificationPopup {
-            z-index: 100; /* S'assurer qu'il est au-dessus d'autres éléments */
-        }
+
+        /* Notification Panel Styles */
+        #notificationPanel {
+        max-height: 80vh;
+        display: flex;
+        flex-direction: column;
+    }
+
+    #notificationList {
+        max-height: 60vh;
+        overflow-y: auto;
+        scrollbar-width: thin;
+        scrollbar-color: #3b82f6 #f1f1f1;
+    }
+
+    #notificationList::-webkit-scrollbar {
+        width: 6px;
+    }
+
+    #notificationList::-webkit-scrollbar-track {
+        background: #f1f1f1;
+        border-radius: 10px;
+    }
+
+    #notificationList::-webkit-scrollbar-thumb {
+        background-color: #3b82f6;
+        border-radius: 10px;
+    }
+
+    .notification-panel-container {
+        overflow-y: auto;
+        max-height: calc(80vh - 120px);
+    }
+    </style>
 
     </style>
 </head>
@@ -163,7 +105,7 @@
                     </button>
                     
                     <div id="notificationPanel" class="absolute right-0 mt-2 w-80 md:w-96 bg-white rounded-lg shadow-lg transition-all duration-300 transform scale-0 origin-top-right opacity-0 z-[60]">
-                        <div class="p-3 border-b border-gray-200 flex justify-between items-center">
+                        <div class="p-3 border-b border-gray-200 flex justify-between items-center sticky top-0 bg-white">
                             <h3 class="font-semibold text-gray-700">Notifications</h3>
                             <div class="flex space-x-2">
                                 <button id="markAllAsRead" title="Tout marquer comme lu" class="text-sm text-blue-600 hover:text-blue-800">
@@ -179,11 +121,10 @@
                             <p id="noNotificationsMessage" class="p-4 text-center text-gray-500">Aucune nouvelle notification.</p>
                         </div>
                         
-                        <div class="p-3 border-t border-gray-200 text-center">
+                        <div class="p-3 border-t border-gray-200 text-center sticky bottom-0 bg-white">
                             <a href="#" class="text-sm text-blue-600 hover:text-blue-800">Voir toutes les notifications</a>
                         </div>
                     </div>
-                </div>
                 
                 <button id="cartButton" class="relative text-gray-600 hover:text-blue-800">
                     <i class="fas fa-shopping-cart text-xl"></i>
@@ -251,9 +192,7 @@
                                 <span class="text-sm">Airtel Money</span>
                             </div>
                         </div>
-                    </div>
-                    <div id="paymentMethods" class="grid grid-cols-2 gap-2">
-                        <div class="payment-method-card border rounded-lg p-3 cursor-pointer hover:border-blue-500" data-payment="mobile-money">
+                        
                     <!-- Rating Modal -->
     <div id="ratingModal" class="rating-modal fixed inset-0 flex items-center justify-center hidden">
         <div class="bg-white rounded-lg p-6 w-96 shadow-xl">
