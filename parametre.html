@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Paramètres du vendeur - ESCIC-Market</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    body {
+      font-family: 'Poppins', sans-serif;
+    }
+    .menu-item {
+      transition: all 0.2s ease;
+    }
+    .menu-item:hover {
+      background-color: #EFF6FF;
+      border-left: 3px solid #3B82F6;
+    }
+    .active-menu-item {
+      background-color: #EFF6FF;
+      border-left: 3px solid #3B82F6;
+      color: #1E40AF;
+    }
+    .mobile-menu {
+      transform: translateX(-100%);
+      transition: transform 0.3s ease;
+    }
+    .mobile-menu.open {
+      transform: translateX(0);
+    }
+  </style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+  <!-- Mobile Menu Button -->
+  <button id="mobileMenuButton" class="md:hidden fixed top-4 left-4 z-50 bg-white p-2 rounded-full shadow-lg">
+    <i class="fas fa-bars text-blue-800 text-xl"></i>
+  </button>
+  <!-- Mobile Menu Backdrop -->
+  <div id="mobileBackdrop" class="fixed inset-0 bg-black bg-opacity-50 z-40 hidden"></div>
+  <!-- Mobile Menu -->
+  <div id="mobileMenu" class="mobile-menu fixed inset-y-0 left-0 z-50 w-64 bg-white shadow-lg overflow-y-auto">
+    <div class="p-4 border-b border-gray-200">
+      <div class="flex items-center">
+        <img src="https://via.placeholder.com/40" alt="Profile" class="w-10 h-10 rounded-full mr-3">
+        <div>
+          <p class="font-semibold">Yoane pequene</p>
+          <p class="text-xs text-gray-500">Vendeur actif</p>
+        </div>
+      </div>
+    </div>
+    <nav class="flex-1 p-2">
+      <a href="Vendeur.html" class="menu-item flex items-center p-3 rounded-lg">
+        <i class="fas fa-home mr-3 text-blue-800"></i>
+        <span>Mon kiosque</span>
+      </a>
+      <a href="Ajouter.html" class="menu-item flex items-center p-3 rounded-lg">
+        <i class="fas fa-plus-circle mr-3 text-blue-800"></i>
+        <span>Ajouter un article</span>
+      </a>
+      <a href="Message.html" class="menu-item flex items-center p-3 rounded-lg">
+        <i class="fas fa-comments mr-3 text-blue-800"></i>
+        <span>Messages</span>
+      </a>
+      <a href="profil.html" class="menu-item flex items-center p-3 rounded-lg">
+        <i class="fas fa-user mr-3 text-blue-800"></i>
+        <span>Profil</span>
+      </a>
+      <a href="evaluation.html" class="menu-item flex items-center p-3 rounded-lg">
+        <i class="fas fa-star mr-3 text-blue-800"></i>
+        <span>Évaluations</span>
+      </a>
+      <a href="parametre.html" class="active-menu-item flex items-center p-3 rounded-lg">
+        <i class="fas fa-cog mr-3 text-blue-800"></i>
+        <span>Paramètres</span>
+      </a>
+      <a href="recherche.html" class="menu-item flex items-center p-3 rounded-lg">
+        <i class="fas fa-search mr-3 text-blue-800"></i>
+        <span>Recherche</span>
+      </a>
+      <a href="login/connection.html" class="menu-item flex items-center p-3 rounded-lg text-red-600">
+        <i class="fas fa-sign-out-alt mr-3"></i>
+        <span>Déconnexion</span>
+      </a>
+    </nav>
+  </div>
+  <!-- Desktop Sidebar -->
+  <div class="hidden md:flex md:w-64 md:flex-col md:fixed md:inset-y-0">
+    <div class="flex flex-col flex-grow border-r border-gray-200 bg-white overflow-y-auto">
+      <div class="p-4 border-b border-gray-200">
+        <div class="flex items-center">
+          <img src="https://via.placeholder.com/40" alt="Profile" class="w-10 h-10 rounded-full mr-3">
+          <div>
+            <p class="font-semibold">Yoane pequene</p>
+            <p class="text-xs text-gray-500">Vendeur actif</p>
+          </div>
+        </div>
+      </div>
+      <nav class="flex-1 p-2">
+        <a href="Vendeur.html" class="menu-item flex items-center p-3 rounded-lg">
+          <i class="fas fa-home mr-3 text-blue-800"></i>
+          <span>Mon kiosque</span>
+        </a>
+        <a href="Ajouter.html" class="menu-item flex items-center p-3 rounded-lg">
+          <i class="fas fa-plus-circle mr-3 text-blue-800"></i>
+          <span>Ajouter un article</span>
+        </a>
+        <a href="Message.html" class="menu-item flex items-center p-3 rounded-lg">
+          <i class="fas fa-comments mr-3 text-blue-800"></i>
+          <span>Messages</span>
+        </a>
+        <a href="profil.html" class="menu-item flex items-center p-3 rounded-lg">
+          <i class="fas fa-user mr-3 text-blue-800"></i>
+          <span>Profil</span>
+        </a>
+        <a href="evaluation.html" class="menu-item flex items-center p-3 rounded-lg">
+          <i class="fas fa-star mr-3 text-blue-800"></i>
+          <span>Évaluations</span>
+        </a>
+        <a href="parametre.html" class="active-menu-item flex items-center p-3 rounded-lg">
+          <i class="fas fa-cog mr-3 text-blue-800"></i>
+          <span>Paramètres</span>
+        </a>
+        <a href="recherche.html" class="menu-item flex items-center p-3 rounded-lg">
+          <i class="fas fa-search mr-3 text-blue-800"></i>
+          <span>Recherche</span>
+        </a>
+        <a href="login/connection.html" class="menu-item flex items-center p-3 rounded-lg text-red-600">
+          <i class="fas fa-sign-out-alt mr-3"></i>
+          <span>Déconnexion</span>
+        </a>
+      </nav>
+    </div>
+  </div>
+  <!-- Main Content -->
+  <div class="md:pl-64">
+    <div class="max-w-2xl mx-auto mt-10 bg-white rounded-lg shadow-lg p-8">
+      <div class="mb-6">
+        <a href="Vendeur.html" class="inline-flex items-center bg-blue-700 hover:bg-blue-800 text-white px-4 py-2 rounded-md font-semibold transition"><i class="fas fa-arrow-left mr-2"></i>Retour</a>
+      </div>
+      <h1 class="text-3xl font-bold text-blue-800 mb-6 flex items-center"><i class="fas fa-cog mr-3"></i> Paramètres du vendeur</h1>
+      <form class="space-y-6">
+        <!-- Profil -->
+        <div>
+          <h2 class="text-xl font-semibold text-gray-700 mb-2">Profil</h2>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label class="block text-gray-600 mb-1">Nom</label>
+              <input type="text" class="w-full border border-gray-300 rounded-md px-3 py-2" value="Yoane pequene">
+            </div>
+            <div>
+              <label class="block text-gray-600 mb-1">Email</label>
+              <input type="email" class="w-full border border-gray-300 rounded-md px-3 py-2" value="vendeur@email.com">
+            </div>
+          </div>
+        </div>
+        <!-- Mot de passe -->
+        <div>
+          <h2 class="text-xl font-semibold text-gray-700 mb-2">Sécurité</h2>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label class="block text-gray-600 mb-1">Nouveau mot de passe</label>
+              <input type="password" class="w-full border border-gray-300 rounded-md px-3 py-2" placeholder="Nouveau mot de passe">
+            </div>
+            <div>
+              <label class="block text-gray-600 mb-1">Confirmer le mot de passe</label>
+              <input type="password" class="w-full border border-gray-300 rounded-md px-3 py-2" placeholder="Confirmer le mot de passe">
+            </div>
+          </div>
+          <div class="flex items-center mt-3">
+            <input type="checkbox" id="2fa" class="form-checkbox h-5 w-5 text-blue-600">
+            <label for="2fa" class="ml-2 text-gray-600">Activer la double authentification (2FA)</label>
+          </div>
+        </div>
+        <!-- Notifications -->
+        <div>
+          <h2 class="text-xl font-semibold text-gray-700 mb-2">Notifications</h2>
+          <div class="flex items-center justify-between">
+            <span class="font-semibold text-gray-700">Notifications Email</span>
+            <label class="inline-flex items-center cursor-pointer">
+              <input type="checkbox" class="form-checkbox h-5 w-5 text-blue-600" checked>
+              <span class="ml-2 text-gray-600">Activer</span>
+            </label>
+          </div>
+          <div class="flex items-center justify-between mt-2">
+            <span class="font-semibold text-gray-700">Notifications SMS</span>
+            <label class="inline-flex items-center cursor-pointer">
+              <input type="checkbox" class="form-checkbox h-5 w-5 text-blue-600">
+              <span class="ml-2 text-gray-600">Activer</span>
+            </label>
+          </div>
+        </div>
+        <!-- Préférences d'affichage -->
+        <div>
+          <h2 class="text-xl font-semibold text-gray-700 mb-2">Préférences</h2>
+          <div class="flex items-center justify-between">
+            <span class="font-semibold text-gray-700">Mode sombre</span>
+            <label class="inline-flex items-center cursor-pointer">
+              <input type="checkbox" id="darkMode" class="form-checkbox h-5 w-5 text-blue-600">
+              <span class="ml-2 text-gray-600">Activer</span>
+            </label>
+          </div>
+        </div>
+        <!-- Moyens de paiement -->
+        <div>
+          <h2 class="text-xl font-semibold text-gray-700 mb-2">Moyens de paiement</h2>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label class="block text-gray-600 mb-1">Ajouter un compte bancaire</label>
+              <input type="text" class="w-full border border-gray-300 rounded-md px-3 py-2" placeholder="IBAN ou numéro de compte">
+            </div>
+            <div>
+              <label class="block text-gray-600 mb-1">Ajouter un compte Mobile Money</label>
+              <input type="text" class="w-full border border-gray-300 rounded-md px-3 py-2" placeholder="Numéro Mobile Money">
+            </div>
+          </div>
+        </div>
+        <!-- Adresse de livraison -->
+        <div>
+          <h2 class="text-xl font-semibold text-gray-700 mb-2">Adresse de livraison</h2>
+          <input type="text" class="w-full border border-gray-300 rounded-md px-3 py-2" placeholder="Adresse complète">
+        </div>
+        <!-- Suppression de compte -->
+        <div class="pt-4 border-t mt-6">
+          <button type="button" class="w-full bg-red-500 hover:bg-red-600 text-white py-2 rounded-md font-semibold transition"><i class="fas fa-trash-alt mr-2"></i>Supprimer mon compte</button>
+        </div>
+        <div class="flex justify-end mt-6">
+          <button type="submit" class="bg-blue-700 hover:bg-blue-800 text-white px-6 py-2 rounded-md font-semibold transition">Enregistrer les modifications</button>
+        </div>
+      </form>
+    </div>
+  </div>
+  <script>
+    // Mobile menu toggle
+    const mobileMenuButton = document.getElementById('mobileMenuButton');
+    const mobileMenu = document.getElementById('mobileMenu');
+    const mobileBackdrop = document.getElementById('mobileBackdrop');
+    mobileMenuButton.addEventListener('click', () => {
+      mobileMenu.classList.toggle('open');
+      mobileBackdrop.classList.toggle('hidden');
+    });
+    mobileBackdrop.addEventListener('click', () => {
+      mobileMenu.classList.remove('open');
+      mobileBackdrop.classList.add('hidden');
+    });
+    // Exemple de gestion du mode sombre (front uniquement)
+    document.getElementById('darkMode').addEventListener('change', function(e) {
+      if (e.target.checked) {
+        document.body.classList.add('bg-gray-900', 'text-white');
+      } else {
+        document.body.classList.remove('bg-gray-900', 'text-white');
+      }
+    });
+  </script>
+</body>
+</html>

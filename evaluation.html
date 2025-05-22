@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Évaluations du vendeur - ESCIC-Market</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-gray-50 min-h-screen">
+  <style>
+    body {
+      font-family: 'Poppins', sans-serif;
+    }
+    .menu-item {
+      transition: all 0.2s ease;
+    }
+    .menu-item:hover {
+      background-color: #EFF6FF;
+      border-left: 3px solid #3B82F6;
+    }
+    .active-menu-item {
+      background-color: #EFF6FF;
+      border-left: 3px solid #3B82F6;
+      color: #1E40AF;
+    }
+    .mobile-menu {
+      transform: translateX(-100%);
+      transition: transform 0.3s ease;
+    }
+    .mobile-menu.open {
+      transform: translateX(0);
+    }
+    .product-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2px;
+    }
+    @media (min-width: 640px) {
+      .product-grid {
+        grid-template-columns: repeat(3, 1fr);
+      }
+    }
+    @media (min-width: 768px) {
+      .product-grid {
+        grid-template-columns: repeat(4, 1fr);
+      }
+    }
+    @media (min-width: 1024px) {
+      .product-grid {
+        grid-template-columns: repeat(5, 1fr);
+      }
+    }
+    .product-card {
+      position: relative;
+      aspect-ratio: 1/1;
+      overflow: hidden;
+      transition: transform 0.3s ease;
+    }
+    .product-card:hover {
+      transform: scale(0.98);
+    }
+    .product-overlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.3);
+      opacity: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: opacity 0.3s ease;
+    }
+    .product-card:hover .product-overlay {
+      opacity: 1;
+    }
+  </style>
+</head>
+  <!-- Mobile Menu Button -->
+  <button id="mobileMenuButton" class="md:hidden fixed top-4 left-4 z-50 bg-white p-2 rounded-full shadow-lg">
+    <i class="fas fa-bars text-blue-800 text-xl"></i>
+  </button>
+  <!-- Mobile Menu Backdrop -->
+  <div id="mobileBackdrop" class="fixed inset-0 bg-black bg-opacity-50 z-40 hidden"></div>
+  <!-- Mobile Menu -->
+  <div id="mobileMenu" class="mobile-menu fixed inset-y-0 left-0 z-50 w-64 bg-white shadow-lg overflow-y-auto">
+    <div class="p-4 border-b border-gray-200">
+      <div class="flex items-center">
+        <img src="https://via.placeholder.com/40" alt="Profile" class="w-10 h-10 rounded-full mr-3">
+        <div>
+          <p class="font-semibold">Yoane pequene</p>
+          <p class="text-xs text-gray-500">Vendeur actif</p>
+        </div>
+      </div>
+    </div>
+    <nav class="flex-1 p-2">
+      <a href="Vendeur.html" class="menu-item flex items-center p-3 rounded-lg">
+        <i class="fas fa-home mr-3 text-blue-800"></i>
+        <span>Mon kiosque</span>
+      </a>
+      <a href="Ajouter.html" class="menu-item flex items-center p-3 rounded-lg">
+        <i class="fas fa-plus-circle mr-3 text-blue-800"></i>
+        <span>Ajouter un article</span>
+      </a>
+      <a href="Message.html" class="menu-item flex items-center p-3 rounded-lg">
+        <i class="fas fa-comments mr-3 text-blue-800"></i>
+        <span>Messages</span>
+      </a>
+      <a href="profil.html" class="active-menu-item flex items-center p-3 rounded-lg">
+        <i class="fas fa-user mr-3 text-blue-800"></i>
+        <span>Profil</span>
+      </a>
+      <a href="evaluation.html" class="menu-item flex items-center p-3 rounded-lg">
+        <i class="fas fa-star mr-3 text-blue-800"></i>
+        <span>Évaluations</span>
+      </a>
+      <a href="parametre.html" class="menu-item flex items-center p-3 rounded-lg">
+        <i class="fas fa-cog mr-3 text-blue-800"></i>
+        <span>Paramètres</span>
+      </a>
+      <a href="recherche.html" class="menu-item flex items-center p-3 rounded-lg">
+        <i class="fas fa-search mr-3 text-blue-800"></i>
+        <span>Recherche</span>
+      </a>
+      <a href="login/connection.html" class="menu-item flex items-center p-3 rounded-lg text-red-600">
+        <i class="fas fa-sign-out-alt mr-3"></i>
+        <span>Déconnexion</span>
+      </a>
+    </nav>
+  </div>
+  <!-- Desktop Sidebar -->
+  <div class="hidden md:flex md:w-64 md:flex-col md:fixed md:inset-y-0">
+    <div class="flex flex-col flex-grow border-r border-gray-200 bg-white overflow-y-auto">
+      <div class="p-4 border-b border-gray-200">
+        <div class="flex items-center">
+          <img src="https://via.placeholder.com/40" alt="Profile" class="w-10 h-10 rounded-full mr-3">
+          <div>
+            <p class="font-semibold">Yoane pequene</p>
+            <p class="text-xs text-gray-500">Vendeur actif</p>
+          </div>
+        </div>
+      </div>
+      <nav class="flex-1 p-2">
+        <a href="Vendeur.html" class="menu-item flex items-center p-3 rounded-lg">
+          <i class="fas fa-home mr-3 text-blue-800"></i>
+          <span>Mon kiosque</span>
+        </a>
+         <a href="Ajouter.html" class="menu-item flex items-center p-3 rounded-lg">
+          <i class="fas fa-plus-circle mr-3 text-blue-800"></i>
+          <span>Ajouter un nouvel article</span>
+        </a>
+        <a href="Message.html" class="menu-item flex items-center p-3 rounded-lg">
+          <i class="fas fa-comments mr-3 text-blue-800"></i>
+          <span>Messages</span>
+        </a>
+         <a href="profil.html" class="menu-item flex items-center p-3 rounded-lg">
+          <i class="fas fa-user mr-3 text-blue-800"></i>
+          <span>Profil</span>
+        </a>
+        <a href="evaluation.html" class="active-menu-item flex items-center p-3 rounded-lg">
+          <i class="fas fa-star mr-3 text-blue-800"></i>
+          <span>Évaluations</span>
+        </a>
+        <a href="parametre.html" class="menu-item flex items-center p-3 rounded-lg">
+          <i class="fas fa-cog mr-3 text-blue-800"></i>
+          <span>Paramètres</span>
+        </a>
+       
+       
+        <a href="recherche.html" class="menu-item flex items-center p-3 rounded-lg">
+            <i class="fas fa-search mr-3 text-blue-800"></i>
+            <span>Recherche</span>
+        </a>
+        <a href="connection.html" class="menu-item flex items-center p-3 rounded-lg mt-4 text-red-500">
+          <i class="fas fa-sign-out-alt mr-3"></i>
+          <span>Déconnexion</span>
+        </a>
+      </nav>
+    </div>
+  </div>
+  <!-- Main Content -->
+  <div class="md:pl-64">
+    <div class="max-w-2xl mx-auto mt-10 bg-white rounded-lg shadow-lg p-8">
+      <h1 class="text-3xl font-bold text-blue-800 mb-6 flex items-center"><i class="fas fa-star mr-3 text-yellow-400"></i> Mes évaluations</h1>
+      <!-- Résumé de la note -->
+      <div class="flex items-center mb-6">
+        <div class="flex flex-col items-center mr-8">
+          <span class="text-5xl font-bold text-yellow-400">4.7</span>
+          <div class="flex items-center mt-1">
+            <i class="fas fa-star text-yellow-400"></i>
+            <i class="fas fa-star text-yellow-400"></i>
+            <i class="fas fa-star text-yellow-400"></i>
+            <i class="fas fa-star text-yellow-400"></i>
+            <i class="fas fa-star-half-alt text-yellow-400"></i>
+          </div>
+          <span class="text-gray-500 text-sm mt-1">Basé sur 23 avis</span>
+        </div>
+        <div class="flex-1">
+          <!-- Répartition des étoiles -->
+          <div class="space-y-1">
+            <div class="flex items-center">
+              <span class="w-10 text-sm text-gray-600">5 <i class='fas fa-star text-yellow-400'></i></span>
+              <div class="flex-1 bg-gray-200 rounded h-3 mx-2">
+                <div class="bg-yellow-400 h-3 rounded" style="width: 70%"></div>
+              </div>
+              <span class="w-8 text-right text-gray-500 text-xs">16</span>
+            </div>
+            <div class="flex items-center">
+              <span class="w-10 text-sm text-gray-600">4 <i class='fas fa-star text-yellow-400'></i></span>
+              <div class="flex-1 bg-gray-200 rounded h-3 mx-2">
+                <div class="bg-yellow-400 h-3 rounded" style="width: 20%"></div>
+              </div>
+              <span class="w-8 text-right text-gray-500 text-xs">5</span>
+            </div>
+            <div class="flex items-center">
+              <span class="w-10 text-sm text-gray-600">3 <i class='fas fa-star text-yellow-400'></i></span>
+              <div class="flex-1 bg-gray-200 rounded h-3 mx-2">
+                <div class="bg-yellow-400 h-3 rounded" style="width: 7%"></div>
+              </div>
+              <span class="w-8 text-right text-gray-500 text-xs">1</span>
+            </div>
+            <div class="flex items-center">
+              <span class="w-10 text-sm text-gray-600">2 <i class='fas fa-star text-yellow-400'></i></span>
+              <div class="flex-1 bg-gray-200 rounded h-3 mx-2">
+                <div class="bg-yellow-400 h-3 rounded" style="width: 2%"></div>
+              </div>
+              <span class="w-8 text-right text-gray-500 text-xs">0</span>
+            </div>
+            <div class="flex items-center">
+              <span class="w-10 text-sm text-gray-600">1 <i class='fas fa-star text-yellow-400'></i></span>
+              <div class="flex-1 bg-gray-200 rounded h-3 mx-2">
+                <div class="bg-yellow-400 h-3 rounded" style="width: 1%"></div>
+              </div>
+              <span class="w-8 text-right text-gray-500 text-xs">1</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- Liste des avis -->
+      <div class="divide-y divide-gray-200">
+        <div class="py-4">
+          <div class="flex items-center mb-1">
+            <img src="https://via.placeholder.com/32" alt="avatar" class="w-8 h-8 rounded-full mr-2">
+            <span class="font-semibold">Aminata T.</span>
+            <div class="ml-2 flex">
+              <i class="fas fa-star text-yellow-400 text-sm"></i>
+              <i class="fas fa-star text-yellow-400 text-sm"></i>
+              <i class="fas fa-star text-yellow-400 text-sm"></i>
+              <i class="fas fa-star text-yellow-400 text-sm"></i>
+              <i class="fas fa-star-half-alt text-yellow-400 text-sm"></i>
+            </div>
+            <span class="ml-auto text-xs text-gray-400">il y a 2 jours</span>
+          </div>
+          <p class="text-gray-700 text-sm">Vendeur très réactif, produit conforme à la description. Je recommande !</p>
+        </div>
+        <div class="py-4">
+          <div class="flex items-center mb-1">
+            <img src="https://via.placeholder.com/32" alt="avatar" class="w-8 h-8 rounded-full mr-2">
+            <span class="font-semibold">Yacine D.</span>
+            <div class="ml-2 flex">
+              <i class="fas fa-star text-yellow-400 text-sm"></i>
+              <i class="fas fa-star text-yellow-400 text-sm"></i>
+              <i class="fas fa-star text-yellow-400 text-sm"></i>
+              <i class="fas fa-star text-yellow-400 text-sm"></i>
+              <i class="fas fa-star text-yellow-400 text-sm"></i>
+            </div>
+            <span class="ml-auto text-xs text-gray-400">il y a 1 semaine</span>
+          </div>
+          <p class="text-gray-700 text-sm">Super expérience, livraison rapide et vendeur très sympa.</p>
+        </div>
+        <div class="py-4">
+          <div class="flex items-center mb-1">
+            <img src="https://via.placeholder.com/32" alt="avatar" class="w-8 h-8 rounded-full mr-2">
+            <span class="font-semibold">Grace K.</span>
+            <div class="ml-2 flex">
+              <i class="fas fa-star text-yellow-400 text-sm"></i>
+              <i class="fas fa-star text-yellow-400 text-sm"></i>
+              <i class="fas fa-star text-yellow-400 text-sm"></i>
+              <i class="fas fa-star text-yellow-400 text-sm"></i>
+              <i class="fas fa-star text-gray-300 text-sm"></i>
+            </div>
+            <span class="ml-auto text-xs text-gray-400">il y a 3 semaines</span>
+          </div>
+          <p class="text-gray-700 text-sm">Bon vendeur, mais un peu de retard sur la livraison.</p>
+        </div>
+        <div class="py-4">
+          <div class="flex items-center mb-1">
+            <img src="https://via.placeholder.com/32" alt="avatar" class="w-8 h-8 rounded-full mr-2">
+            <span class="font-semibold">Julien R.</span>
+            <div class="ml-2 flex">
+              <i class="fas fa-star text-yellow-400 text-sm"></i>
+              <i class="fas fa-star text-yellow-400 text-sm"></i>
+              <i class="fas fa-star text-yellow-400 text-sm"></i>
+              <i class="fas fa-star-half-alt text-yellow-400 text-sm"></i>
+              <i class="fas fa-star text-gray-300 text-sm"></i>
+            </div>
+            <span class="ml-auto text-xs text-gray-400">il y a 1 mois</span>
+          </div>
+          <p class="text-gray-700 text-sm">Bonne communication, mais le produit était légèrement abîmé.</p>
+        </div>
+      </div>
+      <!-- Fin liste avis -->
+      <div class="mt-8 text-center">
+        <a href="Vendeur.html" class="bg-blue-700 hover:bg-blue-800 text-white px-6 py-2 rounded-md font-semibold transition inline-flex items-center"><i class="fas fa-arrow-left mr-2"></i>Retour au kiosque</a>
+      </div>
+    </div>
+  </div>
+  <script>
+    // Mobile menu toggle
+    const mobileMenuButton = document.getElementById('mobileMenuButton');
+    const mobileMenu = document.getElementById('mobileMenu');
+    const mobileBackdrop = document.getElementById('mobileBackdrop');
+    mobileMenuButton.addEventListener('click', () => {
+      mobileMenu.classList.toggle('open');
+      mobileBackdrop.classList.toggle('hidden');
+    });
+    mobileBackdrop.addEventListener('click', () => {
+      mobileMenu.classList.remove('open');
+      mobileBackdrop.classList.add('hidden');
+    });
+    
+  </script>
+</body>
+</html>

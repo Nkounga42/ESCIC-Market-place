@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Profil du vendeur - ESCIC-Market</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    body {
+      font-family: 'Poppins', sans-serif;
+    }
+    .menu-item {
+      transition: all 0.2s ease;
+    }
+    .menu-item:hover {
+      background-color: #EFF6FF;
+      border-left: 3px solid #3B82F6;
+    }
+    .active-menu-item {
+      background-color: #EFF6FF;
+      border-left: 3px solid #3B82F6;
+      color: #1E40AF;
+    }
+    .mobile-menu {
+      transform: translateX(-100%);
+      transition: transform 0.3s ease;
+    }
+    .mobile-menu.open {
+      transform: translateX(0);
+    }
+    .product-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2px;
+    }
+    @media (min-width: 640px) {
+      .product-grid {
+        grid-template-columns: repeat(3, 1fr);
+      }
+    }
+    @media (min-width: 768px) {
+      .product-grid {
+        grid-template-columns: repeat(4, 1fr);
+      }
+    }
+    @media (min-width: 1024px) {
+      .product-grid {
+        grid-template-columns: repeat(5, 1fr);
+      }
+    }
+    .product-card {
+      position: relative;
+      aspect-ratio: 1/1;
+      overflow: hidden;
+      transition: transform 0.3s ease;
+    }
+    .product-card:hover {
+      transform: scale(0.98);
+    }
+    .product-overlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.3);
+      opacity: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: opacity 0.3s ease;
+    }
+    .product-card:hover .product-overlay {
+      opacity: 1;
+    }
+  </style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+  <!-- Mobile Menu Button -->
+  <button id="mobileMenuButton" class="md:hidden fixed top-4 left-4 z-50 bg-white p-2 rounded-full shadow-lg">
+    <i class="fas fa-bars text-blue-800 text-xl"></i>
+  </button>
+  <!-- Mobile Menu Backdrop -->
+  <div id="mobileBackdrop" class="fixed inset-0 bg-black bg-opacity-50 z-40 hidden"></div>
+  <!-- Mobile Menu -->
+  <div id="mobileMenu" class="mobile-menu fixed inset-y-0 left-0 z-50 w-64 bg-white shadow-lg overflow-y-auto">
+    <div class="p-4 border-b border-gray-200">
+      <div class="flex items-center">
+        <img src="https://via.placeholder.com/40" alt="Profile" class="w-10 h-10 rounded-full mr-3">
+        <div>
+          <p class="font-semibold">Yoane pequene</p>
+          <p class="text-xs text-gray-500">Vendeur actif</p>
+        </div>
+      </div>
+    </div>
+    <nav class="p-2">
+      <a href="Vendeur.html" class="menu-item flex items-center p-3 rounded-lg">
+        <i class="fas fa-home mr-3 text-blue-800"></i>
+        <span>Mon kiosque</span>
+      </a>
+      <a href="Ajouter.html" class="menu-item flex items-center p-3 rounded-lg">
+        <i class="fas fa-plus-circle mr-3 text-blue-800"></i>
+        <span>Ajouter un article</span>
+      </a>
+      <a href="Message.html" class="menu-item flex items-center p-3 rounded-lg">
+        <i class="fas fa-comments mr-3 text-blue-800"></i>
+        <span>Messages</span>
+      </a>
+      <a href="profil.html" class="active-menu-item flex items-center p-3 rounded-lg">
+        <i class="fas fa-user mr-3 text-blue-800"></i>
+        <span>Profil</span>
+      </a>
+      <a href="evaluation.html" class="menu-item flex items-center p-3 rounded-lg">
+        <i class="fas fa-star mr-3 text-blue-800"></i>
+        <span>Évaluations</span>
+      </a>
+      <a href="parametre.html" class="menu-item flex items-center p-3 rounded-lg">
+        <i class="fas fa-cog mr-3 text-blue-800"></i>
+        <span>Paramètres</span>
+      </a>
+      <a href="recherche.html" class="menu-item flex items-center p-3 rounded-lg">
+        <i class="fas fa-search mr-3 text-blue-800"></i>
+        <span>Recherche</span>
+      </a>
+      <a href="login/connection.html" class="menu-item flex items-center p-3 rounded-lg text-red-600">
+        <i class="fas fa-sign-out-alt mr-3"></i>
+        <span>Déconnexion</span>
+      </a>
+    </nav>
+  </div>
+
+  <!-- Desktop Sidebar -->
+  <div class="hidden md:flex md:w-64 md:flex-col md:fixed md:inset-y-0">
+    <div class="flex flex-col flex-grow bg-white shadow-lg overflow-y-auto">
+      <div class="p-4 border-b border-gray-200">
+        <div class="flex items-center">
+          <img src="https://via.placeholder.com/40" alt="Profile" class="w-10 h-10 rounded-full mr-3">
+          <div>
+            <p class="font-semibold">Yoane pequene</p>
+            <p class="text-xs text-gray-500">Vendeur actif</p>
+          </div>
+        </div>
+      </div>
+      <nav class="flex-1 p-2">
+        <a href="Vendeur.html" class="menu-item flex items-center p-3 rounded-lg">
+          <i class="fas fa-home mr-3 text-blue-800"></i>
+          <span>Mon kiosque</span>
+        </a>
+        <a href="Ajouter.html" class="menu-item flex items-center p-3 rounded-lg">
+          <i class="fas fa-plus-circle mr-3 text-blue-800"></i>
+          <span>Ajouter un article</span>
+        </a>
+        <a href="Message.html" class="menu-item flex items-center p-3 rounded-lg">
+          <i class="fas fa-comments mr-3 text-blue-800"></i>
+          <span>Messages</span>
+        </a>
+        <a href="profil.html" class="active-menu-item flex items-center p-3 rounded-lg">
+          <i class="fas fa-user mr-3 text-blue-800"></i>
+          <span>Profil</span>
+        </a>
+        <a href="evaluation.html" class="menu-item flex items-center p-3 rounded-lg">
+          <i class="fas fa-star mr-3 text-blue-800"></i>
+          <span>Évaluations</span>
+        </a>
+        <a href="parametre.html" class="menu-item flex items-center p-3 rounded-lg">
+          <i class="fas fa-cog mr-3 text-blue-800"></i>
+          <span>Paramètres</span>
+        </a>
+        <a href="recherche.html" class="menu-item flex items-center p-3 rounded-lg">
+          <i class="fas fa-search mr-3 text-blue-800"></i>
+          <span>Recherche</span>
+        </a>
+        <a href="login/connection.html" class="menu-item flex items-center p-3 rounded-lg text-red-600">
+          <i class="fas fa-sign-out-alt mr-3"></i>
+          <span>Déconnexion</span>
+        </a>
+      </nav>
+    </div>
+  </div>
+
+    <!-- Main Content Area -->
+    <div class="flex-1 p-4 md:p-6">
+      <div class="max-w-4xl mx-auto">
+        <!-- Profile Header -->
+        <div class="bg-white rounded-lg shadow-sm p-6 mb-6">
+          <div class="md:flex items-center">
+            <div class="md:w-1/4 flex justify-center mb-4 md:mb-0">
+              <div class="relative">
+                <img src="https://via.placeholder.com/150" alt="" class="w-32 h-32 rounded-full border-4 border-white shadow">
+                <button class="absolute bottom-0 right-0 bg-blue-600 text-white rounded-full p-2 shadow-md">
+                  <i class="fas fa-camera"></i>
+                </button>
+              </div>
+            </div>
+            <div class="md:w-3/4 md:pl-6">
+              <div class="flex flex-wrap items-center justify-between mb-4">
+                <h1 class="text-2xl font-bold">Yoane pequene</h1>
+                <a href="parametre.html" class="bg-gray-100 hover:bg-gray-200 text-gray-800 px-4 py-2 rounded-lg text-sm font-medium transition">
+                  Modifier le profil
+                </a>
+              </div>
+              <div class="flex space-x-6 mb-4">
+                <div>
+                  <span class="font-bold">42</span>
+                  <span class="text-gray-600 text-sm">produits</span>
+                </div>
+                <div>
+                  <span class="font-bold">128</span>
+                  <span class="text-gray-600 text-sm">ventes</span>
+                </div>
+                <div>
+                  <span class="font-bold">4.8</span>
+                  <span class="text-gray-600 text-sm">
+                    <i class="fas fa-star text-yellow-400"></i>
+                    évaluation
+                  </span>
+                </div>
+              </div>
+              <div class="flex items-start justify-between">
+                <div class="text-gray-700" id="profile-description-container">
+                  <p id="profile-description">Étudiant en informatique passionné par les nouvelles technologies. Je vends principalement des livres, des accessoires électroniques et des vêtements.</p>
+                  <textarea id="profile-description-edit" class="w-full p-2 border border-gray-300 rounded-md hidden" rows="3">Étudiant en informatique passionné par les nouvelles technologies. Je vends principalement des livres, des accessoires électroniques et des vêtements.</textarea>
+                </div>
+                <button id="edit-description-btn" class="text-blue-600 hover:text-blue-800">
+                  <i class="fas fa-edit"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Products Section -->
+        <div class="bg-white rounded-lg shadow-sm p-6 mb-6">
+          <div class="flex items-center justify-between mb-6">
+            <h2 class="text-xl font-bold">Mes produits</h2>
+            <a href="Ajouter.html" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition">
+              <i class="fas fa-plus mr-2"></i>Ajouter un produit
+            </a>
+          </div>
+
+          <!-- Product Filter Tabs -->
+          <div class="border-b border-gray-200 mb-6">
+            <div class="flex space-x-8">
+              <button class="border-b-2 border-blue-600 text-blue-600 pb-2 font-medium">Tous</button>
+              <button class="text-gray-500 pb-2 font-medium">Disponibles</button>
+              <button class="text-gray-500 pb-2 font-medium">Réservés</button>
+              <button class="text-gray-500 pb-2 font-medium">Vendus</button>
+            </div>
+          </div>
+
+          <!-- Product Grid -->
+          <div class="product-grid">
+            <!-- Product 1 -->
+            <div class="product-card">
+              <img src="https://images.unsplash.com/photo-1542291026-7eec264c27ff" alt="Produit" class="w-full h-full object-cover">
+              <div class="product-overlay">
+                <div class="flex space-x-2">
+                  <button class="bg-white p-2 rounded-full">
+                    <i class="fas fa-edit text-blue-600"></i>
+                  </button>
+                  <button class="bg-white p-2 rounded-full">
+                    <i class="fas fa-trash text-red-600"></i>
+                  </button>
+                </div>
+              </div>
+              <div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-2">
+                <p class="text-white text-xs font-medium truncate">Baskets Nike</p>
+                <p class="text-white text-xs opacity-80">45€</p>
+              </div>
+            </div>
+
+            <!-- Product 2 -->
+            <div class="product-card">
+              <img src="https://images.unsplash.com/photo-1546868871-7041f2a55e12" alt="Produit" class="w-full h-full object-cover">
+              <div class="product-overlay">
+                <div class="flex space-x-2">
+                  <button class="bg-white p-2 rounded-full">
+                    <i class="fas fa-edit text-blue-600"></i>
+                  </button>
+                  <button class="bg-white p-2 rounded-full">
+                    <i class="fas fa-trash text-red-600"></i>
+                  </button>
+                </div>
+              </div>
+              <div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-2">
+                <p class="text-white text-xs font-medium truncate">Livre Python</p>
+                <p class="text-white text-xs opacity-80">18€</p>
+              </div>
+            </div>
+
+            <!-- Product 3 -->
+            <div class="product-card">
+              <img src="https://images.unsplash.com/photo-1523275335684-37898b6baf30" alt="Produit" class="w-full h-full object-cover">
+              <div class="product-overlay">
+                <div class="flex space-x-2">
+                  <button class="bg-white p-2 rounded-full">
+                    <i class="fas fa-edit text-blue-600"></i>
+                  </button>
+                  <button class="bg-white p-2 rounded-full">
+                    <i class="fas fa-trash text-red-600"></i>
+                  </button>
+                </div>
+              </div>
+              <div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-2">
+                <p class="text-white text-xs font-medium truncate">Montre connectée</p>
+                <p class="text-white text-xs opacity-80">65€</p>
+              </div>
+            </div>
+
+            <!-- Product 4 -->
+            <div class="product-card">
+              <img src="https://images.unsplash.com/photo-1585298723682-7115561c51b7" alt="Produit" class="w-full h-full object-cover">
+              <div class="product-overlay">
+                <div class="flex space-x-2">
+                  <button class="bg-white p-2 rounded-full">
+                    <i class="fas fa-edit text-blue-600"></i>
+                  </button>
+                  <button class="bg-white p-2 rounded-full">
+                    <i class="fas fa-trash text-red-600"></i>
+                  </button>
+                </div>
+              </div>
+              <div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-2">
+                <p class="text-white text-xs font-medium truncate">Casque audio</p>
+                <p class="text-white text-xs opacity-80">35€</p>
+              </div>
+            </div>
+
+            <!-- Product 5 -->
+            <div class="product-card">
+              <img src="https://images.unsplash.com/photo-1611930022073-84f7f0f65f2d" alt="Produit" class="w-full h-full object-cover">
+              <div class="product-overlay">
+                <div class="flex space-x-2">
+                  <button class="bg-white p-2 rounded-full">
+                    <i class="fas fa-edit text-blue-600"></i>
+                  </button>
+                  <button class="bg-white p-2 rounded-full">
+                    <i class="fas fa-trash text-red-600"></i>
+                  </button>
+                </div>
+              </div>
+              <div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-2">
+                <p class="text-white text-xs font-medium truncate">Sweat ESCIC</p>
+                <p class="text-white text-xs opacity-80">25€</p>
+              </div>
+            </div>
+
+            <!-- Product 6 -->
+            <div class="product-card">
+              <img src="https://images.unsplash.com/photo-1572635196237-14b3f281503f" alt="Produit" class="w-full h-full object-cover">
+              <div class="product-overlay">
+                <div class="flex space-x-2">
+                  <button class="bg-white p-2 rounded-full">
+                    <i class="fas fa-edit text-blue-600"></i>
+                  </button>
+                  <button class="bg-white p-2 rounded-full">
+                    <i class="fas fa-trash text-red-600"></i>
+                  </button>
+                </div>
+              </div>
+              <div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-2">
+                <p class="text-white text-xs font-medium truncate">Lunettes de soleil</p>
+                <p class="text-white text-xs opacity-80">15€</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Load More Button -->
+          <div class="mt-6 text-center">
+            <button class="bg-gray-100 hover:bg-gray-200 text-gray-800 px-6 py-2 rounded-lg text-sm font-medium transition">
+              Voir plus de produits
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Mobile menu functionality
+    const mobileMenuButton = document.getElementById('mobileMenuButton');
+    const mobileMenu = document.getElementById('mobileMenu');
+    const mobileBackdrop = document.getElementById('mobileBackdrop');
+    
+    mobileMenuButton.addEventListener('click', () => {
+      mobileMenu.classList.toggle('open');
+      mobileBackdrop.classList.toggle('hidden');
+    });
+    
+    mobileBackdrop.addEventListener('click', () => {
+      mobileMenu.classList.remove('open');
+      mobileBackdrop.classList.add('hidden');
+    });
+  </script>
+</body>
+</html>

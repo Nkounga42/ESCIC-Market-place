@@ -1,0 +1,644 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ajouter un article - ESCIC-Market</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .menu-item {
+            transition: all 0.2s ease;
+        }
+        .menu-item:hover {
+            background-color: #EFF6FF;
+            border-left: 3px solid #3B82F6;
+        }
+        .active-menu-item {
+            background-color: #EFF6FF;
+            border-left: 3px solid #3B82F6;
+            color: #1E40AF;
+        }
+        .chat-bubble {
+            border-radius: 1rem;
+            max-width: 70%;
+        }
+        .chat-bubble.sender {
+            background-color: #3B82F6;
+            color: white;
+            border-bottom-right-radius: 0.25rem;
+        }
+        .chat-bubble.receiver {
+            background-color: #E5E7EB;
+            color: #1F2937;
+            border-bottom-left-radius: 0.25rem;
+        }
+        .mobile-menu {
+            transform: translateX(-100%);
+            transition: transform 0.3s ease;
+        }
+        .mobile-menu.open {
+            transform: translateX(0);
+        }
+        .backdrop {
+            background-color: rgba(0, 0, 0, 0.5);
+            transition: opacity 0.3s ease;
+        }
+        body {
+            font-family: 'Nunito', sans-serif;
+        }
+        .form-card {
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+        }
+        .form-card:hover {
+            box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+        }
+        .valid-field {
+            border-color: #10B981;
+        }
+        .invalid-field {
+            border-color: #EF4444;
+        }
+        .image-preview {
+            transition: all 0.2s ease;
+        }
+        .image-preview:hover {
+            transform: scale(1.03);
+        }
+        .progress-bar {
+            transition: width 0.5s ease;
+        }
+        .category-icon {
+            transition: all 0.2s ease;
+        }
+        .category-icon:hover {
+            transform: scale(1.1);
+        }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <!-- Mobile Menu Button -->
+    <button id="mobileMenuButton" class="md:hidden fixed top-4 left-4 z-50 bg-white p-2 rounded-full shadow-lg">
+        <i class="fas fa-bars text-blue-800 text-xl"></i>
+    </button>
+    <!-- Mobile Menu Backdrop -->
+    <div id="mobileBackdrop" class="fixed inset-0 bg-black bg-opacity-50 z-40 hidden"></div>
+    <!-- Mobile Menu -->
+    <div id="mobileMenu" class="mobile-menu fixed inset-y-0 left-0 z-50 w-64 bg-white shadow-lg overflow-y-auto">
+        <div class="p-4 border-b border-gray-200">
+            <div class="flex items-center">
+                <img src="https://via.placeholder.com/40" alt="Profile" class="w-10 h-10 rounded-full mr-3">
+                <div>
+                    <p class="font-semibold">Yoane pequene</p>
+                    <p class="text-xs text-gray-500">Vendeur actif</p>
+                </div>
+            </div>
+        </div>
+        <nav class="flex-1 p-2">
+            <a href="Vendeur.html" class="menu-item flex items-center p-3 rounded-lg">
+              <i class="fas fa-home mr-3 text-blue-800"></i>
+              <span>Mon kiosque</span>
+            </a>
+            <a href="Ajouter.html" class="menu-item flex items-center p-3 rounded-lg">
+                <i class="fas fa-plus-circle mr-3 text-blue-800"></i>
+              <span>Ajouter un article</span>
+            </a>
+            <a href="Message.html" class="menu-item flex items-center p-3 rounded-lg">
+                <i class="fas fa-comments mr-3 text-blue-800"></i>
+              <span>Messages</span>
+            </a>
+            <a href="profil.html" class="active-menu-item flex items-center p-3 rounded-lg">
+                <i class="fas fa-user mr-3 text-blue-800"></i>
+              <span>Profil</span>
+            </a>
+            <a href="evaluation.html" class="menu-item flex items-center p-3 rounded-lg">
+                <i class="fas fa-star mr-3 text-blue-800"></i>
+              <span>Évaluations</span>
+            </a>
+            <a href="parametre.html" class="menu-item flex items-center p-3 rounded-lg">
+                <i class="fas fa-cog mr-3 text-blue-800"></i>
+              <span>Paramètres</span>
+            </a>
+            <a href="recherche.html" class="menu-item flex items-center p-3 rounded-lg">
+                <i class="fas fa-search mr-3 text-blue-800"></i>
+              <span>Recherche</span>
+            </a>
+            <a href="login/connection.html" class="menu-item flex items-center p-3 rounded-lg text-red-600">
+              <i class="fas fa-sign-out-alt mr-3"></i>
+              <span>Déconnexion</span>
+            </a>
+          </nav>
+    </div>
+    <!-- Desktop Sidebar -->
+    <div class="hidden md:flex md:w-64 md:flex-col md:fixed md:inset-y-0">
+        <div class="flex flex-col flex-grow border-r border-gray-200 bg-white overflow-y-auto">
+            <div class="p-4 border-b border-gray-200">
+                <div class="flex items-center">
+                    <img src="https://via.placeholder.com/40" alt="Profile" class="w-10 h-10 rounded-full mr-3">
+                    <div>
+                        <p class="font-semibold">Yoane pequene</p>
+                        <p class="text-xs text-gray-500">Vendeur actif</p>
+                    </div>
+                </div>
+            </div>
+            <nav class="flex-1 p-2">
+                <a href="Vendeur.html" class="menu-item flex items-center p-3 rounded-lg">
+                    <i class="fas fa-home mr-3 text-blue-800"></i>
+                    <span>Mon kiosque</span>
+                </a>
+                <a href="Ajouter.html" class="menu-item active-menu-item flex items-center p-3 rounded-lg">
+                    <i class="fas fa-plus-circle mr-3 text-blue-800"></i>
+                    <span>Ajouter un nouvel article</span>
+                </a>
+                <a href="Message.html" class="menu-item flex items-center p-3 rounded-lg">
+                    <i class="fas fa-comments mr-3 text-blue-800"></i>
+                    <span>Messages</span>
+                </a>
+                 <a href="profil.html" class="menu-item flex items-center p-3 rounded-lg">
+                    <i class="fas fa-user mr-3 text-blue-800"></i>
+                    <span>Profil</span>
+                </a>
+                <a href="evaluation.html" class="menu-item flex items-center p-3 rounded-lg">
+                    <i class="fas fa-star mr-3 text-blue-800"></i>
+                    <span>Évaluations</span>
+                </a>
+                <a href="parametre.html" class="menu-item flex items-center p-3 rounded-lg">
+                    <i class="fas fa-cog mr-3 text-blue-800"></i>
+                    <span>Paramètres</span>
+                </a>
+                   <a href="recherche.html" class="menu-item flex items-center p-3 rounded-lg">
+                    <i class="fas fa-search mr-3 text-blue-800"></i>
+                    <span>Recherche</span>
+                </a>
+                <a href="connection.html" class="menu-item flex items-center p-3 rounded-lg mt-4 text-red-500">
+                    <i class="fas fa-sign-out-alt mr-3"></i>
+                    <span>Déconnexion</span>
+                </a>
+             
+            </nav>
+        </div>
+    </div>
+    <!-- Main Content -->
+    <div class="md:pl-64">
+        <!-- Page Header - Réduit -->
+        <div class="text-center mb-4 py-2 bg-white shadow-sm">
+            <h1 class="text-2xl font-bold text-gray-900">Ajouter un nouvel article</h1>
+        </div>
+
+        <!-- Progress Bar - Intégrée dans le formulaire -->
+        <div class="max-w-3xl mx-auto">
+            <div class="form-card bg-white rounded-lg shadow-md overflow-hidden">
+                <!-- En-tête du formulaire -->
+                <div class="bg-blue-50 p-4 border-b border-blue-100">
+                    <div class="flex justify-between items-center">
+                        <h2 class="text-lg font-semibold text-blue-800">
+                            <i class="fas fa-plus-circle mr-2"></i> Nouvel article
+                        </h2>
+                    </div>
+                    <div class="w-full bg-gray-200 rounded-full h-1.5 mt-2">
+                        <div class="progress-bar bg-blue-600 h-1.5 rounded-full" style="width:100%"></div>
+                    </div>
+                </div>
+
+                <!-- Contenu du formulaire -->
+                <div class="p-5">
+                    <!-- Onglets du formulaire -->
+                    <div class="border-b border-gray-200 mb-4">
+                        <nav class="flex -mb-px">
+                            <a href="Ajouter.html" class="border-blue-500 text-blue-600 whitespace-nowrap py-2 px-1 border-b-2 font-medium text-sm">
+                                Informations de base
+                            </a>
+                            <a href="#" class="border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap py-2 px-1 border-b-2 font-medium text-sm ml-8">
+                                Photos
+                            </a>
+                            <a href="#" class="border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap py-2 px-1 border-b-2 font-medium text-sm ml-8">
+                                Détails
+                            </a>
+                        </nav>
+                    </div>
+
+                    <!-- Formulaire compact -->
+                    <form>
+                        <!-- Informations de base -->
+                        <div class="space-y-4">
+                            <!-- Nom et Catégorie -->
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                    <label for="product-name" class="block text-sm font-medium text-gray-700 mb-1">Nom du produit <span class="text-red-500">*</span></label>
+                                    <input type="text" id="product-name" class="w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500" placeholder="Ex : Calculatrice FX-991EX">
+                                </div>
+                                
+                                <div>
+                                    <label for="product-category" class="block text-sm font-medium text-gray-700 mb-1">Catégorie <span class="text-red-500">*</span></label>
+                                    <select id="product-category" class="w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                                        <option value="">Sélectionner une catégorie</option>
+                                        <option value="books">📚 Livres</option>
+                                        <option value="clothes">👕 Vêtements</option>
+                                        <option value="electronics">🎧 Électronique</option>
+                                        <option value="snacks">🍫 Snacks</option>
+                                        <option value="accessories">👜 Accessoires</option>
+                                        <option value="other">🔍 Autre</option>
+                                    </select>
+                                </div>
+                            </div>
+                            
+                            <!-- Prix et Quantité -->
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                    <label for="product-price" class="block text-sm font-medium text-gray-700 mb-1">Prix (FCFA) <span class="text-red-500">*</span></label>
+                                    <div class="relative rounded-md shadow-sm">
+                                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                            <span class="text-gray-500 sm:text-sm">FCFA</span>
+                                        </div>
+                                        <input type="number" id="product-price" class="focus:ring-blue-500 focus:border-blue-500 block w-full pl-16 pr-12 py-2 border-gray-300 rounded-md" placeholder="0">
+                                    </div>
+                                </div>
+                                
+                                <div>
+                                    <label for="product-quantity" class="block text-sm font-medium text-gray-700 mb-1">Quantité</label>
+                                    <input type="number" id="product-quantity" class="w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500" value="1" min="1">
+                                </div>
+                            </div>
+                            
+                            <!-- Zone de dépôt d'images simplifiée -->
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Photos du produit <span class="text-red-500">*</span></label>
+                                <div class="border-2 border-dashed border-gray-300 rounded-lg p-4 text-center" id="drop-area">
+                                    <div class="flex flex-col items-center justify-center">
+                                        <svg class="mx-auto h-10 w-10 text-gray-400" stroke="currentColor" fill="none" viewBox="0 0 48 48" aria-hidden="true">
+                                            <path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                                        </svg>
+                                        <p class="mt-1 text-xs text-gray-500">Glisser-déposer ou</p>
+                                        <label for="file-upload" class="mt-1 inline-flex items-center px-2 py-1 border border-transparent text-xs font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 cursor-pointer">
+                                            <i class="fas fa-camera mr-1"></i> Choisir
+                                        </label>
+                                        <input id="file-upload" type="file" class="hidden" accept="image/*" multiple>
+                                    </div>
+                                </div>
+                                
+                                <!-- Miniatures d'images -->
+                                <div class="mt-2 grid grid-cols-4 gap-2" id="image-previews">
+                                    <!-- Les images apparaîtront ici -->
+                                </div>
+                            </div>
+                            
+                            <!-- Description courte -->
+                            <div>
+                                <label for="product-description" class="block text-sm font-medium text-gray-700 mb-1">Description <span class="text-red-500">*</span></label>
+                                <textarea id="product-description" rows="3" class="w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500" placeholder="Ex : Calculatrice presque neuve, très utile pour les maths financières. Achetée en 2024."></textarea>
+                            </div>
+                            
+                            <!-- Lieu de remise -->
+                            <div>
+                                <label for="delivery-location" class="block text-sm font-medium text-gray-700 mb-1">Lieu de remise <span class="text-red-500">*</span></label>
+                                <select id="delivery-location" class="w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                                    <option value="">Sélectionner un lieu de remise</option>
+                                    <option value="library">Devant la bibliothèque 📚</option>
+                                    <option value="cafeteria">Cafétéria 🍴</option>
+                                    <option value="hall">Hall principal 🏛️</option>
+                                    <option value="other">Autre</option>
+                                </select>
+                                
+                                <!-- Champ "Autre lieu" -->
+                                <div id="other-location-container" class="mt-2 hidden">
+                                    <input type="text" id="other-location" class="w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500" placeholder="Ex : Devant le bâtiment B">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Bouton de soumission -->
+                        <div class="mt-6 flex justify-between">
+                            <a href="Vendeur.html" class="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md shadow-sm text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                                <i class="fas fa-arrow-left mr-2"></i> Retour au kiosque
+                            </a>
+                            <button type="button" id="submit-button" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                                <i class="fas fa-paper-plane mr-2"></i> Publier mon article
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            
+            <!-- Conseils (optionnel) -->
+            <div class="mt-4 bg-yellow-50 border-l-4 border-yellow-400 p-3 rounded-md">
+                <div class="flex">
+                    <div class="flex-shrink-0">
+                        <i class="fas fa-lightbulb text-yellow-400"></i>
+                    </div>
+                    <div class="ml-3">
+                        <p class="text-xs text-yellow-700">
+                            <span class="font-medium">Conseil :</span> 
+                            Les articles avec des photos de qualité et une description détaillée se vendent 2 fois plus vite !
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Success Modal -->
+    <div id="success-modal" class="fixed inset-0 z-50 hidden flex items-center justify-center">
+        <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity"></div>
+        <div class="bg-white rounded-lg overflow-hidden shadow-xl transform transition-all sm:max-w-lg sm:w-full">
+            <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+                <div class="sm:flex sm:items-start">
+                    <div class="mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-green-100 sm:mx-0 sm:h-10 sm:w-10">
+                        <i class="fas fa-check text-green-600"></i>
+                    </div>
+                    <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
+                        <h3 class="text-lg leading-6 font-medium text-gray-900" id="modal-title">Article publié avec succès !</h3>
+                        <div class="mt-2">
+                            <p class="text-sm text-gray-500">Ton article est maintenant visible sur ESCIC-Market ! Tu recevras une notification dès qu'un étudiant souhaite le réserver.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+                <a href="#" class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-blue-600 text-base font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:ml-3 sm:w-auto sm:text-sm">
+                    <i class="fas fa-store mr-2"></i> Voir mon kiosque
+                </a>
+                <button id="add-another" type="button" class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm">
+                    <i class="fas fa-plus mr-2"></i> Ajouter un autre article
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // DOM Elements
+        const fileUpload = document.getElementById('file-upload');
+        const dropArea = document.getElementById('drop-area');
+        const imagePreviews = document.getElementById('image-previews');
+        const addAnotherPhotoBtn = document.getElementById('add-another-photo');
+        const deliveryLocation = document.getElementById('delivery-location');
+        const otherLocationContainer = document.getElementById('other-location-container');
+        const submitButton = document.getElementById('submit-button');
+        const successModal = document.getElementById('success-modal');
+        const addAnotherBtn = document.getElementById('add-another');
+        
+        // Variables
+        let uploadedFiles = [];
+        
+        // Event Listeners
+        
+        // Drag and drop functionality
+        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+            dropArea.addEventListener(eventName, preventDefaults, false);
+        });
+        
+        function preventDefaults(e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+        
+        ['dragenter', 'dragover'].forEach(eventName => {
+            dropArea.addEventListener(eventName, highlight, false);
+        });
+        
+        ['dragleave', 'drop'].forEach(eventName => {
+            dropArea.addEventListener(eventName, unhighlight, false);
+        });
+        
+        function highlight() {
+            dropArea.classList.add('border-blue-500', 'bg-blue-50');
+        }
+        
+        function unhighlight() {
+            dropArea.classList.remove('border-blue-500', 'bg-blue-50');
+        }
+        
+        dropArea.addEventListener('drop', handleDrop, false);
+        
+        function handleDrop(e) {
+            const dt = e.dataTransfer;
+            const files = dt.files;
+            handleFiles(files);
+        }
+        
+        fileUpload.addEventListener('change', function() {
+            handleFiles(this.files);
+        });
+        
+        addAnotherPhotoBtn.addEventListener('click', function() {
+            fileUpload.click();
+        });
+        
+        deliveryLocation.addEventListener('change', function() {
+            if (this.value === 'other') {
+                otherLocationContainer.classList.remove('hidden');
+            } else {
+                otherLocationContainer.classList.add('hidden');
+            }
+        });
+        
+        submitButton.addEventListener('click', function() {
+            // Show loading spinner
+            submitButton.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Publication en cours...';
+            submitButton.disabled = true;
+            
+            // Simulate API call
+            setTimeout(() => {
+                // Show success modal
+                successModal.classList.remove('hidden');
+                
+                // Reset button
+                submitButton.innerHTML = '<i class="fas fa-paper-plane mr-2"></i> Publier mon article';
+                submitButton.disabled = false;
+            }, 1500);
+        });
+        
+        addAnotherBtn.addEventListener('click', function() {
+            successModal.classList.add('hidden');
+            // Reset form (in a real app, you might want to keep some fields)
+            document.getElementById('product-name').value = '';
+            document.getElementById('product-category').value = '';
+            document.getElementById('product-price').value = '';
+            document.getElementById('product-quantity').value = '1';
+            document.getElementById('product-description').value = '';
+            document.getElementById('delivery-location').value = '';
+            document.getElementById('other-location').value = '';
+            document.getElementById('availability').value = '';
+            
+            // Clear images
+            uploadedFiles = [];
+            imagePreviews.innerHTML = '';
+            
+            // Scroll to top
+            window.scrollTo(0, 0);
+        });
+        
+        // Functions
+        function handleFiles(files) {
+            if (uploadedFiles.length + files.length > 4) {
+                alert('Vous ne pouvez ajouter que 4 photos maximum');
+                return;
+            }
+            
+            [...files].forEach(file => {
+                if (!file.type.match('image.*')) {
+                    alert('Seules les images sont acceptées');
+                    return;
+                }
+                
+                if (file.size > 3 * 1024 * 1024) {
+                    alert('La taille maximale d\'une image est de 3 Mo');
+                    return;
+                }
+                
+                uploadedFiles.push(file);
+                previewImage(file);
+            });
+        }
+        
+        function previewImage(file) {
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onloadend = function() {
+                const previewDiv = document.createElement('div');
+                previewDiv.className = 'relative group';
+                
+                const img = document.createElement('img');
+                img.src = reader.result;
+                img.className = 'image-preview w-full h-32 object-cover rounded-md';
+                
+                const deleteBtn = document.createElement('button');
+                deleteBtn.className = 'absolute top-1 right-1 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity';
+                deleteBtn.innerHTML = '<i class="fas fa-times text-xs"></i>';
+                deleteBtn.addEventListener('click', function() {
+                    const index = uploadedFiles.indexOf(file);
+                    if (index > -1) {
+                        uploadedFiles.splice(index, 1);
+                    }
+                    previewDiv.remove();
+                });
+                
+                previewDiv.appendChild(img);
+                previewDiv.appendChild(deleteBtn);
+                imagePreviews.appendChild(previewDiv);
+            };
+        }
+        
+        // Auto-save draft (Bonus Feature)
+        setInterval(function() {
+            const formData = {
+                productName: document.getElementById('product-name').value,
+                category: document.getElementById('product-category').value,
+                price: document.getElementById('product-price').value,
+                quantity: document.getElementById('product-quantity').value,
+                description: document.getElementById('product-description').value,
+                location: document.getElementById('delivery-location').value,
+                otherLocation: document.getElementById('other-location').value,
+                availability: document.getElementById('availability').value,
+                // Note: In a real app, you'd need to handle file uploads differently
+            };
+            
+            localStorage.setItem('draftProduct', JSON.stringify(formData));
+            console.log('Brouillon enregistré');
+        }, 10000); // Auto-save every 10 seconds
+        
+        // Load draft if exists
+        window.addEventListener('load', function() {
+            const draft = localStorage.getItem('draftProduct');
+            if (draft) {
+                const formData = JSON.parse(draft);
+                document.getElementById('product-name').value = formData.productName || '';
+                document.getElementById('product-category').value = formData.category || '';
+                document.getElementById('product-price').value = formData.price || '';
+                document.getElementById('product-quantity').value = formData.quantity || '1';
+                document.getElementById('product-description').value = formData.description || '';
+                document.getElementById('delivery-location').value = formData.location || '';
+                document.getElementById('other-location').value = formData.otherLocation || '';
+                document.getElementById('availability').value = formData.availability || '';
+                
+                if (formData.location === 'other') {
+                    otherLocationContainer.classList.remove('hidden');
+                }
+                
+                // In a real app, you'd also need to handle file uploads
+            }
+        });
+        
+        // Form validation
+        const validateField = (field, isValid) => {
+            if (isValid) {
+                field.classList.add('valid-field');
+                field.classList.remove('invalid-field');
+            } else {
+                field.classList.add('invalid-field');
+                field.classList.remove('valid-field');
+            }
+        };
+        
+        // Real-time validation for required fields
+        document.getElementById('product-name').addEventListener('input', function() {
+            validateField(this, this.value.trim().length > 0);
+        });
+        
+        document.getElementById('product-category').addEventListener('change', function() {
+            validateField(this, this.value !== '');
+        });
+        
+        document.getElementById('product-price').addEventListener('input', function() {
+            validateField(this, this.value > 0);
+        });
+
+        // Mobile menu toggle
+        const mobileMenuButton = document.getElementById('mobileMenuButton');
+        const mobileMenu = document.getElementById('mobileMenu');
+        const mobileBackdrop = document.getElementById('mobileBackdrop');
+        mobileMenuButton.addEventListener('click', () => {
+            mobileMenu.classList.toggle('open');
+            mobileBackdrop.classList.toggle('hidden');
+        });
+        mobileBackdrop.addEventListener('click', () => {
+            mobileMenu.classList.remove('open');
+            mobileBackdrop.classList.add('hidden');
+        });
+    </script>
+     
+    </script>
+    
+    <script>
+        // ... existing code ...
+        
+        // Gestion des onglets du formulaire
+        document.addEventListener('DOMContentLoaded', function() {
+            const tabs = document.querySelectorAll('nav a');
+            
+            tabs.forEach(tab => {
+                tab.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    
+                    // Réinitialiser tous les onglets
+                    tabs.forEach(t => {
+                        t.classList.remove('border-blue-500', 'text-blue-600');
+                        t.classList.add('border-transparent', 'text-gray-500');
+                    });
+                    
+                    // Activer l'onglet cliqué
+                    this.classList.remove('border-transparent', 'text-gray-500');
+                    this.classList.add('border-blue-500', 'text-blue-600');
+                });
+            });
+        });
+        
+        // Mise à jour du pourcentage de progression
+        function updateProgressPercentage() {
+            const requiredFields = document.querySelectorAll('input[required], select[required], textarea[required]');
+            const filledFields = Array.from(requiredFields).filter(field => field.value.trim() !== '');
+            const percentage = Math.round((filledFields.length / requiredFields.length) * 100);
+            
+            document.getElementById('progress-percentage').textContent = percentage + '%';
+            document.querySelector('.progress-bar').style.width = percentage + '%';
+        }
+        
+        // Ajouter des écouteurs d'événements pour les champs du formulaire
+        document.querySelectorAll('input, select, textarea').forEach(field => {
+            field.addEventListener('change', updateProgressPercentage);
+            field.addEventListener('input', updateProgressPercentage);
+        });
+    </script>
+</body>
+</html>
