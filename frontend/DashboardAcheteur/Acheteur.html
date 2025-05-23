@@ -113,8 +113,8 @@
             border: 2px solid white;
             font-weight: bold;
         }
-        .notification-panel-container {
-            max-height: 400px;
+        .notification-panel-container { /* Applied to the scrollable list area */
+            max-height: none; /* Remove max-height if it's flex-1 */
             overflow-y: auto;
         }
         .notification-panel-container::-webkit-scrollbar {
@@ -228,8 +228,6 @@
                 <span class="text-xl font-bold text-blue-800 hidden md:block">ESCIC-Market</span>
             </div>
             
-            
-            
             <div class="flex items-center space-x-4">
                 <button class="md:hidden text-gray-600"> <i class="fas fa-search text-xl"></i>
                 </button>
@@ -284,7 +282,7 @@
                     <span id="notificationCountMobile" class="notification-badge" style="display: none;">0</span>
                     <span>Notifications</span>
                 </button>
-                </div>
+            </div>
             <a href="Message.html" class="menu-item flex items-center p-3 rounded-lg">
                 <i class="fas fa-comments mr-3 text-blue-600"></i>
                 <span>Messages</span>
@@ -304,7 +302,6 @@
              <a href="recherche.html" class="menu-item flex items-center p-3 rounded-lg">
                   <i class="fas fa-search mr-3 text-blue-800"></i>
                   <span>Recherche</span>
-                  
                 </a>
             <a href="connection.html" class="menu-item flex items-center p-3 rounded-lg mt-4 text-red-500">
                 <i class="fas fa-sign-out-alt mr-3"></i>
@@ -340,26 +337,7 @@
                         <span id="notificationCountDesktop" class="notification-badge" style="display: none;">0</span>
                         <span>Notifications</span>
                     </button>
-                    <div id="notificationPanel" class="absolute right-0 mt-2 w-80 md:w-96 bg-white rounded-lg shadow-lg transition-all duration-300 transform scale-0 origin-top-right opacity-0 z-[72]">
-                        <div class="p-3 border-b border-gray-200 flex justify-between items-center">
-                            <h3 class="font-semibold text-gray-700">Notifications</h3>
-                            <div class="flex space-x-2">
-                                <button id="markAllAsRead" title="Tout marquer comme lu" class="text-sm text-blue-600 hover:text-blue-800">
-                                    <i class="fas fa-check-double"></i>
-                                </button>
-                                <button id="notificationSettings" title="Paramètres" class="text-gray-500 hover:text-gray-700">
-                                    <i class="fas fa-cog"></i>
-                                </button>
-                            </div>
-                        </div>
-                        <div id="notificationList" class="notification-panel-container">
-                            <p id="noNotificationsMessage" class="p-4 text-center text-gray-500">Aucune nouvelle notification.</p>
-                        </div>
-                        <div class="p-3 border-t border-gray-200 text-center">
-                            <a href="#" class="text-sm text-blue-600 hover:text-blue-800">Voir toutes les notifications</a>
-                        </div>
                     </div>
-                </div>
                 <a href="Message.html" class="menu-item flex items-center p-3 rounded-lg">
                   <i class="fas fa-comments mr-3 text-blue-800"></i>
                   <span>Messages</span>
@@ -421,6 +399,37 @@
             </div>
         </div>
 
+        <div id="notificationPanel" class="fixed inset-y-0 right-0 w-full md:w-96 bg-white shadow-xl transform translate-x-full transition-transform duration-300 ease-in-out z-[72]">
+            <div class="h-full flex flex-col">
+                <div class="bg-blue-800 text-white px-6 py-4 flex justify-between items-center">
+                    <h2 class="text-xl font-bold">Notifications</h2>
+                    <button id="closeNotificationPanel" class="text-white hover:text-blue-200">
+                        <i class="fas fa-times text-xl"></i>
+                    </button>
+                </div>
+                
+                <div class="p-3 border-b border-gray-200 flex justify-between items-center">
+                    <div class="flex space-x-2">
+                        <button id="markAllAsRead" title="Tout marquer comme lu" class="text-sm text-blue-600 hover:text-blue-800">
+                            <i class="fas fa-check-double mr-1"></i> Tout lu
+                        </button>
+                        <button id="notificationSettings" title="Paramètres" class="text-gray-500 hover:text-gray-700">
+                            <i class="fas fa-cog"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div id="notificationList" class="flex-1 overflow-y-auto p-4 notification-panel-container">
+                    <p id="noNotificationsMessage" class="p-4 text-center text-gray-500">Aucune nouvelle notification.</p>
+                    </div>
+                
+                <div class="bg-gray-50 p-3 border-t text-center">
+                    <a href="#" class="text-sm text-blue-600 hover:text-blue-800">Voir toutes les notifications</a>
+                </div>
+            </div>
+        </div>
+
+
         <div id="notificationPopup" class="fixed bottom-5 right-5 bg-white rounded-lg shadow-xl p-4 w-80 transform translate-y-24 opacity-0 transition-all duration-500 ease-in-out z-[100] border-l-4 border-blue-500">
             <div class="flex items-start">
                 <div class="flex-shrink-0 mr-3 pt-1">
@@ -467,7 +476,7 @@
 
                 <a href="Dashboardcategorie/Vêtements.html" class="category-card bg-white rounded-lg shadow-md overflow-hidden transition duration-300 transform hover:scale-103 block">
                     <div class="h-32 bg-gray-100 flex items-center justify-center">
-                        <img src="https://via.placeholder.com/100" alt="Livres" class="max-h-full max-w-full object-contain">
+                        <img src="https://via.placeholder.com/100" alt="Vêtements" class="max-h-full max-w-full object-contain">
                     </div>
                     <div class="p-4 text-center">
                         <h3 class="font-semibold text-gray-800">Vêtements</h3>
@@ -476,7 +485,7 @@
 
                 <a href="Dashboardcategorie/Accessoires.html" class="category-card bg-white rounded-lg shadow-md overflow-hidden transition duration-300 transform hover:scale-103 block">
                     <div class="h-32 bg-gray-100 flex items-center justify-center">
-                        <img src="https://via.placeholder.com/100" alt="Livres" class="max-h-full max-w-full object-contain">
+                        <img src="https://via.placeholder.com/100" alt="Accessoires" class="max-h-full max-w-full object-contain">
                     </div>
                     <div class="p-4 text-center">
                         <h3 class="font-semibold text-gray-800">Accessoires</h3>
@@ -485,7 +494,7 @@
                 
                 <a href="Dashboardcategorie/Électronique.html" class="category-card bg-white rounded-lg shadow-md overflow-hidden transition duration-300 transform hover:scale-103 block">
                     <div class="h-32 bg-gray-100 flex items-center justify-center">
-                        <img src="https://via.placeholder.com/100" alt="Livres" class="max-h-full max-w-full object-contain">
+                        <img src="https://via.placeholder.com/100" alt="Électronique" class="max-h-full max-w-full object-contain">
                     </div>
                     <div class="p-4 text-center">
                         <h3 class="font-semibold text-gray-800">Électronique</h3>
@@ -495,7 +504,7 @@
                 
                 <a href="Dashboardcategorie/Snacks.html" class="category-card bg-white rounded-lg shadow-md overflow-hidden transition duration-300 transform hover:scale-103 block">
                     <div class="h-32 bg-gray-100 flex items-center justify-center">
-                        <img src="https://via.placeholder.com/100" alt="Livres" class="max-h-full max-w-full object-contain">
+                        <img src="https://via.placeholder.com/100" alt="Snacks" class="max-h-full max-w-full object-contain">
                     </div>
                     <div class="p-4 text-center">
                         <h3 class="font-semibold text-gray-800">Snacks</h3>
@@ -504,7 +513,7 @@
                 
                 <a href="Dashboardcategorie/Événements.html" class="category-card bg-white rounded-lg shadow-md overflow-hidden transition duration-300 transform hover:scale-103 block">
                     <div class="h-32 bg-gray-100 flex items-center justify-center">
-                        <img src="https://via.placeholder.com/100" alt="Livres" class="max-h-full max-w-full object-contain">
+                        <img src="https://via.placeholder.com/100" alt="Événements" class="max-h-full max-w-full object-contain">
                     </div>
                     <div class="p-4 text-center">
                         <h3 class="font-semibold text-gray-800">Événements</h3>
@@ -561,58 +570,7 @@
                                     <button class="add-to-cart mt-3 w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-md text-sm font-medium transition duration-300" data-id="2" data-name="Marketing Digital 5e édition" data-price="18" data-img="https://images.unsplash.com/photo-1541963463532-d68292c34b19?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=688&q=80" data-seller="Thomas L."> Ajouter au panier </button>
                                 </div>
                             </div>
-                            <div class="product-card bg-white rounded-lg shadow-md overflow-hidden w-64 flex-shrink-0 transition duration-300">
-                                <div class="h-48 bg-gray-100">
-                                    <img src="https://images.unsplash.com/photo-1603302576837-37561b2e2302?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1468&q=80" alt="Casque audio" class="w-full h-full object-contain p-4">
-                                </div>
-                                <div class="p-4">
-                                    <h3 class="font-semibold text-gray-800 mb-1">Casque Audio Sans Fil</h3>
-                                    <p class="text-gray-600 text-sm mb-2">État impeccable, boîte incluse</p>
-                                    <div class="flex justify-between items-center">
-                                        <span class="font-bold text-blue-800">45€</span>
-                                        <div class="flex items-center">
-                                            <img src="https://via.placeholder.com/24" alt="Vendeur" class="w-6 h-6 rounded-full mr-1">
-                                            <span class="text-xs text-gray-500">Alexandre P.</span>
-                                        </div>
-                                    </div>
-                                    <button class="add-to-cart mt-3 w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-md text-sm font-medium transition duration-300" data-id="3" data-name="Casque Audio Sans Fil" data-price="45" data-img="https://images.unsplash.com/photo-1603302576837-37561b2e2302?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=1468&q=80" data-seller="Alexandre P."> Ajouter au panier </button>
-                                </div>
-                            </div>
-                            <div class="product-card bg-white rounded-lg shadow-md overflow-hidden w-64 flex-shrink-0 transition duration-300">
-                                <div class="h-48 bg-gray-100">
-                                    <img src="https://images.unsplash.com/photo-1593642632782-0667e2f3f207?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80" alt="Sac à dos" class="w-full h-full object-contain p-4">
-                                </div>
-                                <div class="p-4">
-                                    <h3 class="font-semibold text-gray-800 mb-1">Sac à Dos Étudiant</h3>
-                                    <p class="text-gray-600 text-sm mb-2">Très bon état, spacieux</p>
-                                    <div class="flex justify-between items-center">
-                                        <span class="font-bold text-blue-800">30€</span>
-                                        <div class="flex items-center">
-                                            <img src="https://via.placeholder.com/24" alt="Vendeur" class="w-6 h-6 rounded-full mr-1">
-                                            <span class="text-xs text-gray-500">Sophia M.</span>
-                                        </div>
-                                    </div>
-                                    <button class="add-to-cart mt-3 w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-md text-sm font-medium transition duration-300" data-id="4" data-name="Sac à Dos Étudiant" data-price="30" data-img="https://images.unsplash.com/photo-1593642632782-0667e2f3f207?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80" data-seller="Sophia M."> Ajouter au panier </button>
-                                </div>
-                            </div>
-                            <div class="product-card bg-white rounded-lg shadow-md overflow-hidden w-64 flex-shrink-0 transition duration-300">
-                                <div class="h-48 bg-gray-100">
-                                    <img src="https://images.unsplash.com/photo-1579584065604-1b4e0f4f9f70?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=687&q=80" alt="Lampe de bureau" class="w-full h-full object-contain p-4">
-                                </div>
-                                <div class="p-4">
-                                    <h3 class="font-semibold text-gray-800 mb-1">Lampe de Bureau LED</h3>
-                                    <p class="text-gray-600 text-sm mb-2">Design moderne, ajustable</p>
-                                    <div class="flex justify-between items-center">
-                                        <span class="font-bold text-blue-800">20€</span>
-                                        <div class="flex items-center">
-                                            <img src="https://via.placeholder.com/24" alt="Vendeur" class="w-6 h-6 rounded-full mr-1">
-                                            <span class="text-xs text-gray-500">David C.</span>
-                                        </div>
-                                    </div>
-                                    <button class="add-to-cart mt-3 w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-md text-sm font-medium transition duration-300" data-id="5" data-name="Lampe de Bureau LED" data-price="20" data-img="https://images.unsplash.com/photo-1579584065604-1b4e0f4f9f70?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=687&q=80" data-seller="David C."> Ajouter au panier </button>
-                                </div>
-                            </div>
-                        </div>
+                           </div>
                     </div>
                 </div>
             </div>
@@ -638,61 +596,7 @@
                         <button class="add-to-cart mt-3 w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-md text-sm font-medium transition duration-300" data-id="6" data-name="Cahier de notes A4" data-price="5" data-img="https://images.unsplash.com/photo-1581454522972-e1c0c6b1a3d9?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=687&q=80" data-seller="Léa G."> Ajouter au panier </button>
                     </div>
                 </div>
-                
-                <div class="product-card bg-white rounded-lg shadow-md overflow-hidden transition duration-300">
-                    <div class="h-48 bg-gray-100">
-                        <img src="https://images.unsplash.com/photo-1526947425960-945c6e72858f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80" alt="Bouteille d'eau réutilisable" class="w-full h-full object-contain p-4">
-                    </div>
-                    <div class="p-4">
-                        <h3 class="font-semibold text-gray-800 mb-1">Bouteille d'eau réutilisable</h3>
-                        <p class="text-gray-600 text-sm mb-2">Acier inoxydable, 500ml</p>
-                        <div class="flex justify-between items-center">
-                            <span class="font-bold text-blue-800">12€</span>
-                            <div class="flex items-center">
-                                <img src="https://via.placeholder.com/24" alt="Vendeur" class="w-6 h-6 rounded-full mr-1">
-                                <span class="text-xs text-gray-500">Paul F.</span>
-                            </div>
-                        </div>
-                        <button class="add-to-cart mt-3 w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-md text-sm font-medium transition duration-300" data-id="7" data-name="Bouteille d'eau réutilisable" data-price="12" data-img="https://images.unsplash.com/photo-1526947425960-945c6e72858f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80" data-seller="Paul F."> Ajouter au panier </button>
-                    </div>
                 </div>
-                
-                <div class="product-card bg-white rounded-lg shadow-md overflow-hidden transition duration-300">
-                    <div class="h-48 bg-gray-100">
-                        <img src="https://images.unsplash.com/photo-1517404215381-1c09930f7823?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80" alt="Kit de stylos" class="w-full h-full object-contain p-4">
-                    </div>
-                    <div class="p-4">
-                        <h3 class="font-semibold text-gray-800 mb-1">Kit de stylos gel (5 couleurs)</h3>
-                        <p class="text-gray-600 text-sm mb-2">Neuf, idéal pour les notes</p>
-                        <div class="flex justify-between items-center">
-                            <span class="font-bold text-blue-800">8€</span>
-                            <div class="flex items-center">
-                                <img src="https://via.placeholder.com/24" alt="Vendeur" class="w-6 h-6 rounded-full mr-1">
-                                <span class="text-xs text-gray-500">Claire B.</span>
-                            </div>
-                        </div>
-                        <button class="add-to-cart mt-3 w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-md text-sm font-medium transition duration-300" data-id="8" data-name="Kit de stylos gel (5 couleurs)" data-price="8" data-img="https://images.unsplash.com/photo-1517404215381-1c09930f7823?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80" data-seller="Claire B."> Ajouter au panier </button>
-                    </div>
-                </div>
-                
-                <div class="product-card bg-white rounded-lg shadow-md overflow-hidden transition duration-300">
-                    <div class="h-48 bg-gray-100">
-                        <img src="https://images.unsplash.com/photo-1507842217343-583bb7270b66?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80" alt="Chargeur portable" class="w-full h-full object-contain p-4">
-                    </div>
-                    <div class="p-4">
-                        <h3 class="font-semibold text-gray-800 mb-1">Chargeur Portable 10000mAh</h3>
-                        <p class="text-gray-600 text-sm mb-2">Charge rapide, parfait état</p>
-                        <div class="flex justify-between items-center">
-                            <span class="font-bold text-blue-800">28€</span>
-                            <div class="flex items-center">
-                                <img src="https://via.placeholder.com/24" alt="Vendeur" class="w-6 h-6 rounded-full mr-1">
-                                <span class="text-xs text-gray-500">Marc V.</span>
-                            </div>
-                        </div>
-                        <button class="add-to-cart mt-3 w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-md text-sm font-medium transition duration-300" data-id="9" data-name="Chargeur Portable 10000mAh" data-price="28" data-img="https://images.unsplash.com/photo-1507842217343-583bb7270b66?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80" data-seller="Marc V."> Ajouter au panier </button>
-                    </div>
-                </div>
-            </div>
         </section>
     </div>
     <a href="message.html" class="fixed bottom-20 right-6 bg-blue-600 hover:bg-blue-700 text-white rounded-full p-4 shadow-lg transition-all duration-300 hover:scale-110 z-50">
@@ -743,7 +647,7 @@
         </div>
     </footer>
     <script>
-        // Mobile Menu Toggle (adapted from Vendeur.html)
+        // Mobile Menu Toggle
         const mobileMenuButton = document.getElementById('mobileMenuButton');
         const mobileMenu = document.getElementById('mobileMenu');
         const mobileBackdrop = document.getElementById('mobileBackdrop');
@@ -752,37 +656,31 @@
         function toggleMobileMenu() {
             mobileMenu.classList.toggle('open');
             mobileBackdrop.classList.toggle('hidden');
-            body.classList.toggle('mobile-menu-open'); // To prevent scrolling when menu is open
+            body.classList.toggle('mobile-menu-open');
         }
 
         mobileMenuButton.addEventListener('click', toggleMobileMenu);
         mobileBackdrop.addEventListener('click', toggleMobileMenu);
 
-        // Cart Drawer functionality (from Acheteur.html, adapted for new button IDs)
+        // Cart Drawer functionality
         const navbarCartButtonMobile = document.getElementById('navbarCartButtonMobile');
         const navbarCartButtonDesktop = document.getElementById('navbarCartButtonDesktop');
-        const floatingCartButton = document.getElementById('floatingCartButton'); // Nouvelle déclaration
+        const floatingCartButton = document.getElementById('floatingCartButton'); 
         const cartDrawer = document.getElementById('cartDrawer');
         const closeCart = document.getElementById('closeCart');
-        // const overlay = document.getElementById('overlay'); // Cett ligne est commentée
-        // car l'overlay est supprimé
-
+        
         function openCart() {
-            cartDrawer.classList.remove('translate-x-full');
-            cartDrawer.classList.add('translate-x-0');
-            // overlay.classList.remove('opacity-0', 'pointer-events-none'); // Cett ligne est commentée
-            // overlay.classList.add('opacity-100'); // Cett ligne est commentée
-            // body.classList.add('overflow-hidden'); // Cett ligne est commentée
-            // Pour permettre le défilement de la page derrière le panier
+            if (cartDrawer) {
+                cartDrawer.classList.remove('translate-x-full');
+                cartDrawer.classList.add('translate-x-0');
+            }
         }
 
         function closeCartDrawer() {
-            cartDrawer.classList.remove('translate-x-0');
-            cartDrawer.classList.add('translate-x-full');
-            // overlay.classList.remove('opacity-100'); // Cett ligne est commentée
-            // overlay.classList.add('opacity-0', 'pointer-events-none'); // Cett ligne est commentée
-            // body.classList.remove('overflow-hidden'); // Cett ligne est commentée
-            // Pour permettre le défilement de la page derrière le panier
+            if (cartDrawer) {
+                cartDrawer.classList.remove('translate-x-0');
+                cartDrawer.classList.add('translate-x-full');
+            }
         }
 
         if (navbarCartButtonMobile) {
@@ -791,58 +689,66 @@
         if (navbarCartButtonDesktop) {
             navbarCartButtonDesktop.addEventListener('click', openCart);
         }
-        if (floatingCartButton) { // Ajout de l'écouteur pour le bouton flottant
+        if (floatingCartButton) { 
             floatingCartButton.addEventListener('click', openCart);
         }
         if (closeCart) {
             closeCart.addEventListener('click', closeCartDrawer);
         }
-        // if (overlay) { // Cett ligne est commentée
-        //     overlay.addEventListener('click', closeCartDrawer); // Cett ligne est commentée
-        // } // Cett ligne est commentée
+        
+        const continueShoppingButton = document.getElementById('continueShoppingButton');
+        if (continueShoppingButton) {
+            continueShoppingButton.addEventListener('click', closeCartDrawer);
+        }
 
-        // Notification Panel functionality (from Acheteur.html, adapted for new button IDs)
+        // --- MODIFIED Notification Panel Drawer functionality ---
         const notificationButtonMobile = document.getElementById('notificationButtonMobile');
         const notificationButtonDesktop = document.getElementById('notificationButtonDesktop');
         const notificationPanel = document.getElementById('notificationPanel');
+        const closeNotificationPanelButton = document.getElementById('closeNotificationPanel');
 
-        function toggleNotificationPanel() {
-            notificationPanel.classList.toggle('scale-0');
-            notificationPanel.classList.toggle('opacity-0');
-            notificationPanel.classList.toggle('scale-100');
-            notificationPanel.classList.toggle('opacity-100');
+        function openNotificationDrawer() {
+            if (notificationPanel) {
+                notificationPanel.classList.remove('translate-x-full');
+                notificationPanel.classList.add('translate-x-0');
+            }
+        }
+
+        function closeNotificationDrawer() {
+            if (notificationPanel) {
+                notificationPanel.classList.remove('translate-x-0');
+                notificationPanel.classList.add('translate-x-full');
+            }
         }
 
         if (notificationButtonMobile) {
             notificationButtonMobile.addEventListener('click', (event) => {
-                event.stopPropagation();
-                toggleNotificationPanel();
+                event.stopPropagation(); // Recommended if part of a larger clickable area
+                openNotificationDrawer();
             });
         }
         if (notificationButtonDesktop) {
             notificationButtonDesktop.addEventListener('click', (event) => {
                 event.stopPropagation();
-                toggleNotificationPanel();
+                openNotificationDrawer();
             });
         }
 
-        window.addEventListener('click', (event) => {
-            if (notificationPanel && !notificationPanel.contains(event.target) && !notificationButtonMobile.contains(event.target) && (!notificationButtonDesktop || !notificationButtonDesktop.contains(event.target))) {
-                if (notificationPanel.classList.contains('scale-100')) {
-                    toggleNotificationPanel();
-                }
-            }
-        });
+        if (closeNotificationPanelButton) {
+            closeNotificationPanelButton.addEventListener('click', closeNotificationDrawer);
+        }
+        // --- END MODIFIED Notification Panel Drawer ---
 
-        // Add to cart logic and update cart count (from Acheteur.html)
+
+        // Add to cart logic and update cart count
         const addToCartButtons = document.querySelectorAll('.add-to-cart');
         const cartItemsContainer = document.getElementById('cartItems');
         const emptyCartMessage = document.getElementById('emptyCart');
         const cartSubtotalSpan = document.getElementById('cartSubtotal');
         const checkoutButton = document.getElementById('checkoutButton');
-        const navbarCartCountMobile = document.getElementById('navbarCartCountMobile');
-        const navbarCartCountDesktop = document.getElementById('navbarCartCountDesktop');
-        const floatingCartCount = document.getElementById('cartCount'); // ID du span sur le bouton flottant
+        const navbarCartCountMobile = document.getElementById('navbarCartCountMobile'); // Corrected ID
+        const navbarCartCountDesktop = document.getElementById('navbarCartCountDesktop'); // Corrected ID
+        const floatingCartCount = document.getElementById('cartCount'); 
 
         let cart = JSON.parse(localStorage.getItem('escicCart')) || [];
 
@@ -862,7 +768,6 @@
                 navbarCartCountDesktop.textContent = totalItems;
                 navbarCartCountDesktop.style.display = totalItems > 0 ? 'flex' : 'none';
             }
-            // Mise à jour du bouton flottant
             if (floatingCartCount) {
                 floatingCartCount.textContent = totalItems;
                 floatingCartCount.style.display = totalItems > 0 ? 'flex' : 'none';
@@ -870,6 +775,8 @@
         }
 
         function updateCartDisplay() {
+            if (!cartItemsContainer || !emptyCartMessage || !cartSubtotalSpan || !checkoutButton) return;
+
             cartItemsContainer.innerHTML = '';
             let subtotal = 0;
 
@@ -926,32 +833,38 @@
                 showNotificationPopup('Article ajouté au panier !', `${name} a été ajouté.`, 'fas fa-cart-plus', 'blue');
             });
         });
+        
+        if (cartItemsContainer) {
+            cartItemsContainer.addEventListener('click', (e) => {
+                const targetButton = e.target.closest('button'); // Ensure we get the button if icon is clicked
+                if (!targetButton) return;
 
-        cartItemsContainer.addEventListener('click', (e) => {
-            if (e.target.classList.contains('remove-item')) {
-                const idToRemove = e.target.dataset.id;
-                cart = cart.filter(item => item.id !== idToRemove);
-                saveCart();
-            } else if (e.target.classList.contains('quantity-change')) {
-                const idToChange = e.target.dataset.id;
-                const action = e.target.dataset.action;
-                const itemIndex = cart.findIndex(item => item.id === idToChange);
-
-                if (itemIndex > -1) {
-                    if (action === 'increase') {
-                        cart[itemIndex].quantity++;
-                    } else if (action === 'decrease') {
-                        cart[itemIndex].quantity--;
-                        if (cart[itemIndex].quantity <= 0) {
-                            cart.splice(itemIndex, 1); // Remove if quantity is 0 or less
-                        }
-                    }
+                if (targetButton.classList.contains('remove-item') || targetButton.parentElement.classList.contains('remove-item')) {
+                    const idToRemove = targetButton.dataset.id || targetButton.parentElement.dataset.id;
+                    cart = cart.filter(item => item.id !== idToRemove);
                     saveCart();
-                }
-            }
-        });
+                } else if (targetButton.classList.contains('quantity-change')) {
+                    const idToChange = targetButton.dataset.id;
+                    const action = targetButton.dataset.action;
+                    const itemIndex = cart.findIndex(item => item.id === idToChange);
 
-        // Notification Popup (from Acheteur.html)
+                    if (itemIndex > -1) {
+                        if (action === 'increase') {
+                            cart[itemIndex].quantity++;
+                        } else if (action === 'decrease') {
+                            cart[itemIndex].quantity--;
+                            if (cart[itemIndex].quantity <= 0) {
+                                cart.splice(itemIndex, 1); 
+                            }
+                        }
+                        saveCart();
+                    }
+                }
+            });
+        }
+
+
+        // Notification Popup (Toast)
         const notificationPopup = document.getElementById('notificationPopup');
         const notificationPopupTitle = document.getElementById('notificationPopupTitle');
         const notificationPopupMessage = document.getElementById('notificationPopupMessage');
@@ -959,9 +872,11 @@
         const closeNotificationPopup = document.getElementById('closeNotificationPopup');
 
         function showNotificationPopup(title, message, iconClass, iconColor) {
+            if (!notificationPopup || !notificationPopupTitle || !notificationPopupMessage || !notificationPopupIcon) return;
             notificationPopupTitle.textContent = title;
             notificationPopupMessage.textContent = message;
             notificationPopupIcon.className = `${iconClass} text-${iconColor}-500 text-xl`;
+            
             notificationPopup.classList.remove('translate-y-24', 'opacity-0');
             notificationPopup.classList.add('translate-y-0', 'opacity-100');
             setTimeout(() => {
@@ -969,17 +884,19 @@
                 notificationPopup.classList.add('translate-y-24', 'opacity-0');
             }, 3000);
         }
+        if(closeNotificationPopup) {
+            closeNotificationPopup.addEventListener('click', () => {
+                if (!notificationPopup) return;
+                notificationPopup.classList.remove('translate-y-0', 'opacity-100');
+                notificationPopup.classList.add('translate-y-24', 'opacity-0');
+            });
+        }
 
-        closeNotificationPopup.addEventListener('click', () => {
-            notificationPopup.classList.remove('translate-y-0', 'opacity-100');
-            notificationPopup.classList.add('translate-y-24', 'opacity-0');
-        });
-
-        // Notifications logic (from Acheteur.html)
+        // Main Notifications Panel List Logic
         const notificationList = document.getElementById('notificationList');
         const noNotificationsMessage = document.getElementById('noNotificationsMessage');
-        const notificationCountMobile = document.getElementById('notificationCountMobile'); // Re-using ID for mobile
-        const notificationCountDesktop = document.getElementById('notificationCountDesktop'); // Re-using ID for desktop
+        const notificationCountMobile = document.getElementById('notificationCountMobile'); 
+        const notificationCountDesktop = document.getElementById('notificationCountDesktop'); 
         const markAllAsReadButton = document.getElementById('markAllAsRead');
 
         let notifications = JSON.parse(localStorage.getItem('escicNotifications')) || [];
@@ -1003,6 +920,7 @@
         }
 
         function updateNotificationDisplay() {
+            if (!notificationList || !noNotificationsMessage) return;
             notificationList.innerHTML = '';
             if (notifications.length === 0) {
                 noNotificationsMessage.style.display = 'block';
@@ -1019,11 +937,11 @@
                                 <p class="text-sm text-gray-600">${n.message}</p>
                                 <p class="text-xs text-gray-400 mt-1">${new Date(n.timestamp).toLocaleString()}</p>
                             </div>
-                            <button class="mark-as-read ml-2 text-gray-400 hover:text-blue-600 ${n.read ? 'hidden' : ''}" title="Marquer comme lu">
+                            <button class="mark-as-read-btn ml-2 text-gray-400 hover:text-blue-600 ${n.read ? 'hidden' : ''}" title="Marquer comme lu" data-id="${n.id}">
                                 <i class="fas fa-check-circle"></i>
                             </button>
                         </div>
-                        <div class="notification-actions absolute right-0 top-0 h-full flex items-center bg-gray-500 transform translate-x-full">
+                        <div class="notification-actions absolute right-0 top-0 h-full flex items-center transform translate-x-full">
                             <button class="action-button mute-action" data-id="${n.id}" data-action="mute">
                                 <i class="fas fa-bell-slash"></i>
                             </button>
@@ -1036,106 +954,96 @@
                 });
             }
         }
+        if (notificationList) {
+            notificationList.addEventListener('click', (e) => {
+                const item = e.target.closest('.notification-item');
+                const markAsReadBtn = e.target.closest('.mark-as-read-btn');
+                const actionBtn = e.target.closest('.action-button');
 
-        notificationList.addEventListener('click', (e) => {
-            const item = e.target.closest('.notification-item');
-            if (!item) return;
+                if (!item && !markAsReadBtn && !actionBtn) return;
 
-            const notificationId = item.dataset.id;
-            const notification = notifications.find(n => n.id === notificationId);
+                const notificationId = item ? item.dataset.id : (markAsReadBtn ? markAsReadBtn.dataset.id : actionBtn.dataset.id);
+                const notification = notifications.find(n => n.id === notificationId);
 
-            if (e.target.classList.contains('mark-as-read')) {
-                if (notification) {
+                if (markAsReadBtn) {
+                     if (notification && !notification.read) {
+                        notification.read = true;
+                        saveNotifications();
+                    }
+                } else if (actionBtn) {
+                    const action = actionBtn.dataset.action;
+                    if (action === 'delete') {
+                        notifications = notifications.filter(n => n.id !== notificationId);
+                        saveNotifications();
+                    } else if (action === 'mute') {
+                        console.log(`Mute notification ${notificationId}`);
+                    }
+                } else if (item && notification && !notification.read) {
+                    // Mark as read when clicking on the notification item itself (if not an action button)
                     notification.read = true;
                     saveNotifications();
                 }
-            } else if (e.target.closest('.action-button')) {
-                const action = e.target.closest('.action-button').dataset.action;
-                if (action === 'delete') {
-                    notifications = notifications.filter(n => n.id !== notificationId);
-                    saveNotifications();
-                } else if (action === 'mute') {
-                    // Implement mute logic if needed
-                    console.log(`Mute notification ${notificationId}`);
-                }
-            } else if (!notification.read) {
-                // Mark as read when clicking on the notification itself
-                notification.read = true;
-                saveNotifications();
-            }
-        });
-
-        // Swipe to reveal actions (basic example, can be enhanced with touch events)
-        let startX;
-        notificationList.addEventListener('touchstart', (e) => {
-            const item = e.target.closest('.notification-item');
-            if (item) {
-                startX = e.touches[0].clientX;
-                item.querySelector('.notification-content').style.transition = 'none'; // Disable transition during swipe
-                item.querySelector('.notification-actions').style.transition = 'none'; // Disable transition during swipe
-            }
-        });
-
-        notificationList.addEventListener('touchmove', (e) => {
-            const item = e.target.closest('.notification-item');
-            if (item && startX !== undefined) {
-                const currentX = e.touches[0].clientX;
-                let diffX = currentX - startX;
-                
-                // Clamp diffX to prevent swiping too far right (past 0) or too far left (past -150)
-                const maxSwipeLeft = -150; // The width of your actions (adjust as needed)
-                diffX = Math.max(maxSwipeLeft, Math.min(0, diffX));
-
-
-                item.querySelector('.notification-content').style.transform = `translateX(${diffX}px)`;
-                item.querySelector('.notification-actions').style.transform = `translateX(${150 + diffX}px)`; // Adjust 150 based on action width
-            }
-        });
-
-        notificationList.addEventListener('touchend', (e) => {
-            const item = e.target.closest('.notification-item');
-            if (item && startX !== undefined) {
-                const currentX = e.changedTouches[0].clientX;
-                const diffX = currentX - startX;
-                
-                item.querySelector('.notification-content').style.transition = 'transform 0.3s ease'; // Re-enable transition
-                item.querySelector('.notification-actions').style.transition = 'transform 0.3s ease'; // Re-enable transition
-
-                if (diffX < -70) { // If swiped left enough (adjust threshold as needed)
-                    item.querySelector('.notification-content').style.transform = `translateX(-150px)`; // Show actions fully
-                    item.querySelector('.notification-actions').style.transform = `translateX(0%)`;
-                } else {
-                    item.querySelector('.notification-content').style.transform = `translateX(0px)`;
-                    item.querySelector('.notification-actions').style.transform = `translateX(100%)`;
-                }
-                startX = undefined;
-            }
-        });
-
-        markAllAsReadButton.addEventListener('click', () => {
-            notifications.forEach(n => n.read = true);
-            saveNotifications();
-        });
-
-        // Simulate new notifications (for demonstration)
-        function generateId() {
-            return '_' + Math.random().toString(36).substr(2, 9);
+            });
         }
 
-        // Example: Add a new notification every 10 seconds for demo purposes
-        // setInterval(() => {
-        //     const newNotification = {
-        //         id: generateId(),
-        //         title: "Nouvel article en vente !",
-        //         message: "Découvrez 'Ordinateur Portable Gaming' à un prix incroyable.",
-        //         read: false,
-        //         timestamp: new Date().toISOString(),
-        //         type: 'new_product'
-        //     };
-        //     notifications.unshift(newNotification); // Add to the beginning
-        //     saveNotifications();
-        //     showNotificationPopup(newNotification.title, newNotification.message, 'fas fa-box', 'green');
-        // }, 10000); // Every 10 seconds
+
+        let startX;
+        if (notificationList) {
+            notificationList.addEventListener('touchstart', (e) => {
+                const item = e.target.closest('.notification-item');
+                if (item) {
+                    startX = e.touches[0].clientX;
+                    const content = item.querySelector('.notification-content');
+                    const actions = item.querySelector('.notification-actions');
+                    if (content) content.style.transition = 'none'; 
+                    if (actions) actions.style.transition = 'none';
+                }
+            });
+
+            notificationList.addEventListener('touchmove', (e) => {
+                const item = e.target.closest('.notification-item');
+                if (item && startX !== undefined) {
+                    const currentX = e.touches[0].clientX;
+                    let diffX = currentX - startX;
+                    const maxSwipeLeft = -150; 
+                    diffX = Math.max(maxSwipeLeft, Math.min(0, diffX));
+
+                    const content = item.querySelector('.notification-content');
+                    const actions = item.querySelector('.notification-actions');
+                    if (content) content.style.transform = `translateX(${diffX}px)`;
+                    if (actions) actions.style.transform = `translateX(${150 + diffX}px)`; 
+                }
+            });
+
+            notificationList.addEventListener('touchend', (e) => {
+                const item = e.target.closest('.notification-item');
+                if (item && startX !== undefined) {
+                    const currentX = e.changedTouches[0].clientX;
+                    const diffX = currentX - startX;
+                    const content = item.querySelector('.notification-content');
+                    const actions = item.querySelector('.notification-actions');
+
+                    if (content) content.style.transition = 'transform 0.3s ease';
+                    if (actions) actions.style.transition = 'transform 0.3s ease';
+
+                    if (diffX < -70) { 
+                        if (content) content.style.transform = `translateX(-150px)`; 
+                        if (actions) actions.style.transform = `translateX(0%)`;
+                    } else {
+                        if (content) content.style.transform = `translateX(0px)`;
+                        if (actions) actions.style.transform = `translateX(100%)`;
+                    }
+                    startX = undefined;
+                }
+            });
+        }
+        if (markAllAsReadButton) {
+            markAllAsReadButton.addEventListener('click', () => {
+                notifications.forEach(n => n.read = true);
+                saveNotifications();
+            });
+        }
+        
 
         // Initial load
         updateCartDisplay();
@@ -1143,7 +1051,6 @@
         updateNotificationDisplay();
         updateNotificationCount();
 
-        // Logout button (from Acheteur.html, but using Vendeur.html's target path for consistency)
         const logoutBtn = document.getElementById('logoutBtn');
         if (logoutBtn) {
             logoutBtn.addEventListener('click', function(e) {
