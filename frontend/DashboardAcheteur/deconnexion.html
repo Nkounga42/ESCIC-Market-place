@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Déconnexion - ESCIC-Market</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Nunito', sans-serif;
+            background-color: #f3f4f6;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            text-align: center;
+        }
+        .logout-container {
+            background-color: #ffffff;
+            padding: 40px 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            max-width: 400px;
+            width: 90%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+        }
+        .logout-container h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #007bff; /* escic-blue */
+        }
+        .logout-container p {
+            font-size: 1.1rem;
+            color: #555;
+        }
+        .spinner {
+            border: 4px solid rgba(0, 0, 0, 0.1);
+            border-left-color: #007bff;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="logout-container">
+        <h1>Déconnexion</h1>
+        <div class="spinner"></div>
+        <p>Vous avez été déconnecté avec succès.</p>
+        <p class="text-sm text-gray-500">Redirection vers la page de connexion...</p>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Clear any specific session/local storage data if needed
+            // If you stored user-specific data like 'shoppingCart', 'userNotifications', 'loggedInUser', etc.
+            // Clear them here to ensure a clean logout.
+            localStorage.removeItem('shoppingCart');
+            localStorage.removeItem('userNotifications');
+            // Add any other specific items you store:
+            // localStorage.removeItem('loggedInUser');
+            // sessionStorage.clear(); // To clear all session storage
+
+            // Redirect to the connection page after a delay
+            setTimeout(function() {
+                window.location.href = 'login/connection.html'; // Assuming connection.html is in a 'login' folder
+            }, 2000); // 2-second delay
+        });
+    </script>
+</body>
+</html>

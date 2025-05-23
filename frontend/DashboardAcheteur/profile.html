@@ -1,0 +1,1068 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profil - ESCIC-Market</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Styles généraux pour le corps */
+        body {
+            font-family: 'Nunito', sans-serif;
+            scroll-behavior: smooth;
+            background-color: #f8fafc; /* Couleur de fond cohérente */
+        }
+
+        /* Styles des cartes du tableau de bord (si applicable) */
+        .dashboard-card {
+            transition: all 0.3s ease;
+        }
+        .dashboard-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+        }
+
+        /* Styles pour les statuts des produits (si applicable) */
+        .product-status {
+            font-size: 0.75rem;
+            padding: 0.25rem 0.5rem;
+            border-radius: 1rem;
+        }
+        .status-available {
+            background-color: #D1FAE5; /* green-100 */
+            color: #065F46; /* green-800 */
+        }
+        .status-reserved {
+            background-color: #FEF3C7; /* yellow-100 */
+            color: #92400E; /* yellow-800 */
+        }
+        .status-sold {
+            background-color: #E5E7EB; /* gray-200 */
+            color: #4B5563; /* gray-700 */
+        }
+
+        /* Styles de la sidebar/menu */
+        .menu-item {
+            transition: all 0.2s ease;
+            color: #4B5563; /* gray-700 */
+        }
+        .menu-item:hover {
+            background-color: #EFF6FF; /* blue-50 */
+            border-left: 3px solid #3B82F6; /* blue-500 */
+            color: #1E40AF; /* blue-800 */
+        }
+        .active-menu-item {
+            background-color: #EFF6FF; /* blue-50 */
+            border-left: 3px solid #3B82F6; /* blue-500 */
+            color: #1E40AF; /* blue-800 */
+        }
+
+        /* Styles spécifiques au chat (si des bulles de chat sont réutilisées) */
+        .chat-bubble {
+            border-radius: 1rem;
+            max-width: 70%;
+        }
+        .chat-bubble.sender {
+            background-color: #3B82F6; /* blue-500 */
+            color: white;
+            border-bottom-right-radius: 0.25rem;
+        }
+        .chat-bubble.receiver {
+            background-color: #E5E7EB; /* gray-200 */
+            color: #1F2937; /* gray-900 */
+            border-bottom-left-radius: 0.25rem;
+        }
+
+        /* Styles pour le menu mobile */
+        .mobile-menu {
+            transform: translateX(-100%);
+            transition: transform 0.3s ease;
+        }
+        .mobile-menu.open {
+            transform: translateX(0);
+        }
+        .backdrop {
+            background-color: rgba(0, 0, 0, 0.5);
+            transition: opacity 0.3s ease;
+        }
+        body.mobile-menu-open {
+            overflow: hidden; /* Empêche le défilement du corps lorsque le menu mobile est ouvert */
+        }
+
+        /* Styles de la carte produit (si applicable) */
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+        .category-card:hover {
+            transform: scale(1.03);
+        }
+
+        /* Styles de la scrollbar pour les conteneurs scrollables */
+        .scroll-container {
+            scrollbar-width: thin;
+            scrollbar-color: #3b82f6 #f1f1f1;
+        }
+        .scroll-container::-webkit-scrollbar {
+            height: 6px;
+        }
+        .scroll-container::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+        .scroll-container::-webkit-scrollbar-thumb {
+            background-color: #3b82f6;
+            border-radius: 10px;
+        }
+
+        /* Styles pour les badges de notification */
+        .notification-badge {
+            position: absolute;
+            top: -6px;
+            right: -6px;
+            background-color: #ef4444; /* red-500 */
+            color: white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            font-size: 11px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid white;
+            font-weight: bold;
+        }
+
+        /* Styles du panneau de notification */
+        .notification-panel-container {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        .notification-panel-container::-webkit-scrollbar {
+            width: 6px;
+        }
+        .notification-panel-container::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+        .notification-panel-container::-webkit-scrollbar-thumb {
+            background-color: #3b82f6; /* blue-600 */
+            border-radius: 10px;
+        }
+
+        /* Styles des éléments de notification */
+        .notification-item {
+            position: relative;
+            transition: all 0.2s ease;
+            background: white; /* Assure un fond blanc pour le glissement */
+            overflow: hidden; /* Cache les actions par défaut */
+            touch-action: pan-x; /* Permet le glissement horizontal sur les appareils tactiles */
+        }
+        .notification-item:hover {
+            background-color: #f3f4f6; /* gray-100 */
+        }
+        .notification-item.unread::before {
+            content: '';
+            position: absolute;
+            left: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background-color: #3b82f6; /* blue-600 */
+            z-index: 2; /* S'assure que le point est au-dessus du contenu */
+        }
+        .notification-content {
+            position: relative;
+            background: white;
+            transition: transform 0.3s ease;
+            z-index: 1; /* Assure que le contenu est au-dessus des actions par défaut */
+        }
+        .notification-actions {
+            position: absolute;
+            top: 0;
+            right: 0;
+            height: 100%;
+            display: flex;
+            align-items: stretch;
+            z-index: 0; /* Assure que les actions sont en dessous du contenu */
+        }
+        .action-button {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0 1.5rem;
+            color: white;
+            font-size: 0.875rem;
+            white-space: nowrap;
+            transition: background-color 0.2s;
+        }
+        .mute-action {
+            background-color: #9333ea; /* purple-700 */
+        }
+        .delete-action {
+            background-color: #dc2626; /* red-600 */
+        }
+
+        /* Animations */
+        .notification-animation {
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0% {
+                box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7);
+            }
+            70% {
+                box-shadow: 0 0 0 10px rgba(239, 68, 68, 0);
+            }
+            100% {
+                box-shadow: 0 0 0 0 rgba(239, 68, 68, 0);
+            }
+        }
+
+        /* Z-index pour les popups/toast */
+        #toast {
+            z-index: 100;
+        }
+        #notificationPopup {
+            z-index: 100;
+        }
+
+        /* Styles spécifiques au profil */
+        .profile-section-card {
+            background-color: white;
+            border-radius: 0.5rem;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+        .profile-stat-item {
+            background-color: #f0f4f8; /* blue-gray-100 */
+            padding: 1rem;
+            border-radius: 0.5rem;
+        }
+    </style>
+</head>
+<body>
+    <header class="bg-white shadow-sm sticky top-0 z-50">
+        <div class="container mx-auto px-4 py-3 flex items-center justify-between">
+            <div class="flex items-center">
+                <img src="https://via.placeholder.com/40" alt="ESCIC-Market Logo" class="h-10 mr-2">
+                <span class="text-xl font-bold text-blue-800 hidden md:block">ESCIC-Market</span>
+            </div>
+
+            <div class="flex items-center space-x-4">
+                <button class="md:hidden text-gray-600">
+                    <i class="fas fa-search text-xl"></i>
+                </button>
+
+                <button class="hidden md:block bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-full font-medium transition duration-300">
+                    <i class="fas fa-plus mr-1"></i> Vendre un article
+                </button>
+            </div>
+        </div>
+
+        <div class="md:hidden bg-white px-4 py-2 border-t">
+            <div class="relative">
+                <input type="text" placeholder="Rechercher un article..."
+                       class="w-full py-2 px-4 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                <button class="absolute right-3 top-2 text-gray-400">
+                    <i class="fas fa-search"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <button id="mobileMenuButton" class="md:hidden fixed top-4 left-4 z-50 bg-white p-2 rounded-full shadow-lg">
+        <i class="fas fa-bars text-blue-800 text-xl"></i>
+    </button>
+
+    <div id="mobileBackdrop" class="fixed inset-0 bg-black bg-opacity-50 z-40 hidden"></div>
+
+    <div id="mobileMenu" class="mobile-menu fixed inset-y-0 left-0 z-50 w-64 bg-white shadow-lg overflow-y-auto">
+        <div class="p-4 border-b border-gray-200">
+            <div class="flex items-center">
+                <img src="https://via.placeholder.com/40" alt="Profile" class="w-10 h-10 rounded-full mr-3">
+                <div>
+                    <p class="font-semibold">Nom de l'Acheteur</p>
+                    <p class="text-xs text-gray-500">Acheteur actif</p>
+                </div>
+            </div>
+        </div>
+
+        <nav class="p-2">
+            <a href="Acheteur.html" class="menu-item flex items-center p-3 rounded-lg">
+                <i class="fas fa-home mr-3 text-blue-800"></i>
+                <span>Accueil</span>
+            </a>
+            <button id="navbarCartButtonMobile" class="menu-item flex items-center p-3 rounded-lg w-full text-left relative text-gray-600 hover:text-blue-800">
+                <div class="relative mr-3">
+                    <i class="fas fa-shopping-cart text-xl text-green-600"></i>
+                    <span id="navbarCartCountMobile" class="absolute -top-2 -right-2 bg-blue-600 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">0</span>
+                </div>
+                <span>Mon panier</span>
+            </button>
+            <div class="relative">
+                <button id="notificationButtonMobile" class="menu-item text-gray-600 hover:text-blue-800 flex items-center p-3 rounded-lg w-full text-left relative">
+                    <i class="fas fa-bell text-xl mr-3"></i>
+                    <span id="notificationCountMobile" class="notification-badge" style="display: none;">0</span>
+                    <span>Notifications</span>
+                </button>
+            </div>
+            <a href="message.html" class="menu-item flex items-center p-3 rounded-lg">
+                <i class="fas fa-comments mr-3 text-blue-600"></i>
+                <span>Messages</span>
+            </a>
+            <a href="profile.html" class="menu-item active-menu-item flex items-center p-3 rounded-lg">
+                <i class="fas fa-user mr-3 text-blue-700"></i>
+                <span>Profil</span>
+            </a>
+            <a href="evaluation.html" class="menu-item flex items-center p-3 rounded-lg">
+                <i class="fas fa-star mr-3 text-yellow-500"></i>
+                <span>Évaluations</span>
+            </a>
+            <a href="parametre.html" class="menu-item flex items-center p-3 rounded-lg">
+                <i class="fas fa-cog mr-3 text-gray-600"></i>
+                <span>Paramètres</span>
+            </a>
+            <a href="recherche.html" class="menu-item flex items-center p-3 rounded-lg">
+                <i class="fas fa-search mr-3 text-blue-800"></i>
+                <span>Recherche</span>
+            </a>
+            <a href="login/connection.html" class="menu-item flex items-center p-3 rounded-lg mt-4 text-red-500">
+                <i class="fas fa-sign-out-alt mr-3"></i>
+                <span>Déconnexion</span>
+            </a>
+        </nav>
+    </div>
+
+    <div class="hidden md:flex md:w-64 md:flex-col md:fixed md:inset-y-0">
+        <div class="flex flex-col flex-grow border-r border-gray-200 bg-white overflow-y-auto">
+            <div class="p-4 border-b border-gray-200">
+                <div class="flex items-center">
+                    <img src="https://via.placeholder.com/40" alt="Profile" class="w-10 h-10 rounded-full mr-3">
+                    <div>
+                        <p class="font-semibold">Nom de l'Acheteur</p>
+                        <p class="text-xs text-gray-500">Acheteur actif</p>
+                    </div>
+                </div>
+            </div>
+            <nav class="flex-1 p-2">
+                <a href="Acheteur.html" class="menu-item flex items-center p-3 rounded-lg">
+                    <i class="fas fa-home mr-3 text-blue-800"></i>
+                    <span>Accueil</span>
+                </a>
+                <button id="navbarCartButtonDesktop" class="menu-item flex items-center p-3 rounded-lg w-full text-left relative">
+                    <div class="relative mr-3">
+                        <i class="fas fa-shopping-cart mr-3 text-blue-800"></i>
+                        <span id="navbarCartCountDesktop" class="absolute -top-2 -right-2 bg-blue-600 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">0</span>
+                    </div>
+                    <span>Mon panier</span>
+                </button>
+                <div class="relative">
+                    <button id="notificationButtonDesktop" class="menu-item text-gray-600 hover:text-blue-800 flex items-center p-3 rounded-lg w-full text-left relative">
+                        <i class="fas fa-bell text-xl mr-3 text-blue-800"></i>
+                        <span id="notificationCountDesktop" class="notification-badge" style="display: none;">0</span>
+                        <span>Notifications</span>
+                    </button>
+                    <div id="notificationPanel" class="absolute left-0 md:right-0 md:left-auto mt-2 w-80 md:w-96 bg-white rounded-lg shadow-lg transition-all duration-300 transform scale-0 origin-top-left md:origin-top-right opacity-0 z-[72]">
+                        <div class="p-3 border-b border-gray-200 flex justify-between items-center">
+                            <h3 class="font-semibold text-gray-700">Notifications</h3>
+                            <div class="flex space-x-2">
+                                <button id="markAllAsRead" title="Tout marquer comme lu" class="text-sm text-blue-600 hover:text-blue-800">
+                                    <i class="fas fa-check-double"></i>
+                                </button>
+                                <button id="notificationSettings" title="Paramètres" class="text-gray-500 hover:text-gray-700">
+                                    <i class="fas fa-cog"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div id="notificationList" class="notification-panel-container">
+                            <p id="noNotificationsMessage" class="p-4 text-center text-gray-500">Aucune nouvelle notification.</p>
+                        </div>
+                        <div class="p-3 border-t border-gray-200 text-center">
+                            <a href="#" class="text-sm text-blue-600 hover:text-blue-800">Voir toutes les notifications</a>
+                        </div>
+                    </div>
+                </div>
+                <a href="message.html" class="menu-item flex items-center p-3 rounded-lg">
+                    <i class="fas fa-comments mr-3 text-blue-800"></i>
+                    <span>Messages</span>
+                </a>
+                <a href="profile.html" class="menu-item active-menu-item flex items-center p-3 rounded-lg">
+                    <i class="fas fa-user mr-3 text-blue-800"></i>
+                    <span>Profil</span>
+                </a>
+                <a href="evaluation.html" class="menu-item flex items-center p-3 rounded-lg">
+                    <i class="fas fa-star mr-3 text-blue-800"></i>
+                    <span>Évaluations</span>
+                </a>
+                <a href="parametre.html" class="menu-item flex items-center p-3 rounded-lg">
+                    <i class="fas fa-cog mr-3 text-blue-800"></i>
+                    <span>Paramètres</span>
+                </a>
+                <a href="recherche.html" class="menu-item flex items-center p-3 rounded-lg">
+                    <i class="fas fa-search mr-3 text-blue-800"></i>
+                    <span>Recherche</span>
+                </a>
+                <a href="login/connection.html" id="logoutBtn" class="menu-item flex items-center p-3 rounded-lg text-red-600">
+                    <i class="fas fa-sign-out-alt mr-3"></i>
+                    <span>Déconnexion</span>
+                </a>
+            </nav>
+        </div>
+    </div>
+
+    <div class="md:pl-64 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        <h1 class="text-3xl font-bold text-gray-900 mb-6">Mon Profil</h1>
+
+        <div class="profile-section-card">
+            <h2 class="text-xl font-semibold text-gray-800 mb-4">Informations Personnelles</h2>
+            <div class="flex flex-col md:flex-row items-center md:items-start space-y-4 md:space-y-0 md:space-x-6">
+                <div class="relative">
+                    <img id="profileImage" src="https://via.placeholder.com/150" alt="Photo de profil" class="w-32 h-32 rounded-full object-cover border-4 border-blue-200 shadow-md">
+                    <label for="profilePhotoInput" class="absolute bottom-0 right-0 bg-blue-600 hover:bg-blue-700 text-white p-2 rounded-full cursor-pointer shadow-lg">
+                        <i class="fas fa-camera"></i>
+                        <input type="file" id="profilePhotoInput" accept="image/*" class="hidden">
+                    </label>
+                </div>
+                <div class="flex-1 text-center md:text-left">
+                    <p class="text-2xl font-bold text-gray-900" id="userName">John Doe</p>
+                    <p class="text-gray-600">john.doe@example.com</p>
+                    <p class="text-gray-600">Membre depuis: <span id="memberSince">12 Janvier 2023</span></p>
+                    <button class="mt-4 bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md transition duration-300">
+                        Modifier le profil
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="profile-section-card">
+            <h2 class="text-xl font-semibold text-gray-800 mb-4">Mes Statistiques</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div class="profile-stat-item text-center">
+                    <p class="text-3xl font-bold text-blue-700" id="productsSold">15</p>
+                    <p class="text-gray-600">Articles vendus</p>
+                </div>
+                <div class="profile-stat-item text-center">
+                    <p class="text-3xl font-bold text-green-700" id="productsBought">8</p>
+                    <p class="text-gray-600">Articles achetés</p>
+                </div>
+                <div class="profile-stat-item text-center">
+                    <p class="text-3xl font-bold text-yellow-600" id="averageRating">4.7 <i class="fas fa-star text-yellow-500 text-xl"></i></p>
+                    <p class="text-gray-600">Note moyenne</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="profile-section-card">
+            <h2 class="text-xl font-semibold text-gray-800 mb-4">Mes Articles en Vente</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="sellingItems">
+                <div class="bg-white rounded-lg shadow-md overflow-hidden">
+                    <img src="https://via.placeholder.com/300x200" alt="Livre de Maths" class="w-full h-40 object-cover">
+                    <div class="p-4">
+                        <h3 class="font-semibold text-lg mb-1">Livre de Maths</h3>
+                        <p class="text-gray-700 font-bold mb-2">15.00€</p>
+                        <span class="product-status status-available">Disponible</span>
+                        <div class="mt-3 flex space-x-2">
+                            <button class="flex-1 bg-blue-500 hover:bg-blue-600 text-white text-sm py-2 rounded-md">Modifier</button>
+                            <button class="flex-1 bg-red-500 hover:bg-red-600 text-white text-sm py-2 rounded-md">Supprimer</button>
+                        </div>
+                    </div>
+                </div>
+                </div>
+            <div class="mt-6 text-center">
+                <a href="#" class="text-blue-600 hover:underline">Voir tous mes articles</a>
+            </div>
+        </div>
+
+        <div class="profile-section-card">
+            <h2 class="text-xl font-semibold text-gray-800 mb-4">Articles Achetés Récemment</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="boughtItems">
+                <div class="bg-white rounded-lg shadow-md overflow-hidden">
+                    <img src="https://via.placeholder.com/300x200" alt="Casque Audio" class="w-full h-40 object-cover">
+                    <div class="p-4">
+                        <h3 class="font-semibold text-lg mb-1">Casque Audio</h3>
+                        <p class="text-gray-700 font-bold mb-2">30.00€</p>
+                        <span class="product-status status-sold">Acheté</span>
+                        <div class="mt-3">
+                            <button class="w-full bg-green-500 hover:bg-green-600 text-white text-sm py-2 rounded-md">Laisser une évaluation</button>
+                        </div>
+                    </div>
+                </div>
+                </div>
+            <div class="mt-6 text-center">
+                <a href="#" class="text-blue-600 hover:underline">Voir tous mes achats</a>
+            </div>
+        </div>
+    </div>
+
+    <div id="cartDrawer" class="fixed inset-y-0 right-0 w-full md:w-96 bg-white shadow-xl transform translate-x-full transition-transform duration-300 ease-in-out z-[70]">
+        <div class="h-full flex flex-col">
+            <div class="bg-blue-800 text-white px-6 py-4 flex justify-between items-center">
+                <h2 class="text-xl font-bold">Mon Panier</h2>
+                <button id="closeCart" class="text-white hover:text-blue-200">
+                    <i class="fas fa-times text-xl"></i>
+                </button>
+            </div>
+            <div id="cartItems" class="flex-1 overflow-y-auto p-4">
+                <div id="emptyCart" class="flex flex-col items-center justify-center h-64 text-center text-gray-500">
+                    <i class="fas fa-shopping-cart text-5xl mb-4"></i>
+                    <p class="text-xl font-medium mb-2">Votre panier est vide</p>
+                    <p>Ajoutez des articles pour les voir ici</p>
+                </div>
+            </div>
+            <div class="bg-gray-50 p-6 border-t">
+                <div class="flex justify-between mb-4">
+                    <span class="font-medium text-gray-600">Sous-total:</span>
+                    <span id="cartSubtotal" class="font-bold">0.00€</span>
+                </div>
+                <button id="checkoutButton" class="w-full bg-blue-700 hover:bg-blue-800 text-white py-3 rounded-lg font-medium transition duration-300 disabled:opacity-50 disabled:cursor-not-allowed" disabled> Procéder au paiement </button>
+                <button id="continueShoppingButton" class="w-full mt-3 border border-blue-700 text-blue-700 hover:bg-blue-50 py-3 rounded-lg font-medium transition duration-300"> Continuer mes achats </button>
+            </div>
+        </div>
+    </div>
+
+    <div id="notificationPopup" class="fixed bottom-5 right-5 bg-white rounded-lg shadow-xl p-4 w-80 transform translate-y-24 opacity-0 transition-all duration-500 ease-in-out z-[100] border-l-4 border-blue-500">
+        <div class="flex items-start">
+            <div class="flex-shrink-0 mr-3 pt-1">
+                <i id="notificationPopupIcon" class="fas fa-info-circle text-blue-500 text-xl"></i>
+            </div>
+            <div class="flex-1">
+                <h4 id="notificationPopupTitle" class="font-semibold text-gray-800">Nouvelle Notification</h4>
+                <p id="notificationPopupMessage" class="text-sm text-gray-600 mt-1">Contenu de la notification.</p>
+            </div>
+            <button id="closeNotificationPopup" class="text-gray-400 hover:text-gray-600 ml-2">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+    </div>
+
+    <div id="toast" class="fixed bottom-5 left-1/2 -translate-x-1/2 bg-white rounded-lg shadow-xl p-4 w-80 transform translate-y-full opacity-0 transition-all duration-300 ease-in-out border-t-4 border-blue-500">
+        </div>
+
+        <a href="message.html" class="fixed bottom-20 right-6 bg-blue-600 hover:bg-blue-700 text-white rounded-full p-4 shadow-lg transition-all duration-300 hover:scale-110 z-50">
+            <i class="fas fa-comments text-xl"></i>
+            <span id="messageCount" class="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center" style="display: none;">0</span>
+        </a>
+        
+        
+        <button id="floatingCartButton"
+           class="fixed bottom-32 right-6 bg-white text-gray-600 hover:text-blue-800 shadow-lg p-4 rounded-full transition-all duration-300 hover:scale-110 z-50 border border-gray-300">
+            <i class="fas fa-shopping-cart text-xl"></i>
+            <span id="cartCount" class="absolute -top-2 -right-2 bg-blue-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center" style="display: none;">0</span>
+        </button>
+        <footer class="bg-blue-900 text-white py-10">
+            <div class="container mx-auto px-4">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    <div>
+                        <h3 class="text-xl font-bold mb-4">ESCIC-Market</h3>
+                        <p class="text-blue-200 mb-4">La plateforme d'échange entre étudiants de l'ESCIC.</p>
+                        <div class="flex space-x-4">
+                            <a href="#" class="text-white hover:text-blue-300"><i class="fab fa-facebook-f"></i></a>
+                            <a href="#" class="text-white hover:text-blue-300"><i class="fab fa-instagram"></i></a>
+                            <a href="#" class="text-white hover:text-blue-300"><i class="fab fa-twitter"></i></a>
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <h3 class="text-lg font-semibold mb-4">Liens rapides</h3>
+                        <ul class="space-y-2">
+                            <li><a href="#" class="text-blue-200 hover:text-white">Accueil</a></li>
+                            <li><a href="#" class="text-blue-200 hover:text-white">Catégories</a></li>
+                            <li><a href="#" class="text-blue-200 hover:text-white">Vendre un article</a></li>
+                            <li><a href="#" class="text-blue-200 hover:text-white">Mon compte</a></li>
+                        </ul>
+                    </div>
+                    
+                    <div>
+                        <h3 class="text-lg font-semibold mb-4">Contact</h3>
+                        <p class="text-blue-200 mb-2"><i class="fas fa-map-marker-alt mr-2"></i> Campus ESCIC, Pointe-Noire</p>
+                        <p class="text-blue-200 mb-2"><i class="fas fa-envelope mr-2"></i> contact@escic-market.fr</p>
+                        <p class="text-blue-200"><i class="fas fa-phone mr-2"></i> 01 23 45 67 89</p>
+                    </div>
+                </div>
+                
+                <div class="border-t border-blue-800 mt-8 pt-6 text-center text-blue-300 text-sm">
+                    <p>&copy; 2023 ESCIC-Market. Tous droits réservés.</p>
+                </div>
+            </div>
+        </footer>
+    <script>
+        // Fonctionnalité du menu mobile
+        const mobileMenuButton = document.getElementById('mobileMenuButton');
+        const mobileMenu = document.getElementById('mobileMenu');
+        const mobileBackdrop = document.getElementById('mobileBackdrop');
+
+        if (mobileMenuButton && mobileMenu && mobileBackdrop) {
+            mobileMenuButton.addEventListener('click', () => {
+                mobileMenu.classList.toggle('open');
+                mobileBackdrop.classList.toggle('hidden');
+                document.body.classList.toggle('mobile-menu-open'); // Pour désactiver le défilement du corps
+            });
+
+            mobileBackdrop.addEventListener('click', () => {
+                mobileMenu.classList.remove('open');
+                mobileBackdrop.classList.add('hidden');
+                document.body.classList.remove('mobile-menu-open');
+            });
+        }
+
+        // Fonctionnalité du tiroir de panier (Cart Drawer)
+        const navbarCartButtonMobile = document.getElementById('navbarCartButtonMobile');
+        const navbarCartButtonDesktop = document.getElementById('navbarCartButtonDesktop');
+        const cartDrawer = document.getElementById('cartDrawer');
+        const closeCart = document.getElementById('closeCart');
+        const checkoutButton = document.getElementById('checkoutButton');
+        const continueShoppingButton = document.getElementById('continueShoppingButton');
+        const cartItemsContainer = document.getElementById('cartItems');
+        const emptyCartMessage = document.getElementById('emptyCart');
+        const cartSubtotalSpan = document.getElementById('cartSubtotal');
+        const navbarCartCountMobile = document.getElementById('navbarCartCountMobile');
+        const navbarCartCountDesktop = document.getElementById('navbarCartCountDesktop');
+
+        let cart = JSON.parse(localStorage.getItem('escicCart')) || [];
+
+        function saveCart() {
+            localStorage.setItem('escicCart', JSON.stringify(cart));
+        }
+
+        function updateCartDisplay() {
+            cartItemsContainer.innerHTML = '';
+            if (cart.length === 0) {
+                emptyCartMessage.style.display = 'flex';
+                checkoutButton.disabled = true;
+            } else {
+                emptyCartMessage.style.display = 'none';
+                checkoutButton.disabled = false;
+                let subtotal = 0;
+                cart.forEach(item => {
+                    const itemTotal = item.price * item.quantity;
+                    subtotal += itemTotal;
+                    const cartItemHTML = `
+                        <div class="flex items-center justify-between py-3 border-b border-gray-100 last:border-b-0">
+                            <div class="flex items-center">
+                                <img src="${item.image}" alt="${item.name}" class="w-16 h-16 object-cover rounded-md mr-4">
+                                <div>
+                                    <p class="font-medium text-gray-800">${item.name}</p>
+                                    <p class="text-sm text-gray-500">${item.price.toFixed(2)}€ x ${item.quantity}</p>
+                                </div>
+                            </div>
+                            <div class="flex items-center space-x-2">
+                                <span class="font-semibold text-gray-900">${itemTotal.toFixed(2)}€</span>
+                                <button data-id="${item.id}" class="remove-from-cart text-red-500 hover:text-red-700 ml-2">
+                                    <i class="fas fa-trash-alt"></i>
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                    cartItemsContainer.insertAdjacentHTML('beforeend', cartItemHTML);
+                });
+                cartSubtotalSpan.textContent = subtotal.toFixed(2) + '€';
+            }
+            updateCartCount();
+            addRemoveButtonListeners();
+        }
+
+        function updateCartCount() {
+            const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+            if (navbarCartCountMobile) {
+                navbarCartCountMobile.textContent = totalItems;
+                navbarCartCountMobile.style.display = totalItems > 0 ? 'flex' : 'none';
+            }
+            if (navbarCartCountDesktop) {
+                navbarCartCountDesktop.textContent = totalItems;
+                navbarCartCountDesktop.style.display = totalItems > 0 ? 'flex' : 'none';
+            }
+        }
+
+        function addRemoveButtonListeners() {
+            document.querySelectorAll('.remove-from-cart').forEach(button => {
+                button.addEventListener('click', (e) => {
+                    const itemId = e.currentTarget.dataset.id;
+                    cart = cart.filter(item => item.id !== itemId);
+                    saveCart();
+                    updateCartDisplay();
+                });
+            });
+        }
+
+        if (navbarCartButtonMobile) {
+            navbarCartButtonMobile.addEventListener('click', () => {
+                cartDrawer.classList.remove('translate-x-full');
+            });
+        }
+        if (navbarCartButtonDesktop) {
+            navbarCartButtonDesktop.addEventListener('click', () => {
+                cartDrawer.classList.remove('translate-x-full');
+            });
+        }
+
+        if (closeCart) {
+            closeCart.addEventListener('click', () => {
+                cartDrawer.classList.add('translate-x-full');
+            });
+        }
+
+        if (continueShoppingButton) {
+            continueShoppingButton.addEventListener('click', () => {
+                cartDrawer.classList.add('translate-x-full');
+            });
+        }
+
+        // Fonctionnalité des notifications
+        const notificationButtonMobile = document.getElementById('notificationButtonMobile');
+        const notificationButtonDesktop = document.getElementById('notificationButtonDesktop');
+        const notificationPanel = document.getElementById('notificationPanel');
+        const notificationList = document.getElementById('notificationList');
+        const notificationCountMobile = document.getElementById('notificationCountMobile');
+        const notificationCountDesktop = document.getElementById('notificationCountDesktop');
+        const noNotificationsMessage = document.getElementById('noNotificationsMessage');
+        const markAllAsReadButton = document.getElementById('markAllAsRead');
+        const notificationPopup = document.getElementById('notificationPopup');
+        const closeNotificationPopup = document.getElementById('closeNotificationPopup');
+        const notificationPopupTitle = document.getElementById('notificationPopupTitle');
+        const notificationPopupMessage = document.getElementById('notificationPopupMessage');
+        const notificationPopupIcon = document.getElementById('notificationPopupIcon');
+
+        let notifications = JSON.parse(localStorage.getItem('escicNotifications')) || [];
+
+        function saveNotifications() {
+            localStorage.setItem('escicNotifications', JSON.stringify(notifications));
+        }
+
+        function updateNotificationDisplay() {
+            notificationList.innerHTML = '';
+            if (notifications.length === 0) {
+                noNotificationsMessage.style.display = 'block';
+            } else {
+                noNotificationsMessage.style.display = 'none';
+                notifications.forEach((notification, index) => {
+                    const notificationHTML = `
+                        <div class="notification-item py-3 px-4 ${!notification.read ? 'unread' : ''}" data-id="${notification.id}" data-index="${index}">
+                            <div class="notification-content flex items-center">
+                                <div class="flex-shrink-0 mr-3">
+                                    <i class="${getNotificationIcon(notification.type)} text-xl ${getNotificationColor(notification.type)}"></i>
+                                </div>
+                                <div class="flex-1">
+                                    <h4 class="font-medium text-gray-800">${notification.title}</h4>
+                                    <p class="text-sm text-gray-600">${notification.message}</p>
+                                    <span class="text-xs text-gray-500">${formatTimeAgo(notification.timestamp)}</span>
+                                </div>
+                                <button class="mark-as-read-button ml-2 text-gray-400 hover:text-blue-600 ${notification.read ? 'hidden' : ''}" title="Marquer comme lu">
+                                    <i class="fas fa-check-circle"></i>
+                                </button>
+                            </div>
+                            <div class="notification-actions">
+                                <button class="action-button mute-action" data-id="${notification.id}" data-action="mute">
+                                    <i class="fas fa-volume-mute mr-1"></i> Muet
+                                </button>
+                                <button class="action-button delete-action" data-id="${notification.id}" data-action="delete">
+                                    <i class="fas fa-trash-alt mr-1"></i> Supprimer
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                    notificationList.insertAdjacentHTML('beforeend', notificationHTML);
+                });
+                addNotificationListeners();
+            }
+            updateNotificationCount();
+        }
+
+        function updateNotificationCount() {
+            const unreadCount = notifications.filter(n => !n.read).length;
+            if (notificationCountMobile) {
+                notificationCountMobile.textContent = unreadCount;
+                notificationCountMobile.style.display = unreadCount > 0 ? 'flex' : 'none';
+            }
+            if (notificationCountDesktop) {
+                notificationCountDesktop.textContent = unreadCount;
+                notificationCountDesktop.style.display = unreadCount > 0 ? 'flex' : 'none';
+            }
+        }
+
+        function getNotificationIcon(type) {
+            switch (type) {
+                case 'new_product': return 'fas fa-box';
+                case 'message': return 'fas fa-envelope';
+                case 'promotion': return 'fas fa-tags';
+                case 'update': return 'fas fa-info-circle';
+                default: return 'fas fa-bell';
+            }
+        }
+
+        function getNotificationColor(type) {
+            switch (type) {
+                case 'new_product': return 'text-green-500';
+                case 'message': return 'text-blue-500';
+                case 'promotion': return 'text-purple-500';
+                case 'update': return 'text-yellow-500';
+                default: return 'text-gray-500';
+            }
+        }
+
+        function formatTimeAgo(timestamp) {
+            const now = new Date();
+            const date = new Date(timestamp);
+            const seconds = Math.floor((now - date) / 1000);
+
+            if (seconds < 60) return `${seconds}s`;
+            const minutes = Math.floor(seconds / 60);
+            if (minutes < 60) return `${minutes}m`;
+            const hours = Math.floor(minutes / 60);
+            if (hours < 24) return `${hours}h`;
+            const days = Math.floor(hours / 24);
+            if (days < 7) return `${days}j`;
+            return date.toLocaleDateString();
+        }
+
+        function addNotificationListeners() {
+            // Bouton "Marquer comme lu"
+            document.querySelectorAll('.mark-as-read-button').forEach(button => {
+                button.addEventListener('click', (e) => {
+                    e.stopPropagation(); // Empêche le clic de se propager
+                    const notificationId = e.currentTarget.dataset.id;
+                    const notification = notifications.find(n => n.id === notificationId);
+                    if (notification) {
+                        notification.read = true;
+                        saveNotifications();
+                        updateNotificationDisplay();
+                    }
+                });
+            });
+
+            // Glisser pour révéler les actions (pour les appareils tactiles)
+            notificationList.querySelectorAll('.notification-item').forEach(item => {
+                let startX;
+                let currentTranslateX = 0;
+                const content = item.querySelector('.notification-content');
+                const actions = item.querySelector('.notification-actions');
+
+                item.addEventListener('touchstart', (e) => {
+                    startX = e.touches[0].clientX;
+                    content.style.transition = ''; // Supprime la transition pour un feedback immédiat
+                });
+
+                item.addEventListener('touchmove', (e) => {
+                    const diffX = e.touches[0].clientX - startX;
+                    currentTranslateX = Math.max(-actions.offsetWidth, Math.min(0, diffX));
+                    content.style.transform = `translateX(${currentTranslateX}px)`;
+                });
+
+                item.addEventListener('touchend', () => {
+                    content.style.transition = 'transform 0.3s ease'; // Réapplique la transition
+                    if (currentTranslateX < -50) { // Si glissé de plus de 50px vers la gauche
+                        content.style.transform = `translateX(-${actions.offsetWidth}px)`;
+                    } else {
+                        content.style.transform = `translateX(0px)`;
+                    }
+                });
+            });
+
+            // Boutons d'action (Muet, Supprimer)
+            notificationList.querySelectorAll('.action-button').forEach(button => {
+                button.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const notificationId = e.currentTarget.dataset.id;
+                    const action = e.currentTarget.dataset.action;
+
+                    if (action === 'delete') {
+                        notifications = notifications.filter(n => n.id !== notificationId);
+                        saveNotifications();
+                        updateNotificationDisplay();
+                    } else if (action === 'mute') {
+                        // Logique de mise en sourdine ici
+                        notifications = notifications.filter(n => n.id !== notificationId); // Exemple: supprime pour l'instant
+                        saveNotifications();
+                        updateNotificationDisplay();
+                    }
+                });
+            });
+
+            // Clic pour voir la notification (et marquer comme lue)
+            notificationList.querySelectorAll('.notification-content').forEach(content => {
+                content.addEventListener('click', (e) => {
+                    const notificationId = content.closest('.notification-item').dataset.id;
+                    const notification = notifications.find(n => n.id === notificationId);
+                    if (notification) {
+                        notification.read = true;
+                        saveNotifications();
+                        updateNotificationDisplay();
+                        showToast('Notification lue', notification.title, 'fas fa-check', 'green');
+                    }
+                });
+            });
+        }
+
+        // Basculer la visibilité du panneau de notification (bureau)
+        if (notificationButtonDesktop) {
+            notificationButtonDesktop.addEventListener('click', (e) => {
+                e.stopPropagation(); // Empêche le clic de se propager au document
+                notificationPanel.classList.toggle('scale-0');
+                notificationPanel.classList.toggle('opacity-0');
+            });
+        }
+
+        // Basculer la visibilité du panneau de notification (mobile)
+        if (notificationButtonMobile) {
+            notificationButtonMobile.addEventListener('click', (e) => {
+                e.stopPropagation(); // Empêche le clic de se propager au document
+                notificationPanel.classList.toggle('scale-0');
+                notificationPanel.classList.toggle('opacity-0');
+            });
+        }
+
+        // Fermer le panneau de notification en cliquant à l'extérieur
+        document.addEventListener('click', (e) => {
+            if (notificationPanel && !notificationPanel.contains(e.target) && (!notificationButtonDesktop || !notificationButtonDesktop.contains(e.target)) && (!notificationButtonMobile || !notificationButtonMobile.contains(e.target))) {
+                notificationPanel.classList.add('scale-0', 'opacity-0');
+            }
+        });
+
+        // Marquer toutes les notifications comme lues
+        if (markAllAsReadButton) {
+            markAllAsReadButton.addEventListener('click', () => {
+                notifications.forEach(n => n.read = true);
+                saveNotifications();
+                updateNotificationDisplay();
+            });
+        }
+
+        // Popup de notification (Toast contextuel)
+        function showNotificationPopup(title, message, iconClass, color) {
+            notificationPopupTitle.textContent = title;
+            notificationPopupMessage.textContent = message;
+            notificationPopupIcon.className = `fas ${iconClass} text-${color}-500 text-xl`;
+            notificationPopup.classList.remove('translate-y-24', 'opacity-0');
+            notificationPopup.classList.add('translate-y-0', 'opacity-100');
+
+            setTimeout(() => {
+                hideNotificationPopup();
+            }, 5000); // Masquer après 5 secondes
+        }
+
+        function hideNotificationPopup() {
+            notificationPopup.classList.remove('translate-y-0', 'opacity-100');
+            notificationPopup.classList.add('translate-y-24', 'opacity-0');
+        }
+
+        if (closeNotificationPopup) {
+            closeNotificationPopup.addEventListener('click', hideNotificationPopup);
+        }
+
+        // Système de Toast général
+        const toast = document.getElementById('toast');
+        let toastTimeout;
+
+        function showToast(title, message, icon = '', color = 'blue') {
+            clearTimeout(toastTimeout);
+            toast.innerHTML = `
+                <div class="flex items-center">
+                    ${icon ? `<div class="flex-shrink-0 mr-3"><i class="fas ${icon} text-${color}-500"></i></div>` : ''}
+                    <div>
+                        <h4 class="font-semibold text-gray-800">${title}</h4>
+                        <p class="text-sm text-gray-600">${message}</p>
+                    </div>
+                </div>
+            `;
+            toast.classList.remove('opacity-0', 'translate-y-full');
+            toast.classList.add('opacity-100', 'translate-y-0');
+
+            toastTimeout = setTimeout(() => {
+                hideToast();
+            }, 3000);
+        }
+
+        function hideToast() {
+            toast.classList.remove('opacity-100', 'translate-y-0');
+            toast.classList.add('opacity-0', 'translate-y-full');
+        }
+
+        // --- Fonctions spécifiques au profil ---
+
+        // Gestionnaire de photo de profil
+        const profileImage = document.getElementById('profileImage');
+        const profilePhotoInput = document.getElementById('profilePhotoInput');
+
+        if (profilePhotoInput && profileImage) {
+            profilePhotoInput.addEventListener('change', function(event) {
+                const file = event.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        profileImage.src = e.target.result;
+                        localStorage.setItem('profilePhoto', e.target.result); // Sauvegarder dans le stockage local
+                        showToast('Photo de profil mise à jour', 'Votre nouvelle photo a été enregistrée.', 'fas fa-check-circle', 'green');
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+
+            // Charger la photo de profil sauvegardée au chargement
+            const savedPhoto = localStorage.getItem('profilePhoto');
+            if (savedPhoto) {
+                profileImage.src = savedPhoto;
+            }
+        }
+
+        // Mettre à jour le nombre de messages non lus (si nécessaire)
+        // Note: Cette fonction est spécifique à la page `message.html` pour la gestion des conversations.
+        // Si vous voulez un badge de message non lu dans la navbar, il faudrait modifier le script
+        // de la navbar pour inclure cette logique, en utilisant `escicMessages` du localStorage.
+        // Pour l'instant, la navbar gère les notifications (`escicNotifications`).
+        // Si vous avez un badge de message sur la navbar, il doit être géré dans la fonction `updateNotificationCount` ou une fonction similaire.
+        // Le code suivant est conservé pour la logique spécifique de 'profile.html' si ce n'est pas déjà unifié.
+        function updateMessageCountInNavbar() {
+            const messages = JSON.parse(localStorage.getItem('escicMessages')) || [];
+            const unreadCount = messages.filter(msg => !msg.read).length;
+            const messageCountBadgeMobile = document.getElementById('messageCountMobile'); // Assurez-vous d'avoir ces IDs dans votre HTML
+            const messageCountBadgeDesktop = document.getElementById('messageCountDesktop');
+
+            if (messageCountBadgeMobile) {
+                messageCountBadgeMobile.textContent = unreadCount;
+                messageCountBadgeMobile.style.display = unreadCount > 0 ? 'flex' : 'none';
+            }
+            if (messageCountBadgeDesktop) {
+                messageCountBadgeDesktop.textContent = unreadCount;
+                messageCountBadgeDesktop.style.display = unreadCount > 0 ? 'flex' : 'none';
+            }
+        }
+
+        // Appels initiaux
+        updateCartDisplay();
+        updateCartCount();
+        updateNotificationDisplay();
+        updateNotificationCount();
+        updateMessageCountInNavbar(); // Appeler cette fonction pour mettre à jour le compteur de messages
+
+        // Écouter les changements de stockage pour les messages (si une autre page les modifie)
+        window.addEventListener('storage', function(e) {
+            if (e.key === 'escicMessages') {
+                updateMessageCountInNavbar();
+            }
+            if (e.key === 'escicCart') {
+                updateCartDisplay();
+                updateCartCount();
+            }
+            if (e.key === 'escicNotifications') {
+                updateNotificationDisplay();
+                updateNotificationCount();
+            }
+        });
+
+        // Bouton de déconnexion
+        const logoutBtn = document.getElementById('logoutBtn');
+        if (logoutBtn) {
+            logoutBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                // Assurez-vous que le chemin est correct selon votre structure de dossiers
+                window.location.href = 'login/connection.html';
+            });
+        }
+    </script>
+</body>
+</html>

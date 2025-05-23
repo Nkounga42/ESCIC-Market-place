@@ -1,0 +1,1200 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ESCIC-Market - Tous les Articles Disponibles</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Base styles */
+        body {
+            font-family: 'Nunito', sans-serif;
+            scroll-behavior: smooth;
+            background-color: #f3f4f6; /* A light gray background */
+        }
+        body.mobile-menu-open {
+            overflow: hidden; /* Prevent scrolling when mobile menu is open */
+        }
+
+        /* Reusable component styles */
+        .dashboard-card {
+            transition: all 0.3s ease;
+        }
+        .dashboard-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+        }
+        .product-status {
+            font-size: 0.75rem;
+            padding: 0.25rem 0.5rem;
+            border-radius: 1rem;
+        }
+        .status-available {
+            background-color: #D1FAE5; /* green-100 */
+            color: #065F46; /* green-800 */
+        }
+        .status-reserved {
+            background-color: #FEF3C7; /* yellow-100 */
+            color: #92400E; /* yellow-800 */
+        }
+        .status-sold {
+            background-color: #E5E7EB; /* gray-200 */
+            color: #4B5563; /* gray-700 */
+        }
+        .menu-item {
+            transition: all 0.2s ease;
+        }
+        .menu-item:hover {
+            background-color: #EFF6FF; /* blue-50 */
+            border-left: 3px solid #3B82F6; /* blue-500 */
+        }
+        .active-menu-item {
+            background-color: #EFF6FF; /* blue-50 */
+            border-left: 3px solid #3B82F6; /* blue-500 */
+            color: #1E40AF; /* blue-800 */
+        }
+        .product-card {
+            transition: all 0.3s ease;
+        }
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+        .category-card:hover {
+            transform: scale(1.03);
+        }
+
+        /* Scrollbar styles */
+        .scroll-container {
+            scrollbar-width: thin;
+            scrollbar-color: #3b82f6 #f1f1f1;
+        }
+        .scroll-container::-webkit-scrollbar {
+            height: 6px;
+            width: 6px; /* For vertical scrollbars */
+        }
+        .scroll-container::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+        .scroll-container::-webkit-scrollbar-thumb {
+            background-color: #3b82f6; /* blue-600 */
+            border-radius: 10px;
+        }
+
+        /* Notification specific styles */
+        .notification-badge {
+            position: absolute;
+            top: -6px;
+            right: -6px;
+            background-color: #ef4444; /* red-500 */
+            color: white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            font-size: 11px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid white;
+            font-weight: bold;
+        }
+        .notification-panel-container {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        .notification-panel-container::-webkit-scrollbar {
+            width: 6px;
+        }
+        .notification-panel-container::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+        .notification-panel-container::-webkit-scrollbar-thumb {
+            background-color: #3b82f6; /* blue-600 */
+            border-radius: 10px;
+        }
+        .notification-item {
+            position: relative;
+            transition: all 0.2s ease;
+            overflow: hidden;
+            touch-action: pan-x; /* Allow horizontal swipe */
+        }
+        .notification-item:hover {
+            background-color: #f3f4f6; /* gray-100 */
+        }
+        .notification-item.unread::before {
+            content: '';
+            position: absolute;
+            left: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background-color: #3b82f6; /* blue-600 */
+        }
+        .notification-dot {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+        .notification-animation {
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); }
+            70% { box-shadow: 0 0 0 10px rgba(239, 68, 68, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+        }
+
+        /* Swipe actions for notifications (reused, though perhaps less common on "all articles" page) */
+        .notification-content-wrapper { /* Added wrapper for better swipe */
+            position: relative;
+            background: white;
+            transition: transform 0.3s ease;
+            z-index: 1;
+        }
+        .notification-actions {
+            position: absolute;
+            top: 0;
+            right: 0;
+            height: 100%;
+            display: flex;
+            align-items: stretch;
+            z-index: 0;
+        }
+        .action-button {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0 1.5rem;
+            color: white;
+            font-size: 0.875rem; /* text-sm */
+            white-space: nowrap;
+            transition: background-color 0.2s;
+        }
+        .mute-action {
+            background-color: #9333ea; /* purple-700 */
+        }
+        .delete-action {
+            background-color: #dc2626; /* red-600 */
+        }
+
+
+        /* Fixed positioning and z-index for popups/drawers */
+        #toast {
+            position: fixed;
+            bottom: 1.25rem; /* bottom-5 */
+            left: 50%;
+            transform: translateX(-50%) translateY(100%); /* Start off-screen */
+            background-color: white;
+            border-radius: 0.5rem; /* rounded-lg */
+            box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1), 0 4px 6px rgba(0, 0, 0, 0.05); /* shadow-xl */
+            padding: 1rem; /* p-4 */
+            width: 20rem; /* w-80 */
+            transition: all 0.5s ease-in-out;
+            opacity: 0;
+            z-index: 100;
+            border-left: 4px solid #3b82f6; /* blue-500 */
+        }
+        #notificationPopup {
+            position: fixed;
+            bottom: 1.25rem; /* bottom-5 */
+            right: 1.25rem; /* right-5 */
+            background-color: white;
+            border-radius: 0.5rem; /* rounded-lg */
+            box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1), 0 4px 6px rgba(0, 0, 0, 0.05); /* shadow-xl */
+            padding: 1rem; /* p-4 */
+            width: 20rem; /* w-80 */
+            transform: translateY(6rem); /* translate-y-24 */
+            opacity: 0;
+            transition: all 0.5s ease-in-out;
+            z-index: 100;
+            border-left: 4px solid #3b82f6; /* blue-500 */
+        }
+        #cartDrawer {
+            z-index: 70; /* Above regular content, below highest modals */
+        }
+        #notificationPanel {
+            z-index: 72; /* Above cart drawer */
+            /* Initial hidden state */
+            transform: scale(0);
+            opacity: 0;
+            transform-origin: top right; /* For desktop panel */
+        }
+        /* Mobile menu specific styles */
+        .mobile-menu {
+            transform: translateX(-100%);
+            transition: transform 0.3s ease;
+        }
+        .mobile-menu.open {
+            transform: translateX(0);
+        }
+        .backdrop {
+            background-color: rgba(0, 0, 0, 0.5);
+            transition: opacity 0.3s ease;
+        }
+    </style>
+</head>
+<body class="bg-gray-100">
+
+    <div id="toast" class="fixed bottom-5 left-1/2 -translate-x-1/2 bg-white rounded-lg shadow-xl p-4 w-80 transform translate-y-full opacity-0 transition-all duration-500 ease-in-out z-[100] border-l-4 border-blue-500">
+        <div class="flex items-center">
+            <div id="toastIcon" class="flex-shrink-0 mr-3 pt-1">
+                <i class="fas fa-info-circle text-blue-500 text-xl"></i>
+            </div>
+            <div class="flex-1">
+                <h4 id="toastTitle" class="font-semibold text-gray-800"></h4>
+                <p id="toastMessage" class="text-sm text-gray-600 mt-1"></p>
+            </div>
+            <button id="closeToast" class="text-gray-400 hover:text-gray-600 ml-2">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+    </div>
+
+    <div id="notificationPopup" class="fixed bottom-5 right-5 bg-white rounded-lg shadow-xl p-4 w-80 transform translate-y-24 opacity-0 transition-all duration-500 ease-in-out z-[100] border-l-4 border-blue-500">
+        <div class="flex items-start">
+            <div class="flex-shrink-0 mr-3 pt-1">
+                <i id="notificationPopupIcon" class="fas fa-info-circle text-blue-500 text-xl"></i>
+            </div>
+            <div class="flex-1">
+                <h4 id="notificationPopupTitle" class="font-semibold text-gray-800">Nouvelle Notification</h4>
+                <p id="notificationPopupMessage" class="text-sm text-gray-600 mt-1">Contenu de la notification.</p>
+            </div>
+            <button id="closeNotificationPopup" class="text-gray-400 hover:text-gray-600 ml-2">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+    </div>
+
+    <header class="bg-white shadow-sm sticky top-0 z-50">
+        <div class="container mx-auto px-4 py-3 flex items-center justify-between">
+            <div class="flex items-center">
+                <img src="https://via.placeholder.com/40" alt="ESCIC-Market Logo" class="h-10 mr-2">
+                <span class="text-xl font-bold text-blue-800 hidden md:block">ESCIC-Market</span>
+            </div>
+
+            <div class="flex items-center space-x-4">
+                <button class="md:hidden text-gray-600">
+                    <i class="fas fa-search text-xl"></i>
+                </button>
+                <button class="hidden md:block bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-full font-medium transition duration-300">
+                    <i class="fas fa-plus mr-1"></i> Vendre un article
+                </button>
+            </div>
+        </div>
+
+        <div class="md:hidden bg-white px-4 py-2 border-t">
+            <div class="relative">
+                <input type="text" placeholder="Rechercher un article..."
+                       class="w-full py-2 px-4 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                <button class="absolute right-3 top-2 text-gray-400">
+                    <i class="fas fa-search"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <button id="mobileMenuButton" class="md:hidden fixed top-4 left-4 z-50 bg-white p-2 rounded-full shadow-lg">
+        <i class="fas fa-bars text-blue-800 text-xl"></i>
+    </button>
+
+    <div id="mobileBackdrop" class="fixed inset-0 bg-black bg-opacity-50 z-40 hidden"></div>
+
+    <div id="mobileMenu" class="mobile-menu fixed inset-y-0 left-0 z-50 w-64 bg-white shadow-lg overflow-y-auto">
+        <div class="p-4 border-b border-gray-200">
+            <div class="flex items-center">
+                <img src="https://via.placeholder.com/40" alt="Profile" class="w-10 h-10 rounded-full mr-3">
+                <div>
+                    <p class="font-semibold">Nom de l'Acheteur</p>
+                    <p class="text-xs text-gray-500">Acheteur actif</p>
+                </div>
+            </div>
+        </div>
+        <nav class="p-2">
+            <a href="Acheteur.html" class="menu-item flex items-center p-3 rounded-lg">
+                <i class="fas fa-home mr-3 text-blue-800"></i>
+                <span>Accueil</span>
+            </a>
+            <button id="navbarCartButtonMobile" class="menu-item flex items-center p-3 rounded-lg w-full text-left relative text-gray-600 hover:text-blue-800">
+                <div class="relative mr-3">
+                    <i class="fas fa-shopping-cart text-xl text-green-600"></i>
+                    <span id="navbarCartCountMobile" class="absolute -top-2 -right-2 bg-blue-600 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">0</span>
+                </div>
+                <span>Mon panier</span>
+            </button>
+            <div class="relative">
+                <button id="notificationButtonMobile" class="menu-item text-gray-600 hover:text-blue-800 flex items-center p-3 rounded-lg w-full text-left relative">
+                    <i class="fas fa-bell text-xl mr-3"></i>
+                    <span id="notificationCountMobile" class="notification-badge" style="display: none;">0</span>
+                    <span>Notifications</span>
+                </button>
+            </div>
+            <a href="Message.html" class="menu-item flex items-center p-3 rounded-lg">
+                <i class="fas fa-comments mr-3 text-blue-600"></i>
+                <span>Messages</span>
+            </a>
+            <a href="profile.html" class="menu-item flex items-center p-3 rounded-lg">
+                <i class="fas fa-user mr-3 text-blue-700"></i>
+                <span>Profil</span>
+            </a>
+            <a href="evaluation.html" class="menu-item flex items-center p-3 rounded-lg">
+                <i class="fas fa-star mr-3 text-yellow-500"></i>
+                <span>Évaluations</span>
+            </a>
+            <a href="parametre.html" class="menu-item flex items-center p-3 rounded-lg">
+                <i class="fas fa-cog mr-3 text-gray-600"></i>
+                <span>Paramètres</span>
+            </a>
+            <a href="articles_tout.html" class="menu-item flex items-center p-3 rounded-lg active-menu-item">
+                <i class="fas fa-box-open mr-3 text-blue-800"></i>
+                <span>Tous les Articles</span>
+            </a>
+            <a href="connection.html" class="menu-item flex items-center p-3 rounded-lg mt-4 text-red-500">
+                <i class="fas fa-sign-out-alt mr-3"></i>
+                <span>Déconnexion</span>
+            </a>
+        </nav>
+    </div>
+
+    <div class="hidden md:flex md:w-64 md:flex-col md:fixed md:inset-y-0">
+        <div class="flex flex-col flex-grow border-r border-gray-200 bg-white overflow-y-auto">
+            <div class="p-4 border-b border-gray-200">
+                <div class="flex items-center">
+                    <img src="https://via.placeholder.com/40" alt="Profile" class="w-10 h-10 rounded-full mr-3">
+                    <div>
+                        <p class="font-semibold">Nom de l'Acheteur</p>
+                        <p class="text-xs text-gray-500">Acheteur actif</p>
+                    </div>
+                </div>
+            </div>
+            <nav class="flex-1 p-2">
+                <a href="Acheteur.html" class="menu-item flex items-center p-3 rounded-lg">
+                    <i class="fas fa-home mr-3 text-blue-800"></i>
+                    <span>Accueil</span>
+                </a>
+                <button id="navbarCartButtonDesktop" class="menu-item flex items-center p-3 rounded-lg w-full text-left relative">
+                    <div class="relative mr-3">
+                        <i class="fas fa-shopping-cart mr-3 text-blue-800"></i>
+                        <span id="navbarCartCountDesktop" class="absolute -top-2 -right-2 bg-blue-600 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">0</span>
+                    </div>
+                    <span>Mon panier</span>
+                </button>
+                <div class="relative">
+                    <button id="notificationButtonDesktop" class="menu-item text-gray-600 hover:text-blue-800 flex items-center p-3 rounded-lg w-full text-left relative">
+                        <i class="fas fa-bell text-xl mr-3 text-blue-800"></i>
+                        <span id="notificationCountDesktop" class="notification-badge" style="display: none;">0</span>
+                        <span>Notifications</span>
+                    </button>
+                    <div id="notificationPanel" class="absolute left-0 md:right-0 md:left-auto mt-2 w-80 md:w-96 bg-white rounded-lg shadow-lg transition-all duration-300 transform scale-0 origin-top-left md:origin-top-right opacity-0 z-[72]">
+                        <div class="p-3 border-b border-gray-200 flex justify-between items-center">
+                            <h3 class="font-semibold text-gray-700">Notifications</h3>
+                            <div class="flex space-x-2">
+                                <button id="markAllAsRead" title="Tout marquer comme lu" class="text-sm text-blue-600 hover:text-blue-800">
+                                    <i class="fas fa-check-double"></i>
+                                </button>
+                                <button id="notificationSettings" title="Paramètres" class="text-gray-500 hover:text-gray-700">
+                                    <i class="fas fa-cog"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div id="notificationList" class="notification-panel-container">
+                            <p id="noNotificationsMessage" class="p-4 text-center text-gray-500">Aucune nouvelle notification.</p>
+                        </div>
+                        <div class="p-3 border-t border-gray-200 text-center">
+                            <a href="voirtout.html" class="text-sm text-blue-600 hover:text-blue-800">Voir toutes les notifications</a>
+                        </div>
+                    </div>
+                </div>
+                <a href="Message.html" class="menu-item flex items-center p-3 rounded-lg">
+                    <i class="fas fa-comments mr-3 text-blue-800"></i>
+                    <span>Messages</span>
+                </a>
+                <a href="profile.html" class="menu-item flex items-center p-3 rounded-lg">
+                    <i class="fas fa-user mr-3 text-blue-800"></i>
+                    <span>Profil</span>
+                </a>
+                <a href="evaluation.html" class="menu-item flex items-center p-3 rounded-lg">
+                    <i class="fas fa-star mr-3 text-blue-800"></i>
+                    <span>Évaluations</span>
+                </a>
+                <a href="parametre.html" class="menu-item flex items-center p-3 rounded-lg">
+                    <i class="fas fa-cog mr-3 text-blue-800"></i>
+                    <span>Paramètres</span>
+                </a>
+                <a href="articles_tout.html" class="menu-item flex items-center p-3 rounded-lg active-menu-item">
+                    <i class="fas fa-box-open mr-3 text-blue-800"></i>
+                    <span>Tous les Articles</span>
+                </a>
+                <a href="login/connection.html" id="logoutBtn" class="menu-item flex items-center p-3 rounded-lg text-red-600">
+                    <i class="fas fa-sign-out-alt mr-3"></i>
+                    <span>Déconnexion</span>
+                </a>
+            </nav>
+        </div>
+    </div>
+
+    <div id="cartDrawer" class="fixed inset-y-0 right-0 w-full md:w-96 bg-white shadow-xl transform translate-x-full transition-transform duration-300 ease-in-out z-[70]">
+        <div class="h-full flex flex-col">
+            <div class="bg-blue-800 text-white px-6 py-4 flex justify-between items-center">
+                <h2 class="text-xl font-bold">Mon Panier</h2>
+                <button id="closeCart" class="text-white hover:text-blue-200">
+                    <i class="fas fa-times text-xl"></i>
+                </button>
+            </div>
+            <div id="cartItems" class="flex-1 overflow-y-auto p-4">
+                <div id="emptyCart" class="flex flex-col items-center justify-center h-64 text-center text-gray-500">
+                    <i class="fas fa-shopping-cart text-5xl mb-4"></i>
+                    <p class="text-xl font-medium mb-2">Votre panier est vide</p>
+                    <p>Ajoutez des articles pour les voir ici</p>
+                </div>
+            </div>
+            <div class="bg-gray-50 p-6 border-t">
+                <div class="flex justify-between mb-4">
+                    <span class="font-medium text-gray-600">Sous-total:</span>
+                    <span id="cartSubtotal" class="font-bold">0.00€</span>
+                </div>
+                <button id="checkoutButton" class="w-full bg-blue-700 hover:bg-blue-800 text-white py-3 rounded-lg font-medium transition duration-300 disabled:opacity-50 disabled:cursor-not-allowed" disabled> Procéder au paiement </button>
+                <button id="continueShoppingButton" class="w-full mt-3 border border-blue-700 text-blue-700 hover:bg-blue-50 py-3 rounded-lg font-medium transition duration-300"> Continuer mes achats </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="md:ml-64 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        <h1 class="text-3xl font-bold text-gray-900 mb-6">Tous les Articles Disponibles</h1>
+
+        <div class="bg-white rounded-lg shadow p-6 mb-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div>
+                    <label for="articleSearch" class="sr-only">Rechercher des articles</label>
+                    <div class="relative">
+                        <input type="text" id="articleSearch" placeholder="Rechercher par nom..."
+                               class="w-full border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50 p-2 pl-10">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <i class="fas fa-search text-gray-400"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <div>
+                    <label for="filterCategory" class="sr-only">Catégorie</label>
+                    <select id="filterCategory" class="w-full border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50 p-2">
+                        <option value="all">Toutes les catégories</option>
+                        <option value="electronique">Électronique</option>
+                        <option value="livres">Livres</option>
+                        <option value="vetements">Vêtements</option>
+                        <option value="maison">Maison & Jardin</option>
+                        <option value="sports">Sports & Loisirs</option>
+                        <option value="autres">Autres</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label for="filterCondition" class="sr-only">État</label>
+                    <select id="filterCondition" class="w-full border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50 p-2">
+                        <option value="all">Tous les états</option>
+                        <option value="neuf">Neuf</option>
+                        <option value="comme_neuf">Comme Neuf</option>
+                        <option value="bon_etat">Bon État</option>
+                        <option value="usage">Usagé</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label for="sortOrder" class="sr-only">Trier par</label>
+                    <select id="sortOrder" class="w-full border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50 p-2">
+                        <option value="recent">Plus récent</option>
+                        <option value="price_asc">Prix: Croissant</option>
+                        <option value="price_desc">Prix: Décroissant</option>
+                        <option value="popular">Populaire</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <div id="articlesGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            <p id="noArticlesMessage" class="col-span-full text-center text-gray-500 hidden">Aucun article trouvé pour votre recherche.</p>
+        </div>
+
+        <div class="mt-8 text-center" id="loadMoreContainer">
+            <button id="loadMoreButton" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-6 rounded-full shadow-md transition duration-300 hidden">
+                Charger plus d'articles
+            </button>
+        </div>
+    </div>
+    <a href="message.html" class="fixed bottom-20 right-6 bg-blue-600 hover:bg-blue-700 text-white rounded-full p-4 shadow-lg transition-all duration-300 hover:scale-110 z-50">
+        <i class="fas fa-comments text-xl"></i>
+        <span id="messageCount" class="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center" style="display: none;">0</span>
+    </a>
+    
+    
+    <button id="floatingCartButton"
+       class="fixed bottom-32 right-6 bg-white text-gray-600 hover:text-blue-800 shadow-lg p-4 rounded-full transition-all duration-300 hover:scale-110 z-50 border border-gray-300">
+        <i class="fas fa-shopping-cart text-xl"></i>
+        <span id="cartCount" class="absolute -top-2 -right-2 bg-blue-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center" style="display: none;">0</span>
+    </button>
+    <footer class="bg-blue-900 text-white py-10">
+        <div class="container mx-auto px-4">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div>
+                    <h3 class="text-xl font-bold mb-4">ESCIC-Market</h3>
+                    <p class="text-blue-200 mb-4">La plateforme d'échange entre étudiants de l'ESCIC.</p>
+                    <div class="flex space-x-4">
+                        <a href="#" class="text-white hover:text-blue-300"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#" class="text-white hover:text-blue-300"><i class="fab fa-instagram"></i></a>
+                        <a href="#" class="text-white hover:text-blue-300"><i class="fab fa-twitter"></i></a>
+                    </div>
+                </div>
+                
+                <div>
+                    <h3 class="text-lg font-semibold mb-4">Liens rapides</h3>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="text-blue-200 hover:text-white">Accueil</a></li>
+                        <li><a href="#" class="text-blue-200 hover:text-white">Catégories</a></li>
+                        <li><a href="#" class="text-blue-200 hover:text-white">Vendre un article</a></li>
+                        <li><a href="#" class="text-blue-200 hover:text-white">Mon compte</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h3 class="text-lg font-semibold mb-4">Contact</h3>
+                    <p class="text-blue-200 mb-2"><i class="fas fa-map-marker-alt mr-2"></i> Campus ESCIC, Pointe-Noire</p>
+                    <p class="text-blue-200 mb-2"><i class="fas fa-envelope mr-2"></i> contact@escic-market.fr</p>
+                    <p class="text-blue-200"><i class="fas fa-phone mr-2"></i> 01 23 45 67 89</p>
+                </div>
+            </div>
+            
+            <div class="border-t border-blue-800 mt-8 pt-6 text-center text-blue-300 text-sm">
+                <p>&copy; 2023 ESCIC-Market. Tous droits réservés.</p>
+            </div>
+        </div>
+    </footer>
+    <script>
+        // --- Mobile Menu functionality (Copied from Acheteur.html) ---
+        const mobileMenuButton = document.getElementById('mobileMenuButton');
+        const mobileMenu = document.getElementById('mobileMenu');
+        const mobileBackdrop = document.getElementById('mobileBackdrop');
+
+        if (mobileMenuButton && mobileMenu && mobileBackdrop) {
+            mobileMenuButton.addEventListener('click', () => {
+                mobileMenu.classList.toggle('open');
+                mobileBackdrop.classList.toggle('hidden');
+                document.body.classList.toggle('mobile-menu-open'); // To disable body scroll
+            });
+
+            mobileBackdrop.addEventListener('click', () => {
+                mobileMenu.classList.remove('open');
+                mobileBackdrop.classList.add('hidden');
+                document.body.classList.remove('mobile-menu-open');
+            });
+        }
+
+        // --- Cart Drawer functionality (Copied from Acheteur.html) ---
+        const navbarCartButtonMobile = document.getElementById('navbarCartButtonMobile');
+        const navbarCartButtonDesktop = document.getElementById('navbarCartButtonDesktop');
+        const cartDrawer = document.getElementById('cartDrawer');
+        const closeCart = document.getElementById('closeCart');
+        const checkoutButton = document.getElementById('checkoutButton');
+        const continueShoppingButton = document.getElementById('continueShoppingButton');
+        const cartItemsContainer = document.getElementById('cartItems');
+        const emptyCartMessage = document.getElementById('emptyCart');
+        const cartSubtotalSpan = document.getElementById('cartSubtotal');
+        const navbarCartCountMobile = document.getElementById('navbarCartCountMobile');
+        const navbarCartCountDesktop = document.getElementById('navbarCartCountDesktop');
+
+        let cart = JSON.parse(localStorage.getItem('escicCart')) || [];
+
+        function saveCart() {
+            localStorage.setItem('escicCart', JSON.stringify(cart));
+        }
+
+        function updateCartDisplay() {
+            cartItemsContainer.innerHTML = ''; // Clear current items
+            if (cart.length === 0) {
+                emptyCartMessage.style.display = 'flex';
+                checkoutButton.disabled = true;
+            } else {
+                emptyCartMessage.style.display = 'none';
+                checkoutButton.disabled = false;
+                let subtotal = 0;
+                cart.forEach(item => {
+                    const itemTotal = item.price * item.quantity;
+                    subtotal += itemTotal;
+                    const cartItemHTML = `
+                        <div class="flex items-center justify-between py-3 border-b border-gray-100 last:border-b-0">
+                            <div class="flex items-center">
+                                <img src="${item.image}" alt="${item.name}" class="w-16 h-16 object-cover rounded-md mr-4">
+                                <div>
+                                    <p class="font-medium text-gray-800">${item.name}</p>
+                                    <p class="text-sm text-gray-500">${item.price.toFixed(2)}€ x ${item.quantity}</p>
+                                </div>
+                            </div>
+                            <div class="flex items-center space-x-2">
+                                <span class="font-semibold text-gray-900">${itemTotal.toFixed(2)}€</span>
+                                <button data-id="${item.id}" class="remove-from-cart text-red-500 hover:text-red-700 ml-2">
+                                    <i class="fas fa-trash-alt"></i>
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                    cartItemsContainer.insertAdjacentHTML('beforeend', cartItemHTML);
+                });
+                cartSubtotalSpan.textContent = subtotal.toFixed(2) + '€';
+            }
+            updateCartCount();
+            addRemoveButtonListeners(); // Re-add listeners after updating content
+        }
+
+        function updateCartCount() {
+            const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+            if (navbarCartCountMobile) {
+                navbarCartCountMobile.textContent = totalItems;
+                navbarCartCountMobile.style.display = totalItems > 0 ? 'flex' : 'none';
+            }
+            if (navbarCartCountDesktop) {
+                navbarCartCountDesktop.textContent = totalItems;
+                navbarCartCountDesktop.style.display = totalItems > 0 ? 'flex' : 'none';
+            }
+        }
+
+        function addRemoveButtonListeners() {
+            document.querySelectorAll('.remove-from-cart').forEach(button => {
+                button.addEventListener('click', (e) => {
+                    const itemId = e.currentTarget.dataset.id;
+                    cart = cart.filter(item => item.id !== itemId);
+                    saveCart();
+                    updateCartDisplay();
+                    showToast('Article retiré', 'L\'article a été retiré de votre panier.', 'fas fa-check-circle', 'red');
+                });
+            });
+        }
+
+        if (navbarCartButtonMobile) {
+            navbarCartButtonMobile.addEventListener('click', () => {
+                cartDrawer.classList.remove('translate-x-full');
+            });
+        }
+        if (navbarCartButtonDesktop) {
+            navbarCartButtonDesktop.addEventListener('click', () => {
+                cartDrawer.classList.remove('translate-x-full');
+            });
+        }
+
+        if (closeCart) {
+            closeCart.addEventListener('click', () => {
+                cartDrawer.classList.add('translate-x-full');
+            });
+        }
+
+        if (continueShoppingButton) {
+            continueShoppingButton.addEventListener('click', () => {
+                cartDrawer.classList.add('translate-x-full');
+            });
+        }
+
+        // --- Notification functionality (Copied and adapted for this page) ---
+        const notificationButtonMobile = document.getElementById('notificationButtonMobile');
+        const notificationButtonDesktop = document.getElementById('notificationButtonDesktop');
+        const notificationPanel = document.getElementById('notificationPanel');
+        const notificationList = document.getElementById('notificationList');
+        const notificationCountMobile = document.getElementById('notificationCountMobile');
+        const notificationCountDesktop = document.getElementById('notificationCountDesktop');
+        const noNotificationsMessagePanel = document.getElementById('noNotificationsMessage');
+        const markAllAsReadButtonPanel = document.getElementById('markAllAsRead');
+
+        let notifications = JSON.parse(localStorage.getItem('escicNotifications')) || [];
+
+        // Sample notifications for demonstration
+        if (notifications.length === 0) {
+            notifications = [
+                { id: 'notif1', title: 'Nouvel article en vente !', message: 'Découvrez "Ordinateur Portable Gaming" à un prix incroyable.', read: false, timestamp: '2025-05-22T10:00:00Z', type: 'new_product' },
+                { id: 'notif2', title: 'Votre message a été lu', message: 'Le vendeur "ElectroTech" a lu votre message concernant la tablette.', read: false, timestamp: '2025-05-22T11:30:00Z', type: 'message' },
+                { id: 'notif3', title: 'Promotion spéciale !', message: 'Profitez de -20% sur tous les accessoires jusqu\'à demain.', read: true, timestamp: '2025-05-21T15:00:00Z', type: 'promotion' },
+                { id: 'notif4', title: 'Mise à jour du système', message: 'De nouvelles fonctionnalités ont été ajoutées pour une meilleure expérience.', read: false, timestamp: '2025-05-20T08:00:00Z', type: 'update' },
+                { id: 'notif5', title: 'Article "T-Shirt Sport" vendu', message: 'Votre T-shirt a trouvé un acheteur. Procédez à l\'expédition.', read: true, timestamp: '2025-05-19T14:45:00Z', type: 'update' },
+                { id: 'notif6', title: 'Nouveau message de "LibraireFan"', message: 'Bonjour, l\'état du livre est-il vraiment comme neuf ?', read: false, timestamp: '2025-05-18T09:00:00Z', type: 'message' },
+                { id: 'notif7', title: 'Votre commande #12345 a été expédiée', message: 'Suivez votre colis ici.', read: true, timestamp: '2025-05-17T16:00:00Z', type: 'update' },
+                { id: 'notif8', title: 'Rappel de votre panier', message: 'N\'oubliez pas les articles dans votre panier !', read: true, timestamp: '2025-05-16T12:00:00Z', type: 'update' },
+            ];
+            saveNotifications();
+        }
+
+        function saveNotifications() {
+            localStorage.setItem('escicNotifications', JSON.stringify(notifications));
+        }
+
+        function updateNotificationPanelDisplay() {
+            notificationList.innerHTML = '';
+            const unreadNotifications = [...notifications].filter(n => !n.read).sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+            const recentNotifications = [...notifications].sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp)).slice(0, 5); // Show top 5 recent
+
+            if (recentNotifications.length === 0) {
+                noNotificationsMessagePanel.style.display = 'block';
+            } else {
+                noNotificationsMessagePanel.style.display = 'none';
+                recentNotifications.forEach(notification => {
+                    const notificationHTML = `
+                        <div class="notification-item py-3 px-4 ${!notification.read ? 'unread' : ''}" data-id="${notification.id}">
+                            <div class="notification-content-wrapper flex items-center">
+                                <div class="flex-shrink-0 mr-3">
+                                    <i class="${getNotificationIcon(notification.type)} text-xl ${getNotificationColor(notification.type)}"></i>
+                                </div>
+                                <div class="flex-1">
+                                    <h4 class="font-medium text-gray-800">${notification.title}</h4>
+                                    <p class="text-sm text-gray-600">${notification.message}</p>
+                                    <span class="text-xs text-gray-500">${formatTimeAgo(notification.timestamp)}</span>
+                                </div>
+                                <button class="mark-as-read-button ml-2 text-gray-400 hover:text-blue-600 ${notification.read ? 'hidden' : ''}" title="Marquer comme lu" data-id="${notification.id}">
+                                    <i class="fas fa-check-circle"></i>
+                                </button>
+                            </div>
+                            <div class="notification-actions">
+                                <button class="action-button mute-action" data-id="${notification.id}" data-action="mute">
+                                    <i class="fas fa-volume-mute mr-1"></i> Muet
+                                </button>
+                                <button class="action-button delete-action" data-id="${notification.id}" data-action="delete">
+                                    <i class="fas fa-trash-alt mr-1"></i> Supprimer
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                    notificationList.insertAdjacentHTML('beforeend', notificationHTML);
+                });
+                addNotificationPanelListeners(); // Re-add listeners for panel items
+            }
+            updateNotificationCount();
+        }
+
+        function updateNotificationCount() {
+            const unreadCount = notifications.filter(n => !n.read).length;
+            if (notificationCountMobile) {
+                notificationCountMobile.textContent = unreadCount;
+                notificationCountMobile.style.display = unreadCount > 0 ? 'flex' : 'none';
+            }
+            if (notificationCountDesktop) {
+                notificationCountDesktop.textContent = unreadCount;
+                notificationCountDesktop.style.display = unreadCount > 0 ? 'flex' : 'none';
+            }
+        }
+
+        function getNotificationIcon(type) {
+            switch (type) {
+                case 'new_product': return 'fas fa-box';
+                case 'message': return 'fas fa-envelope';
+                case 'promotion': return 'fas fa-tags';
+                case 'update': return 'fas fa-info-circle';
+                default: return 'fas fa-bell';
+            }
+        }
+
+        function getNotificationColor(type) {
+            switch (type) {
+                case 'new_product': return 'text-green-500';
+                case 'message': return 'text-blue-500';
+                case 'promotion': return 'text-purple-500';
+                case 'update': return 'text-yellow-500';
+                default: return 'text-gray-500';
+            }
+        }
+
+        function formatTimeAgo(timestamp) {
+            const now = new Date();
+            const date = new Date(timestamp);
+            const seconds = Math.floor((now - date) / 1000);
+
+            if (seconds < 60) return `${seconds}s`;
+            const minutes = Math.floor(seconds / 60);
+            if (minutes < 60) return `${minutes}m`;
+            const hours = Math.floor(minutes / 60);
+            if (hours < 24) return `${hours}h`;
+            const days = Math.floor(hours / 24);
+            if (days < 7) return `${days}j`;
+            return date.toLocaleDateString('fr-FR'); // Format based on French locale
+        }
+
+
+        // --- Listeners for the small notification panel items ---
+        function addNotificationPanelListeners() {
+            // Mark as read button
+            notificationList.querySelectorAll('.mark-as-read-button').forEach(button => {
+                button.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const notificationId = e.currentTarget.dataset.id;
+                    const notification = notifications.find(n => n.id === notificationId);
+                    if (notification) {
+                        notification.read = true;
+                        saveNotifications();
+                        updateNotificationPanelDisplay();
+                        showToast('Notification lue', 'La notification a été marquée comme lue.', 'fas fa-check-circle', 'blue');
+                    }
+                });
+            });
+
+            // Swipe to reveal actions for panel items (optional for this page, but kept for consistency)
+            notificationList.querySelectorAll('.notification-item').forEach(item => {
+                let startX;
+                let currentTranslateX = 0;
+                const contentWrapper = item.querySelector('.notification-content-wrapper');
+                const actions = item.querySelector('.notification-actions');
+                const actionsWidth = actions ? actions.offsetWidth : 0;
+
+                if (!contentWrapper || !actions) return;
+
+                item.addEventListener('touchstart', (e) => {
+                    startX = e.touches[0].clientX;
+                    contentWrapper.style.transition = '';
+                });
+
+                item.addEventListener('touchmove', (e) => {
+                    const diffX = e.touches[0].clientX - startX;
+                    currentTranslateX = Math.max(-actionsWidth, Math.min(0, diffX));
+                    contentWrapper.style.transform = `translateX(${currentTranslateX}px)`;
+                });
+
+                item.addEventListener('touchend', () => {
+                    contentWrapper.style.transition = 'transform 0.3s ease';
+                    if (currentTranslateX < -actionsWidth / 2) {
+                        contentWrapper.style.transform = `translateX(-${actionsWidth}px)`;
+                    } else {
+                        contentWrapper.style.transform = `translateX(0px)`;
+                    }
+                });
+            });
+
+            // Action buttons (Mute, Delete) for panel
+            notificationList.querySelectorAll('.action-button').forEach(button => {
+                button.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const notificationId = e.currentTarget.dataset.id;
+                    const action = e.currentTarget.dataset.action;
+
+                    notifications = notifications.filter(n => n.id !== notificationId);
+                    saveNotifications();
+                    updateNotificationPanelDisplay();
+
+                    if (action === 'delete') {
+                        showToast('Notification supprimée', 'La notification a été supprimée.', 'fas fa-trash-alt', 'red');
+                    } else if (action === 'mute') {
+                        showToast('Notification masquée', 'La notification a été masquée.', 'fas fa-volume-mute', 'purple');
+                    }
+                    if (notificationPanel) {
+                        notificationPanel.classList.add('scale-0', 'opacity-0');
+                    }
+                });
+            });
+
+            // Click to view notification (and mark as read) for panel
+            notificationList.querySelectorAll('.notification-content-wrapper').forEach(content => {
+                content.addEventListener('click', (e) => {
+                    const notificationItem = content.closest('.notification-item');
+                    const notificationId = notificationItem.dataset.id;
+                    const notification = notifications.find(n => n.id === notificationId);
+                    if (notification && !notification.read) {
+                        notification.read = true;
+                        saveNotifications();
+                        updateNotificationPanelDisplay();
+                        showToast('Notification lue', notification.title, 'fas fa-check-circle', 'blue');
+                    }
+                    if (notificationPanel) {
+                        notificationPanel.classList.add('scale-0', 'opacity-0');
+                    }
+                });
+            });
+        }
+
+
+        // Toggle notification panel visibility (desktop)
+        if (notificationButtonDesktop) {
+            notificationButtonDesktop.addEventListener('click', (e) => {
+                e.stopPropagation(); // Prevent click from propagating to document
+                notificationPanel.classList.toggle('scale-0');
+                notificationPanel.classList.toggle('opacity-0');
+            });
+        }
+
+        // Toggle notification panel visibility (mobile)
+        if (notificationButtonMobile) {
+            notificationButtonMobile.addEventListener('click', (e) => {
+                e.stopPropagation(); // Prevent click from propagating to document
+                notificationPanel.classList.toggle('scale-0');
+                notificationPanel.classList.toggle('opacity-0');
+            });
+        }
+
+        // Close notification panel when clicking outside
+        document.addEventListener('click', (e) => {
+            const isClickInsideDesktopButton = notificationButtonDesktop && notificationButtonDesktop.contains(e.target);
+            const isClickInsideMobileButton = notificationButtonMobile && notificationButtonMobile.contains(e.target);
+            const isClickInsidePanel = notificationPanel && notificationPanel.contains(e.target);
+
+            if (notificationPanel && !isClickInsidePanel && !isClickInsideDesktopButton && !isClickInsideMobileButton) {
+                notificationPanel.classList.add('scale-0', 'opacity-0');
+            }
+        });
+
+        // Mark all as read button for the small panel
+        if (markAllAsReadButtonPanel) {
+            markAllAsReadButtonPanel.addEventListener('click', () => {
+                let unreadExist = false;
+                notifications.forEach(n => {
+                    if (!n.read) {
+                        n.read = true;
+                        unreadExist = true;
+                    }
+                });
+                if (unreadExist) {
+                    saveNotifications();
+                    updateNotificationPanelDisplay();
+                    showToast('Toutes lues', 'Toutes les notifications ont été marquées comme lues.', 'fas fa-check-double', 'blue');
+                } else {
+                    showToast('Aucune nouvelle', 'Aucune nouvelle notification à marquer comme lue.', 'fas fa-info-circle', 'gray');
+                }
+            });
+        }
+
+        // Notification pop-up (Toast for new notifications) - copied from Acheteur.html
+        const notificationPopup = document.getElementById('notificationPopup');
+        const closeNotificationPopup = document.getElementById('closeNotificationPopup');
+        const notificationPopupTitle = document.getElementById('notificationPopupTitle');
+        const notificationPopupMessage = document.getElementById('notificationPopupMessage');
+        const notificationPopupIcon = document.getElementById('notificationPopupIcon');
+
+        function showNotificationPopup(title, message, iconClass, color) {
+            notificationPopupTitle.textContent = title;
+            notificationPopupMessage.textContent = message;
+            notificationPopupIcon.className = `fas ${iconClass} text-${color}-500 text-xl`;
+            notificationPopup.classList.remove('translate-y-24', 'opacity-0');
+            notificationPopup.classList.add('translate-y-0', 'opacity-100');
+
+            setTimeout(() => {
+                hideNotificationPopup();
+            }, 5000); // Hide after 5 seconds
+        }
+
+        function hideNotificationPopup() {
+            notificationPopup.classList.remove('translate-y-0', 'opacity-100');
+            notificationPopup.classList.add('translate-y-24', 'opacity-0');
+        }
+
+        if (closeNotificationPopup) {
+            closeNotificationPopup.addEventListener('click', hideNotificationPopup);
+        }
+
+        // --- General Toast Notification system (reusable for general alerts) - copied from Acheteur.html ---
+        const toast = document.getElementById('toast');
+        const closeToastButton = document.getElementById('closeToast');
+        const toastTitleElement = document.getElementById('toastTitle');
+        const toastMessageElement = document.getElementById('toastMessage');
+        const toastIconElement = document.getElementById('toastIcon');
+        let toastTimeout;
+
+        function showToast(title, message, icon = 'fas fa-info-circle', color = 'blue') {
+            clearTimeout(toastTimeout);
+
+            toastTitleElement.textContent = title;
+            toastMessageElement.textContent = message;
+            toastIconElement.innerHTML = `<i class="${icon} text-${color}-500 text-xl"></i>`;
+
+            toast.classList.remove('opacity-0', 'translate-y-full');
+            toast.classList.add('opacity-100', 'translate-y-0');
+
+            toastTimeout = setTimeout(() => {
+                hideToast();
+            }, 3000);
+        }
+
+        function hideToast() {
+            toast.classList.remove('opacity-100', 'translate-y-0');
+            toast.classList.add('opacity-0', 'translate-y-full');
+        }
+
+        if (closeToastButton) {
+            closeToastButton.addEventListener('click', hideToast);
+        }
+
+
+        // --- Articles Display Logic ---
+        const articlesGrid = document.getElementById('articlesGrid');
+        const noArticlesMessage = document.getElementById('noArticlesMessage');
+        const articleSearch = document.getElementById('articleSearch');
+        const filterCategory = document.getElementById('filterCategory');
+        const filterCondition = document.getElementById('filterCondition');
+        const sortOrder = document.getElementById('sortOrder');
+        const loadMoreButton = document.getElementById('loadMoreButton');
+
+        let allArticles = [
+            { id: 'prod1', name: 'Ordinateur Portable Ultra Slim', price: 799.99, image: 'https://via.placeholder.com/300x200/4F46E5/FFFFFF?text=Laptop', seller: 'TechShop', category: 'electronique', condition: 'neuf', datePosted: '2025-05-20T10:00:00Z', popularity: 150 },
+            { id: 'prod2', name: 'Livre: Les Misérables', price: 15.50, image: 'https://via.placeholder.com/300x200/F97316/FFFFFF?text=Livre', seller: 'Librairie du Coin', category: 'livres', condition: 'comme_neuf', datePosted: '2025-05-21T11:00:00Z', popularity: 90 },
+            { id: 'prod3', name: 'T-shirt Sportif Dri-Fit M', price: 25.00, image: 'https://via.placeholder.com/300x200/10B981/FFFFFF?text=T-shirt', seller: 'SportyWear', category: 'vetements', condition: 'bon_etat', datePosted: '2025-05-19T09:30:00Z', popularity: 200 },
+            { id: 'prod4', name: 'Casque Audio Bluetooth', price: 89.99, image: 'https://via.placeholder.com/300x200/6366F1/FFFFFF?text=Casque', seller: 'SoundMaster', category: 'electronique', condition: 'neuf', datePosted: '2025-05-18T14:00:00Z', popularity: 120 },
+            { id: 'prod5', name: 'Plante Verte d\'Intérieur', price: 35.00, image: 'https://via.placeholder.com/300x200/22C55E/FFFFFF?text=Plante', seller: 'GreenHouse', category: 'maison', condition: 'neuf', datePosted: '2025-05-17T16:00:00Z', popularity: 80 },
+            { id: 'prod6', name: 'Baskets de Course Taille 42', price: 65.00, image: 'https://via.placeholder.com/300x200/EF4444/FFFFFF?text=Baskets', seller: 'RunFast', category: 'sports', condition: 'bon_etat', datePosted: '2025-05-16T10:00:00Z', popularity: 180 },
+            { id: 'prod7', name: 'Manette PS5 DualSense', price: 59.99, image: 'https://via.placeholder.com/300x200/8B5CF6/FFFFFF?text=Manette', seller: 'GameWorld', category: 'electronique', condition: 'usage', datePosted: '2025-05-15T13:00:00Z', popularity: 250 },
+            { id: 'prod8', name: 'Roman Policier: L\'Ombre de l\'Énigme', price: 12.00, image: 'https://via.placeholder.com/300x200/FBBF24/FFFFFF?text=Roman', seller: 'Librairie du Coin', category: 'livres', condition: 'comme_neuf', datePosted: '2025-05-14T09:00:00Z', popularity: 70 },
+            { id: 'prod9', name: 'Jean Slim Homme Taille 32', price: 45.00, image: 'https://via.placeholder.com/300x200/06B6D4/FFFFFF?text=Jean', seller: 'FashionHub', category: 'vetements', condition: 'bon_etat', datePosted: '2025-05-13T17:00:00Z', popularity: 110 },
+            { id: 'prod10', name: 'Kit Outils Réparation Smartphone', price: 29.99, image: 'https://via.placeholder.com/300x200/EC4899/FFFFFF?text=Outils', seller: 'RepairPro', category: 'electronique', condition: 'neuf', datePosted: '2025-05-12T11:00:00Z', popularity: 60 },
+            { id: 'prod11', name: 'Fauteuil de Bureau Ergonomique', price: 180.00, image: 'https://via.placeholder.com/300x200/9CA3AF/FFFFFF?text=Fauteuil', seller: 'OfficePro', category: 'maison', condition: 'comme_neuf', datePosted: '2025-05-11T14:30:00Z', popularity: 130 },
+            { id: 'prod12', name: 'Haltères Réglables (Paire)', price: 99.00, image: 'https://via.placeholder.com/300x200/C084FC/FFFFFF?text=Halteres', seller: 'FitGear', category: 'sports', condition: 'neuf', datePosted: '2025-05-10T08:00:00Z', popularity: 160 },
+            { id: 'prod13', name: 'Webcam Full HD avec Micro', price: 39.99, image: 'https://via.placeholder.com/300x200/3B82F6/FFFFFF?text=Webcam', seller: 'WebConnect', category: 'electronique', condition: 'neuf', datePosted: '2025-05-09T16:00:00Z', popularity: 95 },
+            { id: 'prod14', name: 'Batterie Externe 10000mAh', price: 20.00, image: 'https://via.placeholder.com/300x200/EAB308/FFFFFF?text=Batterie', seller: 'PowerUp', category: 'electronique', condition: 'neuf', datePosted: '2025-05-08T12:00:00Z', popularity: 85 },
+            { id: 'prod15', name: 'Kit de Peinture Acrylique', price: 30.00, image: 'https://via.placeholder.com/300x200/DC2626/FFFFFF?text=Peinture', seller: 'ArtSupplies', category: 'autres', condition: 'neuf', datePosted: '2025-05-07T10:00:00Z', popularity: 50 },
+            { id: 'prod16', name: 'Drone Compact avec Caméra 4K', price: 299.99, image: 'https://via.placeholder.com/300x200/1D4ED8/FFFFFF?text=Drone', seller: 'FlyHigh', category: 'electronique', condition: 'comme_neuf', datePosted: '2025-05-06T15:00:00Z', popularity: 210 },
+            { id: 'prod17', name: 'Sac à Dos de Randonnée 40L', price: 70.00, image: 'https://via.placeholder.com/300x200/FB923C/FFFFFF?text=SacADos', seller: 'OutdoorGear', category: 'sports', condition: 'bon_etat', datePosted: '2025-05-05T09:00:00Z', popularity: 140 },
+            { id: 'prod18', name: 'Écouteurs sans Fil In-Ear', price: 49.99, image: 'https://via.placeholder.com/300x200/C2410C/FFFFFF?text=Ecouteurs', seller: 'AudioSense', category: 'electronique', condition: 'neuf', datePosted: '2025-05-04T11:00:00Z', popularity: 100 },
+            { id: 'prod19', name: 'Jeu de Société: Stratèges Catan', price: 40.00, image: 'https://via.placeholder.com/300x200/DB2777/FFFFFF?text=JeuSociete', seller: 'BoardGameKing', category: 'autres', condition: 'comme_neuf', datePosted: '2025-05-03T14:00:00Z', popularity: 105 },
+            { id: 'prod20', name: 'Cafetière Express 10 Tasses', price: 55.00, image: 'https://via.placeholder.com/300x200/4B5563/FFFFFF?text=Cafetiere', seller: 'HomeEssentials', category: 'maison', condition: 'usage', datePosted: '2025-05-02T08:30:00Z', popularity: 75 },
+        ];
+
+
+        let currentPage = 1;
+        const itemsPerPage = 12; // Display 12 items initially, then 6 more per load
+
+        function displayArticles() {
+            let filteredArticles = [...allArticles];
+
+            // Apply Search
+            const searchTerm = articleSearch.value.toLowerCase().trim();
+            if (searchTerm) {
+                filteredArticles = filteredArticles.filter(article =>
+                    article.name.toLowerCase().includes(searchTerm) ||
+                    article.seller.toLowerCase().includes(searchTerm) ||
+                    article.category.toLowerCase().includes(searchTerm)
+                );
+            }
+
+            // Apply Category Filter
+            const selectedCategory = filterCategory.value;
+            if (selectedCategory !== 'all') {
+                filteredArticles = filteredArticles.filter(article => article.category === selectedCategory);
+            }
+
+            // Apply Condition Filter
+            const selectedCondition = filterCondition.value;
+            if (selectedCondition !== 'all') {
+                filteredArticles = filteredArticles.filter(article => article.condition === selectedCondition);
+            }
+
+            // Apply Sorting
+            const selectedSortOrder = sortOrder.value;
+            filteredArticles.sort((a, b) => {
+                if (selectedSortOrder === 'recent') {
+                    return new Date(b.datePosted) - new Date(a.datePosted);
+                } else if (selectedSortOrder === 'price_asc') {
+                    return a.price - b.price;
+                } else if (selectedSortOrder === 'price_desc') {
+                    return b.price - a.price;
+                } else if (selectedSortOrder === 'popular') {
+                    return b.popularity - a.popularity;
+                }
+                return 0;
+            });
+
+            // Pagination (simplified for demo, initially show all filtered)
+            const articlesToDisplay = filteredArticles; // For "voir tout", we display all filtered results
+
+            articlesGrid.innerHTML = ''; // Clear previous articles
+            if (articlesToDisplay.length === 0) {
+                noArticlesMessage.classList.remove('hidden');
+                loadMoreButton.classList.add('hidden');
+            } else {
+                noArticlesMessage.classList.add('hidden');
+                articlesToDisplay.forEach(article => {
+                    const articleHTML = `
+                        <div class="product-card bg-white rounded-lg shadow-md overflow-hidden">
+                            <img src="${article.image}" alt="${article.name}" class="w-full h-48 object-cover">
+                            <div class="p-4">
+                                <h3 class="font-semibold text-lg text-gray-800 truncate">${article.name}</h3>
+                                <p class="text-sm text-gray-600 mb-2">Vendu par <span class="font-medium text-blue-600">${article.seller}</span></p>
+                                <div class="flex items-center justify-between mb-3">
+                                    <span class="text-2xl font-bold text-green-700">${article.price.toFixed(2)}€</span>
+                                    <span class="product-status px-2 py-1 rounded-full text-xs font-semibold ${getConditionClass(article.condition)}">
+                                        ${getConditionText(article.condition)}
+                                    </span>
+                                </div>
+                                <button data-id="${article.id}" data-name="${article.name}" data-price="${article.price}" data-image="${article.image}"
+                                        class="add-to-cart-btn w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-md font-medium transition duration-300">
+                                    <i class="fas fa-cart-plus mr-2"></i> Ajouter au panier
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                    articlesGrid.insertAdjacentHTML('beforeend', articleHTML);
+                });
+                addAddToCartListeners(); // Re-add listeners for new buttons
+
+                // Hide Load More button if all are displayed (for simplified demo)
+                loadMoreButton.classList.add('hidden');
+            }
+        }
+
+        function getConditionText(condition) {
+            switch (condition) {
+                case 'neuf': return 'Neuf';
+                case 'comme_neuf': return 'Comme Neuf';
+                case 'bon_etat': return 'Bon État';
+                case 'usage': return 'Usagé';
+                default: return '';
+            }
+        }
+
+        function getConditionClass(condition) {
+            switch (condition) {
+                case 'neuf': return 'bg-green-100 text-green-800';
+                case 'comme_neuf': return 'bg-blue-100 text-blue-800';
+                case 'bon_etat': return 'bg-yellow-100 text-yellow-800';
+                case 'usage': return 'bg-red-100 text-red-800';
+                default: return '';
+            }
+        }
+
+        function addAddToCartListeners() {
+            document.querySelectorAll('.add-to-cart-btn').forEach(button => {
+                button.addEventListener('click', (e) => {
+                    const id = e.currentTarget.dataset.id;
+                    const name = e.currentTarget.dataset.name;
+                    const price = parseFloat(e.currentTarget.dataset.price);
+                    const image = e.currentTarget.dataset.image;
+
+                    const existingItem = cart.find(item => item.id === id);
+                    if (existingItem) {
+                        existingItem.quantity++;
+                    } else {
+                        cart.push({ id, name, price, image, quantity: 1 });
+                    }
+                    saveCart();
+                    updateCartDisplay();
+                    showToast('Ajouté au panier', `${name} a été ajouté.`, 'fas fa-cart-plus', 'green');
+                });
+            });
+        }
+
+        // Event listeners for filters and sort
+        articleSearch.addEventListener('input', displayArticles);
+        filterCategory.addEventListener('change', displayArticles);
+        filterCondition.addEventListener('change', displayArticles);
+        sortOrder.addEventListener('change', displayArticles);
+
+        // --- Initial loads ---
+        updateCartDisplay();
+        updateCartCount();
+        updateNotificationPanelDisplay(); // Update the small notification panel
+        displayArticles(); // Initial display of all articles
+
+        // --- Logout button (ensure path is correct for your project structure) ---
+        const logoutBtn = document.getElementById('logoutBtn');
+        if (logoutBtn) {
+            logoutBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                window.location.href = 'login/connection.html';
+            });
+        }
+    </script>
+
+</body>
+</html>
