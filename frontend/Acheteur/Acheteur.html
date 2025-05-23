@@ -113,7 +113,49 @@
         #notificationPopup {
             z-index: 100; /* S'assurer qu'il est au-dessus d'autres éléments */
         }
+        .notification-item {
+        position: relative;
+        background: white;
+        overflow: hidden;
+        touch-action: pan-x;
+    }
 
+    .notification-content {
+        position: relative;
+        background: white;
+        transition: transform 0.3s ease;
+        z-index: 1;
+    }
+
+    .notification-actions {
+        position: absolute;
+        top: 0;
+        right: 0;
+        height: 100%;
+        display: flex;
+        align-items: stretch;
+        z-index: 0;
+    }
+
+    .action-button {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0 1.5rem;
+        color: white;
+        font-size: 0.875rem;
+        white-space: nowrap;
+        transition: background-color 0.2s;
+    }
+
+    .mute-action {
+        background-color: #9333ea;
+    }
+
+    .delete-action {
+        background-color: #dc2626;
+    }
+    
     </style>
 </head>
 <body class="bg-gray-50">
@@ -830,68 +872,155 @@
                 return `${days} j`;
             }
 
-            function renderNotifications() {
-                notificationListContainer.innerHTML = ''; // Clear previous notifications
-                const unreadCount = notifications.filter(n => !n.read).length;
+            // ... existing code ...
 
-                if (unreadCount > 0) {
-                    notificationCountBadge.textContent = unreadCount > 9 ? '9+' : unreadCount;
-                    notificationCountBadge.style.display = 'flex';
-                    notificationCountBadge.classList.add('notification-animation');
-                } else {
-                    notificationCountBadge.style.display = 'none';
-                    notificationCountBadge.classList.remove('notification-animation');
-                }
-                
-                if (notifications.length === 0) {
-                    noNotificationsMessage.style.display = 'block';
-                } else {
-                    noNotificationsMessage.style.display = 'none';
-                    // Trier les notifications: non lues d'abord, puis par date (plus récentes en premier)
-                    const sortedNotifications = [...notifications].sort((a, b) => {
-                        if (a.read !== b.read) {
-                            return a.read ? 1 : -1; // Non lues en premier
-                        }
-                        return new Date(b.timestamp) - new Date(a.timestamp); // Puis par date décroissante
-                    });
+function renderNotifications() {
+    notificationListContainer.innerHTML = '';
+    const unreadCount = notifications.filter(n => !n.read).length;
 
+    // Update notification badge
+    if (unreadCount > 0) {
+        notificationCountBadge.textContent = unreadCount > 9 ? '9+' : unreadCount;
+        notificationCountBadge.style.display = 'flex';
+        notificationCountBadge.classList.add('notification-animation');
+    } else {
+        notificationCountBadge.style.display = 'none';
+        notificationCountBadge.classList.remove('notification-animation');
+    }
 
-                    sortedNotifications.forEach(notif => {
-                        const item = document.createElement('a');
-                        item.href = notif.link || '#';
-                        item.classList.add('notification-item', 'block', 'p-3', 'hover:bg-gray-100', 'border-b', 'border-gray-100', 'cursor-pointer');
-                        if (!notif.read) {
-                            item.classList.add('unread', 'bg-blue-50'); // Fond légèrement bleuté pour non lu
-                        }
-                        item.innerHTML = `
-                            <div class="flex items-start">
-                                <div class="flex-shrink-0 mr-3 pt-1">
-                                    <i class="${notif.icon || 'fas fa-bell'} text-lg ${notif.read ? 'text-gray-400' : 'text-blue-600'}"></i>
-                                </div>
-                                <div class="flex-1">
-                                    <p class="text-sm font-medium text-gray-800">${notif.title}</p>
-                                    <p class="text-xs text-gray-600">${notif.message}</p>
-                                    <p class="text-xs ${notif.read ? 'text-gray-400' : 'text-blue-500'} mt-1">${formatTimeAgo(notif.timestamp)}</p>
-                                </div>
-                                ${!notif.read ? '<span class="notification-dot bg-blue-600 self-center ml-auto"></span>' : ''}
-                            </div>
-                        `;
-                        item.addEventListener('click', (e) => {
-                            if (!notif.read) {
-                                markNotificationAsRead(notif.id);
-                            }
-                            // Si le lien est juste '#', on évite le saut de page
-                            if (item.getAttribute('href') === '#') {
-                                e.preventDefault();
-                            }
-                            closeNotificationPanel(); // Ferme le panel après clic
-                            // Si vous voulez rediriger, la redirection se fera naturellement.
-                        });
-                        notificationListContainer.appendChild(item);
-                    });
-                }
-                saveNotifications(); // Sauvegarde au cas où l'ordre ou l'état a changé
+    // Show empty state if no notifications
+    if (notifications.length === 0) {
+        noNotificationsMessage.style.display = 'block';
+        return;
+    }
+
+    noNotificationsMessage.style.display = 'none';
+    
+    // Sort notifications
+    const sortedNotifications = [...notifications].sort((a, b) => {
+        if (a.read !== b.read) return a.read ? 1 : -1;
+        return new Date(b.timestamp) - new Date(a.timestamp);
+    });
+
+    // Render each notification
+    sortedNotifications.forEach(notif => {
+        const item = document.createElement('div');
+        item.classList.add('notification-item', 'relative', 'overflow-hidden');
+
+        const content = document.createElement('div');
+        content.classList.add('notification-content', 'p-3', 'border-b', 'border-gray-100', 'bg-white', 'cursor-pointer');
+        if (!notif.read) content.classList.add('bg-blue-50');
+
+        content.innerHTML = `
+            <div class="flex items-start">
+                <div class="flex-shrink-0 mr-3 pt-1">
+                    <i class="${notif.icon || 'fas fa-bell'} text-lg ${notif.read ? 'text-gray-400' : 'text-blue-600'}"></i>
+                </div>
+                <div class="flex-1">
+                    <p class="text-sm font-medium text-gray-800">${notif.title}</p>
+                    <p class="text-xs text-gray-600">${notif.message}</p>
+                    <p class="text-xs ${notif.read ? 'text-gray-400' : 'text-blue-500'} mt-1">${formatTimeAgo(notif.timestamp)}</p>
+                </div>
+                ${!notif.read ? '<span class="notification-dot bg-blue-600 self-center ml-auto"></span>' : ''}
+            </div>
+        `;
+
+        const actions = document.createElement('div');
+        actions.classList.add('notification-actions');
+        actions.innerHTML = `
+            <button class="action-button mute-action">
+                <i class="fas fa-bell-slash mr-2"></i>
+                Mute
+            </button>
+            <button class="action-button delete-action">
+                <i class="fas fa-trash mr-2"></i>
+                Delete
+            </button>
+        `;
+
+        item.appendChild(content);
+        item.appendChild(actions);
+        notificationListContainer.appendChild(item);
+
+        // Touch and mouse event handling
+        let startX = 0;
+        let currentX = 0;
+        let isDragging = false;
+
+        const handleStart = (e) => {
+            startX = e.type.includes('mouse') ? e.pageX : e.touches[0].pageX;
+            isDragging = true;
+            content.style.transition = 'none';
+        };
+
+        const handleMove = (e) => {
+            if (!isDragging) return;
+            e.preventDefault();
+            const x = e.type.includes('mouse') ? e.pageX : e.touches[0].pageX;
+            const diff = x - startX;
+            currentX = Math.min(Math.max(diff, -150), 0);
+            content.style.transform = `translateX(${currentX}px)`;
+        };
+
+        const handleEnd = () => {
+            if (!isDragging) return;
+            isDragging = false;
+            content.style.transition = 'transform 0.3s ease';
+            
+            if (currentX < -75) {
+                content.style.transform = 'translateX(-150px)';
+            } else {
+                content.style.transform = 'translateX(0)';
+                currentX = 0;
             }
+        };
+
+        // Add event listeners
+        content.addEventListener('mousedown', handleStart);
+        content.addEventListener('touchstart', handleStart);
+        window.addEventListener('mousemove', handleMove);
+        window.addEventListener('touchmove', handleMove, { passive: false });
+        window.addEventListener('mouseup', handleEnd);
+        window.addEventListener('touchend', handleEnd);
+
+        // Handle actions
+        actions.querySelector('.mute-action').addEventListener('click', () => {
+            showToast(`Notifications muted for "${notif.title}"`, 'bg-purple-500', 'fas fa-bell-slash');
+            content.style.transform = 'translateX(0)';
+        });
+
+        actions.querySelector('.delete-action').addEventListener('click', () => {
+            item.style.height = item.offsetHeight + 'px';
+            item.style.transition = 'all 0.3s ease';
+            requestAnimationFrame(() => {
+                item.style.height = '0';
+                item.style.opacity = '0';
+            });
+            setTimeout(() => {
+                notifications = notifications.filter(n => n.id !== notif.id);
+                saveNotifications();
+                renderNotifications();
+            }, 300);
+        });
+
+        // Handle notification click
+        content.addEventListener('click', (e) => {
+            if (Math.abs(currentX) < 5) {
+                if (!notif.read) {
+                    markNotificationAsRead(notif.id);
+                }
+                if (notif.link && notif.link !== '#') {
+                    window.location.href = notif.link;
+                }
+                closeNotificationPanel();
+            }
+        });
+    });
+
+    saveNotifications();
+}
+
+// ... existing code ...
 
             function markNotificationAsRead(notificationId) {
                 const notification = notifications.find(n => n.id === notificationId);
