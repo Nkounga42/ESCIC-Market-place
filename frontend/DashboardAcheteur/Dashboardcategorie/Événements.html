@@ -1,0 +1,926 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ESCIC-Market - Événements</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Nunito', sans-serif;
+            scroll-behavior: smooth;
+        }
+        .dashboard-card {
+            transition: all 0.3s ease;
+        }
+        .dashboard-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+        }
+        .product-status {
+            font-size: 0.75rem;
+            padding: 0.25rem 0.5rem;
+            border-radius: 1rem;
+        }
+        .status-available {
+            background-color: #D1FAE5;
+            color: #065F46;
+        }
+        .status-reserved {
+            background-color: #FEF3C7;
+            color: #92400E;
+        }
+        .status-sold {
+            background-color: #E5E7EB;
+            color: #4B5563;
+        }
+        .menu-item {
+            transition: all 0.2s ease;
+        }
+        .menu-item:hover {
+            background-color: #EFF6FF;
+            border-left: 3px solid #3B82F6;
+        }
+        .active-menu-item {
+            background-color: #EFF6FF;
+            border-left: 3px solid #3B82F6;
+            color: #1E40AF;
+        }
+        .chat-bubble {
+            border-radius: 1rem;
+            max-width: 70%;
+        }
+        .chat-bubble.sender {
+            background-color: #3B82F6;
+            color: white;
+            border-bottom-right-radius: 0.25rem;
+        }
+        .chat-bubble.receiver {
+            background-color: #E5E7EB;
+            color: #1F2937;
+            border-bottom-left-radius: 0.25rem;
+        }
+        .mobile-menu {
+            transform: translateX(-100%);
+            transition: transform 0.3s ease;
+        }
+        .mobile-menu.open {
+            transform: translateX(0);
+        }
+        .backdrop {
+            background-color: rgba(0, 0, 0, 0.5);
+            transition: opacity 0.3s ease;
+        }
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+        .category-card:hover {
+            transform: scale(1.03);
+        }
+        .scroll-container {
+            scrollbar-width: thin;
+            scrollbar-color: #3b82f6 #f1f1f1;
+        }
+        .scroll-container::-webkit-scrollbar {
+            height: 6px;
+        }
+        .scroll-container::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+        .scroll-container::-webkit-scrollbar-thumb {
+            background-color: #3b82f6;
+            border-radius: 10px;
+        }
+        /* Styles pour les notifications */
+        .notification-badge {
+            position: absolute;
+            top: -6px;
+            right: -6px;
+            background-color: #ef4444; /* red-500 */
+            color: white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            font-size: 11px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid white;
+            font-weight: bold;
+        }
+        .notification-panel-container {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        .notification-panel-container::-webkit-scrollbar {
+            width: 6px;
+        }
+        .notification-panel-container::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+        .notification-panel-container::-webkit-scrollbar-thumb {
+            background-color: #3b82f6; /* blue-600 */
+            border-radius: 10px;
+        }
+        .notification-item {
+            position: relative;
+            transition: all 0.2s ease;
+        }
+        .notification-item:hover {
+            background-color: #f3f4f6; /* gray-100 */
+        }
+        .notification-item.unread::before {
+            content: '';
+            position: absolute;
+            left: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background-color: #3b82f6; /* blue-600 */
+        }
+        .notification-dot {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+        .notification-animation {
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0% {
+                box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7);
+            }
+            70% {
+                box-shadow: 0 0 0 10px rgba(239, 68, 68, 0);
+            }
+            100% {
+                box-shadow: 0 0 0 0 rgba(239, 68, 68, 0);
+            }
+        }
+        #toast {
+           z-index: 100;
+        }
+        #notificationPopup {
+            z-index: 100;
+        }
+        .notification-item {
+            position: relative;
+            background: white;
+            overflow: hidden;
+            touch-action: pan-x;
+        }
+        .notification-content {
+            position: relative;
+            background: white;
+            transition: transform 0.3s ease;
+            z-index: 1;
+        }
+        .notification-actions {
+            position: absolute;
+            top: 0;
+            right: 0;
+            height: 100%;
+            display: flex;
+            align-items: stretch;
+            z-index: 0;
+        }
+        .action-button {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0 1.5rem;
+            color: white;
+            font-size: 0.875rem;
+            white-space: nowrap;
+            transition: background-color 0.2s;
+        }
+        .mute-action {
+            background-color: #9333ea;
+        }
+        .delete-action {
+            background-color: #dc2626;
+        }
+        body.mobile-menu-open {
+            overflow: hidden;
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <header class="bg-white shadow-sm sticky top-0 z-50">
+        <div class="container mx-auto px-4 py-3 flex items-center justify-between">
+            <div class="flex items-center">
+                <img src="https://via.placeholder.com/40" alt="ESCIC-Market Logo" class="h-10 mr-2">
+                <span class="text-xl font-bold text-blue-800 hidden md:block">ESCIC-Market</span>
+            </div>
+            
+            <div class="flex items-center space-x-4">
+                <button class="md:hidden text-gray-600"> <i class="fas fa-search text-xl"></i>
+                </button>
+                
+                <button class="hidden md:block bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-full font-medium transition duration-300">
+                    <i class="fas fa-plus mr-1"></i> Vendre un article
+                </button>
+            </div>
+        </div>
+        
+        <div class="md:hidden bg-white px-4 py-2 border-t">
+            <div class="relative">
+                <input type="text" placeholder="Rechercher un article..." 
+                       class="w-full py-2 px-4 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                <button class="absolute right-3 top-2 text-gray-400">
+                    <i class="fas fa-search"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <button id="mobileMenuButton" class="md:hidden fixed top-4 left-4 z-50 bg-white p-2 rounded-full shadow-lg">
+        <i class="fas fa-bars text-blue-800 text-xl"></i>
+    </button>
+
+    <div id="mobileBackdrop" class="fixed inset-0 bg-black bg-opacity-50 z-40 hidden"></div>
+
+    <div id="mobileMenu" class="mobile-menu fixed inset-y-0 left-0 z-50 w-64 bg-white shadow-lg overflow-y-auto">
+        <div class="p-4 border-b border-gray-200">
+            <div class="flex items-center">
+                <img src="https://via.placeholder.com/40" alt="Profile" class="w-10 h-10 rounded-full mr-3">
+                <div>
+                    <p class="font-semibold">Nom de l'Acheteur</p> <p class="text-xs text-gray-500">Acheteur actif</p> </div>
+            </div>
+        </div>
+
+        <nav class="p-2">
+            <a href="DashboardAcheteur/Acheteur.html" class="menu-item flex items-center p-3 rounded-lg bg-blue-600 hover:bg-blue-700 text-white shadow-md">
+                <i class="fas fa-home mr-3"></i> <span>Accueil</span>
+            </a>
+            
+            <button id="navbarCartButtonMobile" class="menu-item flex items-center p-3 rounded-lg w-full text-left relative text-gray-600 hover:text-blue-800">
+                <div class="relative mr-3"> 
+                    <i class="fas fa-shopping-cart text-xl text-green-600"></i> 
+                    <span id="navbarCartCountMobile" class="absolute -top-2 -right-2 bg-blue-600 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">0</span> 
+                </div>
+                <span>Mon panier</span>
+            </button>
+            <div class="relative">
+                <button id="notificationButtonMobile" class="menu-item text-gray-600 hover:text-blue-800 flex items-center p-3 rounded-lg w-full text-left relative">
+                    <i class="fas fa-bell text-xl mr-3"></i>
+                    <span id="notificationCountMobile" class="notification-badge" style="display: none;">0</span>
+                    <span>Notifications</span>
+                </button>
+            </div>
+
+            <a href="DashboardAcheteur/message.html" class="menu-item flex items-center p-3 rounded-lg">
+                <i class="fas fa-home mr-3 text-blue-800"></i>
+                <span>Messages</span>
+            </a>
+
+            <a href="DashboardAcheteur/profile.html" class="menu-item flex items-center p-3 rounded-lg">
+                <i class="fas fa-home mr-3 text-blue-800"></i>
+                <span>Profil</span>
+            </a>
+            
+            <a href="DashboardAcheteur/evaluation.html" class="menu-item flex items-center p-3 rounded-lg">
+                <i class="fas fa-home mr-3 text-blue-800"></i>
+                <span>evaluation</span>
+            </a>
+            <a href="DashboardAcheteur/parametre.html" class="menu-item flex items-center p-3 rounded-lg">
+                <i class="fas fa-home mr-3 text-blue-800"></i>
+                <span>Paramètres</span>
+            </a>
+            <a href="DashboardAcheteur/recherche.html" class="menu-item flex items-center p-3 rounded-lg">
+                <i class="fas fa-home mr-3 text-blue-800"></i>
+                <span>Recherche</span>
+            </a>
+            
+            <a href="DashboardAcheteur/deconnection.html" class="menu-item flex items-center p-3 rounded-lg">
+                <i class="fas fa-home mr-3 text-blue-800"></i>
+                <span>Déconnexion</span>
+            </a>
+        </nav>
+    </div>
+
+    <div class="hidden md:flex md:w-64 md:flex-col md:fixed md:inset-y-0">
+        <div class="flex flex-col flex-grow border-r border-gray-200 bg-white overflow-y-auto">
+            <div class="p-4 border-b border-gray-200">
+                <div class="flex items-center">
+                    <img src="https://via.placeholder.com/40" alt="Profile" class="w-10 h-10 rounded-full mr-3">
+                    <div>
+                        <p class="font-semibold">Nom de l'Acheteur</p> <p class="text-xs text-gray-500">Acheteur actif</p> </div>
+                </div>
+            </div>
+            <nav class="flex-1 p-2">
+                <a href="Acheteur.html" class="menu-item flex items-center p-3 rounded-lg">
+                  <i class="fas fa-home mr-3 text-blue-800"></i>
+                  <span>Accueil</span>
+                </a>
+                <button id="navbarCartButtonDesktop" class="menu-item flex items-center p-3 rounded-lg w-full text-left relative">
+                    <div class="relative mr-3"> 
+                        <i class="fas fa-shopping-cart text-xl text-blue-800"></i> 
+                        <span id="navbarCartCountDesktop" class="absolute -top-2 -right-2 bg-blue-600 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">0</span> 
+                    </div>
+                    <span>Mon panier</span>
+                </button>
+                <div class="relative">
+                    <button id="notificationButtonDesktop" class="menu-item text-gray-600 hover:text-blue-800 flex items-center p-3 rounded-lg w-full text-left relative">
+                        <i class="fas fa-bell text-xl mr-3 text-blue-800"></i>
+                        <span id="notificationCountDesktop" class="notification-badge" style="display: none;">0</span>
+                        <span>Notifications</span>
+                    </button>
+                    <div id="notificationPanel" class="absolute right-0 mt-2 w-80 md:w-96 bg-white rounded-lg shadow-lg transition-all duration-300 transform scale-0 origin-top-right opacity-0 z-[72]">
+                        <div class="p-3 border-b border-gray-200 flex justify-between items-center">
+                            <h3 class="font-semibold text-gray-700">Notifications</h3>
+                            <div class="flex space-x-2">
+                                <button id="markAllAsRead" title="Tout marquer comme lu" class="text-sm text-blue-600 hover:text-blue-800">
+                                    <i class="fas fa-check-double"></i>
+                                </button>
+                                <button id="notificationSettings" title="Paramètres" class="text-gray-500 hover:text-gray-700">
+                                    <i class="fas fa-cog"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div id="notificationList" class="notification-panel-container">
+                            <p id="noNotificationsMessage" class="p-4 text-center text-gray-500">Aucune nouvelle notification.</p>
+                        </div>
+                        <div class="p-3 border-t border-gray-200 text-center">
+                            <a href="#" class="text-sm text-blue-600 hover:text-blue-800">Voir toutes les notifications</a>
+                        </div>
+                    </div>
+                </div>
+                <a href="Message.html" class="menu-item flex items-center p-3 rounded-lg">
+                  <i class="fas fa-comments mr-3 text-blue-800"></i>
+                  <span>Messages</span>
+                </a>
+                <a href="profile.html" class="menu-item flex items-center p-3 rounded-lg">
+                  <i class="fas fa-user mr-3 text-blue-800"></i>
+                  <span>Profil</span>
+                </a>
+                <a href="evaluation.html" class="menu-item flex items-center p-3 rounded-lg">
+                  <i class="fas fa-star mr-3 text-blue-800"></i>
+                  <span>Évaluations</span>
+                </a>
+                <a href="parametre.html" class="menu-item flex items-center p-3 rounded-lg">
+                  <i class="fas fa-cog mr-3 text-blue-800"></i>
+                  <span>Paramètres</span>
+                </a>
+                <a href="recherche.html" class="menu-item flex items-center p-3 rounded-lg active-menu-item">
+                  <i class="fas fa-search mr-3 text-blue-800"></i>
+                  <span>Recherche</span>
+                </a>
+                <a href="login/connection.html" id="logoutBtn" class="menu-item flex items-center p-3 rounded-lg text-red-600">
+                  <i class="fas fa-sign-out-alt mr-3"></i>
+                  <span>Déconnexion</span>
+                </a>
+            </nav>
+        </div>
+    </div>
+
+    <div class="md:pl-64">
+        <div id="cartDrawer" class="fixed inset-y-0 right-0 w-full md:w-96 bg-white shadow-xl transform translate-x-full transition-transform duration-300 ease-in-out z-[70]">
+            <div class="h-full flex flex-col">
+                <div class="bg-blue-800 text-white px-6 py-4 flex justify-between items-center">
+                    <h2 class="text-xl font-bold">Mon Panier</h2>
+                    <button id="closeCart" class="text-white hover:text-blue-200">
+                        <i class="fas fa-times text-xl"></i>
+                    </button>
+                </div>
+                
+                <div id="cartItems" class="flex-1 overflow-y-auto p-4">
+                    <div id="emptyCart" class="flex flex-col items-center justify-center h-64 text-center text-gray-500">
+                        <i class="fas fa-shopping-cart text-5xl mb-4"></i>
+                        <p class="text-xl font-medium mb-2">Votre panier est vide</p>
+                        <p>Ajoutez des articles pour les voir ici</p>
+                    </div>
+                </div>
+                
+                <div class="bg-gray-50 p-6 border-t">
+                    <div class="flex justify-between mb-4">
+                        <span class="font-medium text-gray-600">Sous-total:</span>
+                        <span id="cartSubtotal" class="font-bold">0.00€</span>
+                    </div>
+                    <button id="checkoutButton" class="w-full bg-blue-700 hover:bg-blue-800 text-white py-3 rounded-lg font-medium transition duration-300 disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+                        Procéder au paiement
+                    </button>
+                    <button id="continueShoppingButton" class="w-full mt-3 border border-blue-700 text-blue-700 hover:bg-blue-50 py-3 rounded-lg font-medium transition duration-300">
+                        Continuer mes achats
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div id="notificationPopup" class="fixed bottom-5 right-5 bg-white rounded-lg shadow-xl p-4 w-80 transform translate-y-24 opacity-0 transition-all duration-500 ease-in-out z-[100] border-l-4 border-blue-500">
+            <div class="flex items-start">
+                <div class="flex-shrink-0 mr-3 pt-1">
+                    <i id="notificationPopupIcon" class="fas fa-info-circle text-blue-500 text-xl"></i>
+                </div>
+                <div class="flex-1">
+                    <h4 id="notificationPopupTitle" class="font-semibold text-gray-800">Nouvelle Notification</h4>
+                    <p id="notificationPopupMessage" class="text-sm text-gray-600 mt-1">Contenu de la notification.</p>
+                </div>
+                <button id="closeNotificationPopup" class="text-gray-400 hover:text-gray-600 ml-2">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+        </div>
+
+        <section class="container mx-auto px-4 py-12">
+            <h2 class="text-3xl font-bold text-center mb-10 text-blue-800">Événements à venir</h2>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div class="product-card bg-white rounded-lg shadow-md overflow-hidden transition duration-300">
+                    <div class="h-48 bg-gray-100">
+                        <img src="https://images.unsplash.com/photo-1505373877841-8256f7739844?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80" alt="Atelier CV" class="w-full h-full object-cover">
+                    </div>
+                    <div class="p-4">
+                        <h3 class="font-semibold text-gray-800 mb-1">Atelier CV et Lettre de Motivation</h3>
+                        <p class="text-gray-600 text-sm mb-1"><i class="fas fa-calendar-alt mr-1"></i> Mer. 15 Juin, 14h-16h</p>
+                        <p class="text-gray-600 text-sm mb-2"><i class="fas fa-map-marker-alt mr-1"></i> Salle B05</p>
+                        <div class="flex justify-between items-center">
+                            <span class="font-bold text-green-600">Gratuit</span>
+                            <div class="flex items-center">
+                                <img src="https://via.placeholder.com/24/ff0000/ffffff?text=BDE" alt="Organisateur" class="w-6 h-6 rounded-full mr-1">
+                                <span class="text-xs text-gray-500">BDE ESCIC</span>
+                            </div>
+                        </div>
+                        <button class="add-to-cart mt-3 w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-md text-sm font-medium transition duration-300" data-id="event-1" data-name="Atelier CV et Lettre de Motivation" data-price="0" data-img="https://images.unsplash.com/photo-1505373877841-8256f7739844?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80" data-seller="BDE ESCIC"> S'inscrire </button>
+                    </div>
+                </div>
+
+                <div class="product-card bg-white rounded-lg shadow-md overflow-hidden transition duration-300">
+                    <div class="h-48 bg-gray-100">
+                        <img src="https://images.unsplash.com/photo-1517457373958-b7bdd4587205?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1169&q=80" alt="Soirée d'Intégration" class="w-full h-full object-cover">
+                    </div>
+                    <div class="p-4">
+                        <h3 class="font-semibold text-gray-800 mb-1">Soirée d'Intégration ESCIC</h3>
+                        <p class="text-gray-600 text-sm mb-1"><i class="fas fa-calendar-alt mr-1"></i> Ven. 25 Sept, 20h</p>
+                        <p class="text-gray-600 text-sm mb-2"><i class="fas fa-map-marker-alt mr-1"></i> Foyer des étudiants</p>
+                        <div class="flex justify-between items-center">
+                            <span class="font-bold text-blue-800">5€</span>
+                            <div class="flex items-center">
+                                <img src="https://via.placeholder.com/24/00ff00/ffffff?text=CF" alt="Organisateur" class="w-6 h-6 rounded-full mr-1">
+                                <span class="text-xs text-gray-500">Club Festif</span>
+                            </div>
+                        </div>
+                        <button class="add-to-cart mt-3 w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-md text-sm font-medium transition duration-300" data-id="event-2" data-name="Soirée d'Intégration ESCIC (Ticket)" data-price="5" data-img="https://images.unsplash.com/photo-1517457373958-b7bdd4587205?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1169&q=80" data-seller="Club Festif"> Acheter un billet </button>
+                    </div>
+                </div>
+
+                <div class="product-card bg-white rounded-lg shadow-md overflow-hidden transition duration-300">
+                    <div class="h-48 bg-gray-100">
+                        <img src="https://images.unsplash.com/photo-1579952363873-27f3bade9f55?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=735&q=80" alt="Tournoi de Foot" class="w-full h-full object-cover">
+                    </div>
+                    <div class="p-4">
+                        <h3 class="font-semibold text-gray-800 mb-1">Tournoi de Foot Inter-Classes</h3>
+                        <p class="text-gray-600 text-sm mb-1"><i class="fas fa-calendar-alt mr-1"></i> Sam. 10 Oct, 9h</p>
+                        <p class="text-gray-600 text-sm mb-2"><i class="fas fa-map-marker-alt mr-1"></i> Terrain de sport</p>
+                        <div class="flex justify-between items-center">
+                            <span class="font-bold text-blue-800">2€/joueur</span>
+                            <div class="flex items-center">
+                                <img src="https://via.placeholder.com/24/0000ff/ffffff?text=AS" alt="Organisateur" class="w-6 h-6 rounded-full mr-1">
+                                <span class="text-xs text-gray-500">AS ESCIC</span>
+                            </div>
+                        </div>
+                        <button class="add-to-cart mt-3 w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-md text-sm font-medium transition duration-300" data-id="event-3" data-name="Inscription Tournoi de Foot" data-price="2" data-img="https://images.unsplash.com/photo-1579952363873-27f3bade9f55?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=735&q=80" data-seller="AS ESCIC"> Inscrire son équipe </button>
+                    </div>
+                </div>
+                
+                <div class="product-card bg-white rounded-lg shadow-md overflow-hidden transition duration-300">
+                    <div class="h-48 bg-gray-100">
+                        <img src="https://images.unsplash.com/photo-1516321497487-e288fb19713f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80" alt="Conférence IA" class="w-full h-full object-cover">
+                    </div>
+                    <div class="p-4">
+                        <h3 class="font-semibold text-gray-800 mb-1">Conférence: L'IA dans le Marketing</h3>
+                        <p class="text-gray-600 text-sm mb-1"><i class="fas fa-calendar-alt mr-1"></i> Jeu. 5 Nov, 18h</p>
+                        <p class="text-gray-600 text-sm mb-2"><i class="fas fa-map-marker-alt mr-1"></i> Amphi A</p>
+                        <div class="flex justify-between items-center">
+                            <span class="font-bold text-green-600">Gratuit (sur réservation)</span>
+                            <div class="flex items-center">
+                                <img src="https://via.placeholder.com/24/ffa500/ffffff?text=PD" alt="Organisateur" class="w-6 h-6 rounded-full mr-1">
+                                <span class="text-xs text-gray-500">Prof. Dubois</span>
+                            </div>
+                        </div>
+                        <button class="add-to-cart mt-3 w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-md text-sm font-medium transition duration-300" data-id="event-4" data-name="Réservation Conférence IA" data-price="0" data-img="https://images.unsplash.com/photo-1516321497487-e288fb19713f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80" data-seller="Prof. Dubois"> Réserver sa place </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <a href="message.html" class="fixed bottom-20 right-6 bg-blue-600 hover:bg-blue-700 text-white rounded-full p-4 shadow-lg transition-all duration-300 hover:scale-110 z-50">
+        <i class="fas fa-comments text-xl"></i>
+        <span id="messageCount" class="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center" style="display: none;">0</span>
+    </a>
+    
+    <button id="floatingCartButton"
+       class="fixed bottom-32 right-6 bg-white text-gray-600 hover:text-blue-800 shadow-lg p-4 rounded-full transition-all duration-300 hover:scale-110 z-50 border border-gray-300">
+        <i class="fas fa-shopping-cart text-xl"></i>
+        <span id="cartCount" class="absolute -top-2 -right-2 bg-blue-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-content-center" style="display: none;">0</span>
+    </button>
+    
+    <footer class="bg-blue-900 text-white py-10">
+        <div class="container mx-auto px-4">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div>
+                    <h3 class="text-xl font-bold mb-4">ESCIC-Market</h3>
+                    <p class="text-blue-200 mb-4">La plateforme d'échange entre étudiants de l'ESCIC.</p>
+                    <div class="flex space-x-4">
+                        <a href="#" class="text-white hover:text-blue-300"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#" class="text-white hover:text-blue-300"><i class="fab fa-instagram"></i></a>
+                        <a href="#" class="text-white hover:text-blue-300"><i class="fab fa-twitter"></i></a>
+                    </div>
+                </div>
+                
+                <div>
+                    <h3 class="text-lg font-semibold mb-4">Liens rapides</h3>
+                    <ul class="space-y-2">
+                        <li><a href="Acheteur.html" class="text-blue-200 hover:text-white">Accueil</a></li>
+                        <li><a href="#" class="text-blue-200 hover:text-white">Catégories</a></li>
+                        <li><a href="#" class="text-blue-200 hover:text-white">Vendre un article</a></li>
+                        <li><a href="#" class="text-blue-200 hover:text-white">Mon compte</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h3 class="text-lg font-semibold mb-4">Contact</h3>
+                    <p class="text-blue-200 mb-2"><i class="fas fa-map-marker-alt mr-2"></i> Campus ESCIC, Pointe-Noire</p>
+                    <p class="text-blue-200 mb-2"><i class="fas fa-envelope mr-2"></i> contact@escic-market.fr</p>
+                    <p class="text-blue-200"><i class="fas fa-phone mr-2"></i> 01 23 45 67 89</p>
+                </div>
+            </div>
+            
+            <div class="border-t border-blue-800 mt-8 pt-6 text-center text-blue-300 text-sm">
+                <p>&copy; 2023 ESCIC-Market. Tous droits réservés.</p>
+            </div>
+        </div>
+    </footer>
+    <script>
+        // Mobile Menu Toggle
+        const mobileMenuButton = document.getElementById('mobileMenuButton');
+        const mobileMenu = document.getElementById('mobileMenu');
+        const mobileBackdrop = document.getElementById('mobileBackdrop');
+        const body = document.body;
+
+        function toggleMobileMenu() {
+            mobileMenu.classList.toggle('open');
+            mobileBackdrop.classList.toggle('hidden');
+            body.classList.toggle('mobile-menu-open');
+        }
+
+        mobileMenuButton.addEventListener('click', toggleMobileMenu);
+        mobileBackdrop.addEventListener('click', toggleMobileMenu);
+
+        // Cart Drawer functionality
+        const navbarCartButtonMobile = document.getElementById('navbarCartButtonMobile');
+        const navbarCartButtonDesktop = document.getElementById('navbarCartButtonDesktop');
+        const floatingCartButton = document.getElementById('floatingCartButton');
+        const cartDrawer = document.getElementById('cartDrawer');
+        const closeCart = document.getElementById('closeCart');
+
+        function openCart() {
+            cartDrawer.classList.remove('translate-x-full');
+            cartDrawer.classList.add('translate-x-0');
+        }
+
+        function closeCartDrawer() {
+            cartDrawer.classList.remove('translate-x-0');
+            cartDrawer.classList.add('translate-x-full');
+        }
+
+        if (navbarCartButtonMobile) {
+            navbarCartButtonMobile.addEventListener('click', openCart);
+        }
+        if (navbarCartButtonDesktop) {
+            navbarCartButtonDesktop.addEventListener('click', openCart);
+        }
+        if (floatingCartButton) {
+            floatingCartButton.addEventListener('click', openCart);
+        }
+        if (closeCart) {
+            closeCart.addEventListener('click', closeCartDrawer);
+        }
+        
+        const continueShoppingButton = document.getElementById('continueShoppingButton');
+        if (continueShoppingButton) {
+            continueShoppingButton.addEventListener('click', closeCartDrawer);
+        }
+
+
+        // Notification Panel functionality
+        const notificationButtonMobile = document.getElementById('notificationButtonMobile');
+        const notificationButtonDesktop = document.getElementById('notificationButtonDesktop');
+        const notificationPanel = document.getElementById('notificationPanel');
+
+        function toggleNotificationPanel() {
+            if (!notificationPanel) return;
+            notificationPanel.classList.toggle('scale-0');
+            notificationPanel.classList.toggle('opacity-0');
+            notificationPanel.classList.toggle('scale-100');
+            notificationPanel.classList.toggle('opacity-100');
+        }
+        
+        if (notificationButtonDesktop) {
+            notificationButtonDesktop.addEventListener('click', (event) => {
+                event.stopPropagation();
+                toggleNotificationPanel();
+            });
+        }
+        
+        if (notificationButtonMobile) {
+             notificationButtonMobile.addEventListener('click', (event) => {
+                event.stopPropagation();
+                if (document.getElementById('notificationPanel')) { 
+                    toggleNotificationPanel();
+                } else {
+                    alert('Accès aux notifications sur mobile (interface à adapter).');
+                }
+            });
+        }
+
+
+        window.addEventListener('click', (event) => {
+            if (notificationPanel && !notificationPanel.contains(event.target) && 
+                (!notificationButtonMobile || !notificationButtonMobile.contains(event.target)) &&
+                (!notificationButtonDesktop || !notificationButtonDesktop.contains(event.target))) {
+                if (notificationPanel.classList.contains('scale-100')) {
+                    toggleNotificationPanel();
+                }
+            }
+        });
+
+        // Add to cart logic and update cart count
+        const addToCartButtons = document.querySelectorAll('.add-to-cart');
+        const cartItemsContainer = document.getElementById('cartItems');
+        const emptyCartMessage = document.getElementById('emptyCart');
+        const cartSubtotalSpan = document.getElementById('cartSubtotal');
+        const checkoutButton = document.getElementById('checkoutButton');
+        const navbarCartCountMobile = document.getElementById('navbarCartCountMobile');
+        const navbarCartCountDesktop = document.getElementById('navbarCartCountDesktop');
+        const floatingCartCount = document.getElementById('cartCount');
+
+        let cart = JSON.parse(localStorage.getItem('escicCart')) || [];
+
+        function saveCart() {
+            localStorage.setItem('escicCart', JSON.stringify(cart));
+            updateCartDisplay();
+            updateCartCount();
+        }
+
+        function updateCartCount() {
+            const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+            if (navbarCartCountMobile) {
+                navbarCartCountMobile.textContent = totalItems;
+                navbarCartCountMobile.style.display = totalItems > 0 ? 'flex' : 'none';
+            }
+            if (navbarCartCountDesktop) {
+                navbarCartCountDesktop.textContent = totalItems;
+                navbarCartCountDesktop.style.display = totalItems > 0 ? 'flex' : 'none';
+            }
+            if (floatingCartCount) {
+                floatingCartCount.textContent = totalItems;
+                floatingCartCount.style.display = totalItems > 0 ? 'flex' : 'none';
+            }
+        }
+
+        function updateCartDisplay() {
+            if (!cartItemsContainer || !emptyCartMessage || !cartSubtotalSpan || !checkoutButton) return;
+            
+            cartItemsContainer.innerHTML = '';
+            let subtotal = 0;
+
+            if (cart.length === 0) {
+                emptyCartMessage.style.display = 'flex';
+                checkoutButton.disabled = true;
+            } else {
+                emptyCartMessage.style.display = 'none';
+                checkoutButton.disabled = false;
+                cart.forEach(item => {
+                    const itemTotal = item.price * item.quantity;
+                    subtotal += itemTotal;
+                    const itemHtml = `
+                        <div class="flex items-center justify-between py-3 border-b border-gray-200">
+                            <div class="flex items-center">
+                                <img src="${item.img}" alt="${item.name}" class="w-16 h-16 object-cover rounded-md mr-4">
+                                <div>
+                                    <h4 class="font-medium text-gray-800">${item.name}</h4>
+                                    <p class="text-sm text-gray-500">${item.price.toFixed(2)}€ x ${item.quantity}</p>
+                                    <p class="text-sm text-gray-600 font-semibold">${itemTotal.toFixed(2)}€</p>
+                                </div>
+                            </div>
+                            <div class="flex items-center space-x-2">
+                                <button class="quantity-change text-blue-600 hover:text-blue-800" data-id="${item.id}" data-action="decrease">-</button>
+                                <span class="font-medium">${item.quantity}</span>
+                                <button class="quantity-change text-blue-600 hover:text-blue-800" data-id="${item.id}" data-action="increase">+</button>
+                                <button class="remove-item text-red-500 hover:text-red-700" data-id="${item.id}">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                    cartItemsContainer.insertAdjacentHTML('beforeend', itemHtml);
+                });
+            }
+            cartSubtotalSpan.textContent = subtotal.toFixed(2) + '€';
+        }
+
+        addToCartButtons.forEach(button => {
+            button.addEventListener('click', (e) => {
+                const id = e.currentTarget.dataset.id;
+                const name = e.currentTarget.dataset.name;
+                const price = parseFloat(e.currentTarget.dataset.price);
+                const img = e.currentTarget.dataset.img;
+                const seller = e.currentTarget.dataset.seller; 
+
+                const existingItem = cart.find(item => item.id === id);
+                if (existingItem) {
+                    existingItem.quantity++;
+                } else {
+                    cart.push({ id, name, price, img, seller, quantity: 1 });
+                }
+                saveCart();
+                const messageType = price === 0 ? "Inscription enregistrée!" : "Ajouté au panier!";
+                const messageDetail = price === 0 ? `${name} a été enregistré.` : `${name} a été ajouté.`;
+                showNotificationPopup(messageType, messageDetail, 'fas fa-check-circle', 'green');
+            });
+        });
+
+        if (cartItemsContainer) {
+            cartItemsContainer.addEventListener('click', (e) => {
+                const targetButton = e.target.closest('button');
+                if (!targetButton) return;
+
+                if (targetButton.classList.contains('remove-item')) {
+                    const idToRemove = targetButton.dataset.id;
+                    cart = cart.filter(item => item.id !== idToRemove);
+                    saveCart();
+                } else if (targetButton.classList.contains('quantity-change')) {
+                    const idToChange = targetButton.dataset.id;
+                    const action = targetButton.dataset.action;
+                    const itemIndex = cart.findIndex(item => item.id === idToChange);
+
+                    if (itemIndex > -1) {
+                        if (action === 'increase') {
+                            cart[itemIndex].quantity++;
+                        } else if (action === 'decrease') {
+                            cart[itemIndex].quantity--;
+                            if (cart[itemIndex].quantity <= 0) {
+                                cart.splice(itemIndex, 1);
+                            }
+                        }
+                        saveCart();
+                    }
+                }
+            });
+        }
+        
+
+        // Notification Popup
+        const notificationPopup = document.getElementById('notificationPopup');
+        const notificationPopupTitle = document.getElementById('notificationPopupTitle');
+        const notificationPopupMessage = document.getElementById('notificationPopupMessage');
+        const notificationPopupIcon = document.getElementById('notificationPopupIcon');
+        const closeNotificationPopup = document.getElementById('closeNotificationPopup');
+
+        function showNotificationPopup(title, message, iconClass, iconColor) {
+            if (!notificationPopup || !notificationPopupTitle || !notificationPopupMessage || !notificationPopupIcon) return;
+            
+            notificationPopupTitle.textContent = title;
+            notificationPopupMessage.textContent = message;
+            notificationPopupIcon.className = `${iconClass} text-${iconColor}-500 text-xl`;
+            
+            notificationPopup.classList.remove('translate-y-0', 'opacity-100', 'translate-y-24', 'opacity-0');
+            void notificationPopup.offsetWidth;
+            notificationPopup.classList.add('translate-y-0', 'opacity-100');
+            
+            setTimeout(() => {
+                notificationPopup.classList.remove('translate-y-0', 'opacity-100');
+                notificationPopup.classList.add('translate-y-24', 'opacity-0');
+            }, 3000);
+        }
+
+        if (closeNotificationPopup) {
+            closeNotificationPopup.addEventListener('click', () => {
+                if (!notificationPopup) return;
+                notificationPopup.classList.remove('translate-y-0', 'opacity-100');
+                notificationPopup.classList.add('translate-y-24', 'opacity-0');
+            });
+        }
+
+        // Notifications logic
+        const notificationList = document.getElementById('notificationList');
+        const noNotificationsMessage = document.getElementById('noNotificationsMessage');
+        const notificationCountMobile = document.getElementById('notificationCountMobile');
+        const notificationCountDesktop = document.getElementById('notificationCountDesktop');
+        const markAllAsReadButton = document.getElementById('markAllAsRead');
+
+        let notifications = JSON.parse(localStorage.getItem('escicNotifications')) || [];
+
+        function saveNotifications() {
+            localStorage.setItem('escicNotifications', JSON.stringify(notifications));
+            updateNotificationDisplay();
+            updateNotificationCount();
+        }
+
+        function updateNotificationCount() {
+            const unreadCount = notifications.filter(n => !n.read).length;
+            if (notificationCountMobile) {
+                notificationCountMobile.textContent = unreadCount;
+                notificationCountMobile.style.display = unreadCount > 0 ? 'flex' : 'none';
+            }
+            if (notificationCountDesktop) {
+                notificationCountDesktop.textContent = unreadCount;
+                notificationCountDesktop.style.display = unreadCount > 0 ? 'flex' : 'none';
+            }
+        }
+
+        function updateNotificationDisplay() {
+            if (!notificationList || !noNotificationsMessage) return;
+            notificationList.innerHTML = '';
+            if (notifications.length === 0) {
+                noNotificationsMessage.style.display = 'block';
+            } else {
+                noNotificationsMessage.style.display = 'none';
+                notifications.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp)).forEach((n) => { 
+                    const notificationItem = document.createElement('div');
+                    notificationItem.className = `notification-item p-4 border-b border-gray-100 cursor-pointer ${n.read ? '' : 'unread bg-blue-50'}`; 
+                    notificationItem.setAttribute('data-id', n.id);
+                    notificationItem.innerHTML = `
+                        <div class="notification-content flex items-start justify-between">
+                            <div class="flex-1 mr-2">
+                                <div class="flex items-center mb-1">
+                                    ${!n.read ? '<span class="notification-dot bg-blue-600"></span>' : '<span class="notification-dot bg-transparent"></span>'}
+                                    <p class="font-semibold text-gray-800 text-sm">${n.title}</p>
+                                </div>
+                                <p class="text-xs text-gray-600 ml-4">${n.message}</p>
+                                <p class="text-xs text-gray-400 mt-1 ml-4">${new Date(n.timestamp).toLocaleString('fr-FR', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })}</p>
+                            </div>
+                            <div class="flex flex-col items-end space-y-1">
+                                <button class="mark-as-read text-xs text-gray-400 hover:text-blue-600 ${n.read ? 'hidden' : ''}" title="Marquer comme lu">
+                                    <i class="fas fa-check-circle"></i> Lu
+                                </button>
+                                <button class="delete-notification-btn text-xs text-gray-400 hover:text-red-600" title="Supprimer">
+                                    <i class="fas fa-times-circle"></i> Suppr.
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                    notificationList.appendChild(notificationItem);
+                });
+            }
+        }
+        
+        if (notificationList) {
+            notificationList.addEventListener('click', (e) => {
+                const item = e.target.closest('.notification-item');
+                if (!item) return;
+
+                const notificationId = item.dataset.id;
+                const notification = notifications.find(n => n.id === notificationId);
+
+                if (e.target.closest('.mark-as-read')) {
+                    if (notification && !notification.read) {
+                        notification.read = true;
+                        saveNotifications();
+                    }
+                } else if (e.target.closest('.delete-notification-btn')) {
+                     notifications = notifications.filter(n => n.id !== notificationId);
+                     saveNotifications();
+                } else if (notification && !notification.read) { 
+                    notification.read = true;
+                    saveNotifications();
+                }
+            });
+        }
+
+
+        if (markAllAsReadButton) {
+            markAllAsReadButton.addEventListener('click', () => {
+                notifications.forEach(n => n.read = true);
+                saveNotifications();
+            });
+        }
+        
+
+        // Initial load
+        updateCartDisplay();
+        updateCartCount();
+        updateNotificationDisplay();
+        updateNotificationCount();
+
+        // Logout button
+        const logoutBtn = document.getElementById('logoutBtn');
+        if (logoutBtn) {
+            logoutBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                window.location.href = 'login/connection.html'; 
+            });
+        }
+    </script>
+</body>
+</html>
