@@ -76,16 +76,76 @@
         .category-icon:hover {
             transform: scale(1.1);
         }
+        /* Styles for the new top navigation bar */
+        .top-navbar {
+            background-color: #ffffff;
+            border-bottom: 1px solid #e5e7eb;
+            padding: 0.75rem 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 30; /* Below mobile menu and backdrop, above other content */
+        }
+        .top-navbar .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #1E40AF; /* Blue-800 equivalent */
+        }
+        .top-navbar .search-input {
+            width: 100%;
+            max-width: 400px;
+            padding: 0.5rem 1rem;
+            border: 1px solid #d1d5db;
+            border-radius: 0.375rem;
+            font-size: 0.9rem;
+        }
+        .top-navbar .profile-icon {
+            cursor: pointer;
+        }
+        .top-navbar .profile-dropdown {
+            position: absolute;
+            right: 1rem;
+            top: 4rem; /* Adjust based on navbar height */
+            background-color: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 0.375rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            z-index: 50; /* Above all other content */
+        }
+        .top-navbar .profile-dropdown a {
+            display: block;
+            padding: 0.75rem 1rem;
+            font-size: 0.9rem;
+            color: #4b5563;
+        }
+        .top-navbar .profile-dropdown a:hover {
+            background-color: #f3f4f6;
+        }
     </style>
 </head>
 <body class="bg-gray-50 min-h-screen">
-    <!-- Mobile Menu Button -->
+    <header class="top-navbar">
+        <div class="flex items-center justify-between w-full"> <a href="index.html" class="logo flex items-center">
+                <i class="fas fa-store mr-2 text-blue-600"></i>
+                <span>ESCIC-Market</span>
+            </a>
+            <div class="relative">
+                <img src="https://via.placeholder.com/32" alt="Profile" class="w-8 h-8 rounded-full profile-icon" id="profileDropdownToggle">
+                <div id="profileDropdown" class="profile-dropdown hidden">
+                    <a href="profil.html"><i class="fas fa-user mr-2"></i> Mon Profil</a>
+                    <a href="Message.html"><i class="fas fa-comments mr-2"></i> Messages</a>
+                    <a href="login/connection.html" class="text-red-500"><i class="fas fa-sign-out-alt mr-2"></i> Déconnexion</a>
+                </div>
+            </div>
+        </div>
+    </header>
+
     <button id="mobileMenuButton" class="md:hidden fixed top-4 left-4 z-50 bg-white p-2 rounded-full shadow-lg">
         <i class="fas fa-bars text-blue-800 text-xl"></i>
     </button>
-    <!-- Mobile Menu Backdrop -->
     <div id="mobileBackdrop" class="fixed inset-0 bg-black bg-opacity-50 z-40 hidden"></div>
-    <!-- Mobile Menu -->
     <div id="mobileMenu" class="mobile-menu fixed inset-y-0 left-0 z-50 w-64 bg-white shadow-lg overflow-y-auto">
         <div class="p-4 border-b border-gray-200">
             <div class="flex items-center">
@@ -131,7 +191,6 @@
             </a>
           </nav>
     </div>
-    <!-- Desktop Sidebar -->
     <div class="hidden md:flex md:w-64 md:flex-col md:fixed md:inset-y-0">
         <div class="flex flex-col flex-grow border-r border-gray-200 bg-white overflow-y-auto">
             <div class="p-4 border-b border-gray-200">
@@ -156,7 +215,7 @@
                     <i class="fas fa-comments mr-3 text-blue-800"></i>
                     <span>Messages</span>
                 </a>
-                 <a href="profil.html" class="menu-item flex items-center p-3 rounded-lg">
+                   <a href="profil.html" class="menu-item flex items-center p-3 rounded-lg">
                     <i class="fas fa-user mr-3 text-blue-800"></i>
                     <span>Profil</span>
                 </a>
@@ -176,21 +235,17 @@
                     <i class="fas fa-sign-out-alt mr-3"></i>
                     <span>Déconnexion</span>
                 </a>
-             
+              
             </nav>
         </div>
     </div>
-    <!-- Main Content -->
     <div class="md:pl-64">
-        <!-- Page Header - Réduit -->
         <div class="text-center mb-4 py-2 bg-white shadow-sm">
             <h1 class="text-2xl font-bold text-gray-900">Ajouter un nouvel article</h1>
         </div>
 
-        <!-- Progress Bar - Intégrée dans le formulaire -->
         <div class="max-w-3xl mx-auto">
             <div class="form-card bg-white rounded-lg shadow-md overflow-hidden">
-                <!-- En-tête du formulaire -->
                 <div class="bg-blue-50 p-4 border-b border-blue-100">
                     <div class="flex justify-between items-center">
                         <h2 class="text-lg font-semibold text-blue-800">
@@ -202,9 +257,7 @@
                     </div>
                 </div>
 
-                <!-- Contenu du formulaire -->
                 <div class="p-5">
-                    <!-- Onglets du formulaire -->
                     <div class="border-b border-gray-200 mb-4">
                         <nav class="flex -mb-px">
                             <a href="Ajouter.html" class="border-blue-500 text-blue-600 whitespace-nowrap py-2 px-1 border-b-2 font-medium text-sm">
@@ -219,11 +272,8 @@
                         </nav>
                     </div>
 
-                    <!-- Formulaire compact -->
                     <form>
-                        <!-- Informations de base -->
                         <div class="space-y-4">
-                            <!-- Nom et Catégorie -->
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div>
                                     <label for="product-name" class="block text-sm font-medium text-gray-700 mb-1">Nom du produit <span class="text-red-500">*</span></label>
@@ -244,7 +294,6 @@
                                 </div>
                             </div>
                             
-                            <!-- Prix et Quantité -->
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div>
                                     <label for="product-price" class="block text-sm font-medium text-gray-700 mb-1">Prix (FCFA) <span class="text-red-500">*</span></label>
@@ -262,7 +311,6 @@
                                 </div>
                             </div>
                             
-                            <!-- Zone de dépôt d'images simplifiée -->
                             <div>
                                 <label class="block text-sm font-medium text-gray-700 mb-2">Photos du produit <span class="text-red-500">*</span></label>
                                 <div class="border-2 border-dashed border-gray-300 rounded-lg p-4 text-center" id="drop-area">
@@ -278,19 +326,15 @@
                                     </div>
                                 </div>
                                 
-                                <!-- Miniatures d'images -->
                                 <div class="mt-2 grid grid-cols-4 gap-2" id="image-previews">
-                                    <!-- Les images apparaîtront ici -->
-                                </div>
+                                    </div>
                             </div>
                             
-                            <!-- Description courte -->
                             <div>
                                 <label for="product-description" class="block text-sm font-medium text-gray-700 mb-1">Description <span class="text-red-500">*</span></label>
                                 <textarea id="product-description" rows="3" class="w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500" placeholder="Ex : Calculatrice presque neuve, très utile pour les maths financières. Achetée en 2024."></textarea>
                             </div>
                             
-                            <!-- Lieu de remise -->
                             <div>
                                 <label for="delivery-location" class="block text-sm font-medium text-gray-700 mb-1">Lieu de remise <span class="text-red-500">*</span></label>
                                 <select id="delivery-location" class="w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500">
@@ -301,14 +345,12 @@
                                     <option value="other">Autre</option>
                                 </select>
                                 
-                                <!-- Champ "Autre lieu" -->
                                 <div id="other-location-container" class="mt-2 hidden">
                                     <input type="text" id="other-location" class="w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500" placeholder="Ex : Devant le bâtiment B">
                                 </div>
                             </div>
                         </div>
                         
-                        <!-- Bouton de soumission -->
                         <div class="mt-6 flex justify-between">
                             <a href="Vendeur.html" class="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md shadow-sm text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
                                 <i class="fas fa-arrow-left mr-2"></i> Retour au kiosque
@@ -321,7 +363,6 @@
                 </div>
             </div>
             
-            <!-- Conseils (optionnel) -->
             <div class="mt-4 bg-yellow-50 border-l-4 border-yellow-400 p-3 rounded-md">
                 <div class="flex">
                     <div class="flex-shrink-0">
@@ -338,7 +379,6 @@
         </div>
     </div>
 
-    <!-- Success Modal -->
     <div id="success-modal" class="fixed inset-0 z-50 hidden flex items-center justify-center">
         <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity"></div>
         <div class="bg-white rounded-lg overflow-hidden shadow-xl transform transition-all sm:max-w-lg sm:w-full">
@@ -371,13 +411,18 @@
         const fileUpload = document.getElementById('file-upload');
         const dropArea = document.getElementById('drop-area');
         const imagePreviews = document.getElementById('image-previews');
-        const addAnotherPhotoBtn = document.getElementById('add-another-photo');
+        // const addAnotherPhotoBtn = document.getElementById('add-another-photo'); // This element doesn't exist in your HTML
         const deliveryLocation = document.getElementById('delivery-location');
         const otherLocationContainer = document.getElementById('other-location-container');
         const submitButton = document.getElementById('submit-button');
         const successModal = document.getElementById('success-modal');
         const addAnotherBtn = document.getElementById('add-another');
-        
+        const mobileMenuButton = document.getElementById('mobileMenuButton');
+        const mobileMenu = document.getElementById('mobileMenu');
+        const mobileBackdrop = document.getElementById('mobileBackdrop');
+        const profileDropdownToggle = document.getElementById('profileDropdownToggle');
+        const profileDropdown = document.getElementById('profileDropdown');
+
         // Variables
         let uploadedFiles = [];
         
@@ -421,9 +466,15 @@
             handleFiles(this.files);
         });
         
-        addAnotherPhotoBtn.addEventListener('click', function() {
-            fileUpload.click();
-        });
+        // The addAnotherPhotoBtn was commented out or removed, so this listener would cause an error.
+        // If you intend to have a separate "add another photo" button, please add it to your HTML.
+        /*
+        if (addAnotherPhotoBtn) {
+            addAnotherPhotoBtn.addEventListener('click', function() {
+                fileUpload.click();
+            });
+        }
+        */
         
         deliveryLocation.addEventListener('change', function() {
             if (this.value === 'other') {
@@ -459,7 +510,8 @@
             document.getElementById('product-description').value = '';
             document.getElementById('delivery-location').value = '';
             document.getElementById('other-location').value = '';
-            document.getElementById('availability').value = '';
+            // Assuming 'availability' is a field you might add later, it's not in the current HTML.
+            // document.getElementById('availability').value = ''; 
             
             // Clear images
             uploadedFiles = [];
@@ -476,20 +528,21 @@
                 return;
             }
             
-            [...files].forEach(file => {
+            for (let i = 0; i < files.length; i++) {
+                const file = files[i];
                 if (!file.type.match('image.*')) {
                     alert('Seules les images sont acceptées');
-                    return;
+                    continue; // Continue to the next file
                 }
                 
                 if (file.size > 3 * 1024 * 1024) {
                     alert('La taille maximale d\'une image est de 3 Mo');
-                    return;
+                    continue; // Continue to the next file
                 }
                 
                 uploadedFiles.push(file);
                 previewImage(file);
-            });
+            }
         }
         
         function previewImage(file) {
@@ -530,7 +583,7 @@
                 description: document.getElementById('product-description').value,
                 location: document.getElementById('delivery-location').value,
                 otherLocation: document.getElementById('other-location').value,
-                availability: document.getElementById('availability').value,
+                // availability: document.getElementById('availability').value, // This field doesn't exist in your current HTML
                 // Note: In a real app, you'd need to handle file uploads differently
             };
             
@@ -549,95 +602,38 @@
                 document.getElementById('product-quantity').value = formData.quantity || '1';
                 document.getElementById('product-description').value = formData.description || '';
                 document.getElementById('delivery-location').value = formData.location || '';
-                document.getElementById('other-location').value = formData.otherLocation || '';
-                document.getElementById('availability').value = formData.availability || '';
-                
+                // Check if 'other' location was selected and show the input field
                 if (formData.location === 'other') {
                     otherLocationContainer.classList.remove('hidden');
+                } else {
+                    otherLocationContainer.classList.add('hidden');
                 }
-                
-                // In a real app, you'd also need to handle file uploads
+                document.getElementById('other-location').value = formData.otherLocation || '';
+                // document.getElementById('availability').value = formData.availability || ''; 
             }
-        });
-        
-        // Form validation
-        const validateField = (field, isValid) => {
-            if (isValid) {
-                field.classList.add('valid-field');
-                field.classList.remove('invalid-field');
-            } else {
-                field.classList.add('invalid-field');
-                field.classList.remove('valid-field');
-            }
-        };
-        
-        // Real-time validation for required fields
-        document.getElementById('product-name').addEventListener('input', function() {
-            validateField(this, this.value.trim().length > 0);
-        });
-        
-        document.getElementById('product-category').addEventListener('change', function() {
-            validateField(this, this.value !== '');
-        });
-        
-        document.getElementById('product-price').addEventListener('input', function() {
-            validateField(this, this.value > 0);
         });
 
         // Mobile menu toggle
-        const mobileMenuButton = document.getElementById('mobileMenuButton');
-        const mobileMenu = document.getElementById('mobileMenu');
-        const mobileBackdrop = document.getElementById('mobileBackdrop');
         mobileMenuButton.addEventListener('click', () => {
             mobileMenu.classList.toggle('open');
             mobileBackdrop.classList.toggle('hidden');
         });
+
         mobileBackdrop.addEventListener('click', () => {
             mobileMenu.classList.remove('open');
             mobileBackdrop.classList.add('hidden');
         });
-    </script>
-     
-    </script>
-    
-    <script>
-        // ... existing code ...
-        
-        // Gestion des onglets du formulaire
-        document.addEventListener('DOMContentLoaded', function() {
-            const tabs = document.querySelectorAll('nav a');
-            
-            tabs.forEach(tab => {
-                tab.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    
-                    // Réinitialiser tous les onglets
-                    tabs.forEach(t => {
-                        t.classList.remove('border-blue-500', 'text-blue-600');
-                        t.classList.add('border-transparent', 'text-gray-500');
-                    });
-                    
-                    // Activer l'onglet cliqué
-                    this.classList.remove('border-transparent', 'text-gray-500');
-                    this.classList.add('border-blue-500', 'text-blue-600');
-                });
-            });
+
+        // Profile dropdown toggle
+        profileDropdownToggle.addEventListener('click', () => {
+            profileDropdown.classList.toggle('hidden');
         });
-        
-        // Mise à jour du pourcentage de progression
-        function updateProgressPercentage() {
-            const requiredFields = document.querySelectorAll('input[required], select[required], textarea[required]');
-            const filledFields = Array.from(requiredFields).filter(field => field.value.trim() !== '');
-            const percentage = Math.round((filledFields.length / requiredFields.length) * 100);
-            
-            document.getElementById('progress-percentage').textContent = percentage + '%';
-            document.querySelector('.progress-bar').style.width = percentage + '%';
-        }
-        
-        // Ajouter des écouteurs d'événements pour les champs du formulaire
-        document.querySelectorAll('input, select, textarea').forEach(field => {
-            field.addEventListener('change', updateProgressPercentage);
-            field.addEventListener('input', updateProgressPercentage);
+
+        // Close profile dropdown if clicked outside
+        window.addEventListener('click', (event) => {
+            if (!profileDropdownToggle.contains(event.target) && !profileDropdown.contains(event.target)) {
+                profileDropdown.classList.add('hidden');
+            }
         });
     </script>
 </body>
