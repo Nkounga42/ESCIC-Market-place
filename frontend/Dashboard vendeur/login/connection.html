@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Connexion — ESCIC-Market</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(rgba(244, 248, 251, 0.85), rgba(244, 248, 251, 0.85)), 
+                         url('https://images.unsplash.com/photo-1523050854058-8df90110c9f1?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2070&q=80') no-repeat center center fixed;
+            background-size: cover;
+            animation: fadeIn 0.5s ease-in-out;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        .password-toggle {
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .password-toggle:hover {
+            transform: translateY(-50%) scale(1.1);
+        }
+        
+        .spinner {
+            border-top-color: transparent;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .bg-overlay {
+            background-color: rgba(255, 255, 255, 0.92);
+            backdrop-filter: blur(4px);
+            transition: all 0.3s ease;
+        }
+        
+        .card-hover {
+            transition: all 0.3s ease;
+        }
+        
+        .card-hover:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+        }
+        
+        .input-field {
+            transition: all 0.3s ease;
+        }
+        
+        .input-field:focus {
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+        }
+        
+        .btn-primary {
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-1px);
+        }
+        
+        .btn-primary:active {
+            transform: translateY(1px);
+        }
+        
+        .btn-primary::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 5px;
+            height: 5px;
+            background: rgba(255, 255, 255, 0.5);
+            opacity: 0;
+            border-radius: 100%;
+            transform: scale(1, 1) translate(-50%, -50%);
+            transform-origin: 50% 50%;
+        }
+        
+        .btn-primary:focus:not(:active)::after {
+            animation: ripple 1s ease-out;
+        }
+        
+        @keyframes ripple {
+            0% {
+                transform: scale(0, 0);
+                opacity: 0.5;
+            }
+            100% {
+                transform: scale(20, 20);
+                opacity: 0;
+            }
+        }
+        
+        .error-shake {
+            animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both;
+        }
+        
+        @keyframes shake {
+            10%, 90% { transform: translateX(-1px); }
+            20%, 80% { transform: translateX(2px); }
+            30%, 50%, 70% { transform: translateX(-4px); }
+            40%, 60% { transform: translateX(4px); }
+        }
+        
+        .logo {
+            transition: all 0.3s ease;
+        }
+        
+        .logo:hover {
+            transform: rotate(-5deg) scale(1.05);
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col">
+    <!-- Header -->
+    <header class="py-6">
+        <div class="container mx-auto px-4 text-center">
+            <div class="flex justify-center mb-2">
+                <div class="logo w-16 h-16 bg-gradient-to-br from-blue-800 to-blue-600 rounded-full flex items-center justify-center text-white font-bold text-2xl shadow-md cursor-pointer">
+                    <i class="fas fa-store"></i>
+                </div>
+            </div>
+            <h1 class="text-2xl font-bold text-blue-900">ESCIC-Market</h1>
+            <p class="text-gray-500 text-sm mt-1">Le kiosque virtuel de ton campus</p>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="flex-grow flex items-center justify-center px-4 py-8">
+        <div class="w-full max-w-md bg-white rounded-2xl shadow-lg overflow-hidden bg-overlay card-hover">
+            <!-- Login Card -->
+            <div class="p-8">
+                <h2 class="text-2xl font-bold text-blue-900 mb-6 text-center">Connexion à ESCIC-Market</h2>
+                
+                <!-- Error Message -->
+                <div id="error-message" class="hidden bg-red-50 border-l-4 border-red-500 text-red-700 px-4 py-3 rounded mb-4">
+                    <div class="flex items-center">
+                        <i class="fas fa-exclamation-circle mr-2"></i>
+                        <span id="error-text"></span>
+                    </div>
+                </div>
+                
+                <!-- Login Form -->
+                <form id="login-form">
+                    <!-- Email Field -->
+                    <div class="mb-4 relative">
+                        <label for="email" class="block text-gray-700 text-sm font-medium mb-1">Adresse email universitaire</label>
+                        <div class="relative">
+                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400">
+                                <i class="fas fa-envelope"></i>
+                            </div>
+                            <input type="email" id="email" name="email" required
+                                class="w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent input-field"
+                                placeholder="prenom.nom@escic.edu">
+                        </div>
+                    </div>
+                    
+                    <!-- Password Field -->
+                    <div class="mb-4 relative">
+                        <label for="password" class="block text-gray-700 text-sm font-medium mb-1">Mot de passe</label>
+                        <div class="relative">
+                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400">
+                                <i class="fas fa-lock"></i>
+                            </div>
+                            <input type="password" id="password" name="password" required
+                                class="w-full pl-10 pr-10 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent input-field"
+                                placeholder="••••••••">
+                            <button type="button" id="toggle-password" class="absolute password-toggle text-gray-400 hover:text-gray-600">
+                                <i class="fas fa-eye" id="toggle-icon"></i>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Remember Me & Forgot Password -->
+                    <div class="flex items-center justify-between mb-6">
+                        <div class="flex items-center">
+                            <input id="remember-me" name="remember-me" type="checkbox" class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded">
+                            <label for="remember-me" class="ml-2 block text-sm text-gray-700">Se souvenir de moi</label>
+                        </div>
+                        <a href="../recuperation de compte/recuperation de compte.html" class="text-sm text-green-600 hover:text-green-700 font-medium transition-colors">
+                            Mot de passe oublié ?
+                        </a>
+                    </div>
+                    
+                    <!-- Submit Button -->
+                    <button type="submit" id="submit-btn"
+                        class="w-full bg-gradient-to-r from-blue-800 to-blue-600 hover:from-blue-700 hover:to-blue-500 text-white font-bold py-3 px-4 rounded-lg transition duration-200 flex items-center justify-center btn-primary">
+                        <span id="btn-text">Se connecter</span>
+                        <div id="spinner" class="hidden spinner border-4 border-white border-opacity-30 rounded-full w-6 h-6 ml-2"></div>
+                    </button>
+                </form>
+                
+                <!-- Divider -->
+                <div class="flex items-center my-6">
+                    <div class="flex-grow border-t border-gray-200"></div>
+                    <span class="px-3 text-gray-400 text-sm">ou</span>
+                    <div class="flex-grow border-t border-gray-200"></div>
+                </div>
+                
+                <!-- Social Login Buttons -->
+                <div class="grid grid-cols-2 gap-3 mb-6">
+                    <button class="flex items-center justify-center py-2 px-4 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors">
+                        <i class="fab fa-google text-red-500 mr-2"></i>
+                        <span class="text-sm font-medium">Google</span>
+                    </button>
+                    <button class="flex items-center justify-center py-2 px-4 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors">
+                        <i class="fab fa-microsoft text-blue-500 mr-2"></i>
+                        <span class="text-sm font-medium">Microsoft</span>
+                    </button>
+                </div>
+                
+                <!-- Sign-up Link -->
+                <div class="mt-6 text-center">
+                    <p class="text-gray-500 text-sm">
+                        Pas encore inscrit ? 
+                        <a href="connection.html" class="text-green-600 hover:text-green-700 font-medium transition-colors">
+                            Créer un compte
+                        </a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="py-4 text-center">
+        <p class="text-gray-500 text-sm">ESCIC-Market © 2025 – Propulsé par les étudiants de l'ESCIC</p>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Toggle password visibility
+            const togglePassword = document.getElementById('toggle-password');
+            const passwordInput = document.getElementById('password');
+            const toggleIcon = document.getElementById('toggle-icon');
+            
+            togglePassword.addEventListener('click', function() {
+                const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+                passwordInput.setAttribute('type', type);
+                toggleIcon.className = type === 'password' ? 'fas fa-eye' : 'fas fa-eye-slash';
+            });
+            
+            // Form submission
+            const loginForm = document.getElementById('login-form');
+            const submitBtn = document.getElementById('submit-btn');
+            const btnText = document.getElementById('btn-text');
+            const spinner = document.getElementById('spinner');
+            const errorMessage = document.getElementById('error-message');
+            const errorText = document.getElementById('error-text');
+            
+            loginForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                // Get form values
+                const email = document.getElementById('email').value;
+                const password = document.getElementById('password').value;
+                const rememberMe = document.getElementById('remember-me').checked;
+                
+                // Hide previous error
+                errorMessage.classList.add('hidden');
+                
+                // Validate email domain
+                if (!email.endsWith('@escic.edu')) {
+                    showError("Veuillez utiliser votre email universitaire (@escic.edu)");
+                    return;
+                }
+                
+                // Validate password length
+                if (password.length < 6) {
+                    showError("Le mot de passe doit contenir au moins 6 caractères");
+                    return;
+                }
+                
+                // Show loading state
+                btnText.textContent = "Connexion en cours...";
+                spinner.classList.remove('hidden');
+                submitBtn.disabled = true;
+                
+                // Simulate API call
+                setTimeout(function() {
+                    // This is just a demo - in a real app, you would validate with your backend
+                    if (password === 'escic123') {
+                        // Successful login - redirect to home page
+                        window.location.href = 'dashboard.html';
+                    } else {
+                        // Show error
+                        showError("Email ou mot de passe incorrect");
+                        // Reset form
+                        btnText.textContent = "Se connecter";
+                        spinner.classList.add('hidden');
+                        submitBtn.disabled = false;
+                    }
+                }, 1500);
+            });
+            
+            function showError(message) {
+                errorText.textContent = message;
+                errorMessage.classList.remove('hidden');
+                loginForm.classList.add('error-shake');
+                
+                setTimeout(() => {
+                    loginForm.classList.remove('error-shake');
+                }, 500);
+                
+                setTimeout(() => {
+                    errorMessage.classList.add('hidden');
+                }, 5000);
+            }
+            
+            // Add hover effect to social buttons
+            const socialButtons = document.querySelectorAll('[class*="fa-"]').forEach(icon => {
+                icon.parentElement.addEventListener('mouseenter', () => {
+                    icon.style.transform = 'scale(1.1)';
+                });
+                icon.parentElement.addEventListener('mouseleave', () => {
+                    icon.style.transform = 'scale(1)';
+                });
+            });
+        });
+    </script>
+</body>
+</html>

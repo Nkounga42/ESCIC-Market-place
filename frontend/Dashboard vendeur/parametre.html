@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Paramètres du vendeur - ESCIC-Market</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Poppins', sans-serif;
+      background-color: #f8fafc;
+    }
+    .menu-item {
+      transition: all 0.2s ease;
+    }
+    .menu-item:hover {
+      background-color: #EFF6FF;
+      border-left: 3px solid #3B82F6;
+    }
+    .active-menu-item {
+      background-color: #EFF6FF;
+      border-left: 3px solid #3B82F6;
+      color: #1E40AF;
+    }
+    .mobile-menu {
+      transform: translateX(-100%);
+      transition: transform 0.3s ease;
+    }
+    .mobile-menu.open {
+      transform: translateX(0);
+    }
+    
+    /* Animations et transitions */
+    .fade-in {
+      animation: fadeIn 0.5s ease-out forwards;
+    }
+    
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    .tab-active {
+      color: #3B82F6;
+      border-bottom: 2px solid #3B82F6;
+    }
+    
+    .settings-card {
+      transition: all 0.3s ease;
+    }
+    
+    .settings-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 15px rgba(0, 0, 0, 0.05);
+    }
+    
+    .toggle-checkbox:checked {
+      right: 0;
+      border-color: #3B82F6;
+    }
+    
+    .toggle-checkbox:checked + .toggle-label {
+      background-color: #3B82F6;
+    }
+  </style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+  <!-- Mobile Menu Button -->
+  <button id="mobileMenuButton" class="md:hidden fixed top-4 left-4 z-50 bg-white p-2 rounded-full shadow-lg">
+    <i class="fas fa-bars text-blue-800 text-xl"></i>
+  </button>
+  <!-- Mobile Menu Backdrop -->
+  <div id="mobileBackdrop" class="fixed inset-0 bg-black bg-opacity-50 z-40 hidden"></div>
+  <!-- Mobile Menu -->
+  <div id="mobileMenu" class="mobile-menu fixed inset-y-0 left-0 z-50 w-64 bg-white shadow-lg overflow-y-auto">
+    <div class="p-4 border-b border-gray-200">
+      <div class="flex items-center">
+        <img src="https://via.placeholder.com/40" alt="Profile" class="w-10 h-10 rounded-full mr-3">
+        <div>
+          <p class="font-semibold">Yoane pequene</p>
+          <p class="text-xs text-gray-500">Vendeur actif</p>
+        </div>
+      </div>
+    </div>
+    <nav class="flex-1 p-2">
+      <a href="Vendeur.html" class="menu-item flex items-center p-3 rounded-lg">
+        <i class="fas fa-home mr-3 text-blue-800"></i>
+        <span>Mon kiosque</span>
+      </a>
+      <a href="Ajouter.html" class="menu-item flex items-center p-3 rounded-lg">
+        <i class="fas fa-plus-circle mr-3 text-blue-800"></i>
+        <span>Ajouter un article</span>
+      </a>
+      <a href="Message.html" class="menu-item flex items-center p-3 rounded-lg">
+        <i class="fas fa-comments mr-3 text-blue-800"></i>
+        <span>Messages</span>
+      </a>
+      <a href="profil.html" class="menu-item flex items-center p-3 rounded-lg">
+        <i class="fas fa-user mr-3 text-blue-800"></i>
+        <span>Profil</span>
+      </a>
+      <a href="evaluation.html" class="menu-item flex items-center p-3 rounded-lg">
+        <i class="fas fa-star mr-3 text-blue-800"></i>
+        <span>Évaluations</span>
+      </a>
+      <a href="parametre.html" class="active-menu-item flex items-center p-3 rounded-lg">
+        <i class="fas fa-cog mr-3 text-blue-800"></i>
+        <span>Paramètres</span>
+      </a>
+      <a href="recherche.html" class="menu-item flex items-center p-3 rounded-lg">
+        <i class="fas fa-search mr-3 text-blue-800"></i>
+        <span>Recherche</span>
+      </a>
+      <a href="login/connection.html" class="menu-item flex items-center p-3 rounded-lg text-red-600">
+        <i class="fas fa-sign-out-alt mr-3"></i>
+        <span>Déconnexion</span>
+      </a>
+    </nav>
+  </div>
+  <!-- Desktop Sidebar -->
+  <div class="hidden md:flex md:w-64 md:flex-col md:fixed md:inset-y-0">
+    <div class="flex flex-col flex-grow border-r border-gray-200 bg-white overflow-y-auto">
+      <div class="p-4 border-b border-gray-200">
+        <div class="flex items-center">
+          <img src="https://via.placeholder.com/40" alt="Profile" class="w-10 h-10 rounded-full mr-3">
+          <div>
+            <p class="font-semibold">Yoane pequene</p>
+            <p class="text-xs text-gray-500">Vendeur actif</p>
+          </div>
+        </div>
+      </div>
+      <nav class="flex-1 p-2">
+        <a href="Vendeur.html" class="menu-item flex items-center p-3 rounded-lg">
+          <i class="fas fa-home mr-3 text-blue-800"></i>
+          <span>Mon kiosque</span>
+        </a>
+        <a href="Ajouter.html" class="menu-item flex items-center p-3 rounded-lg">
+          <i class="fas fa-plus-circle mr-3 text-blue-800"></i>
+          <span>Ajouter un article</span>
+        </a>
+        <a href="Message.html" class="menu-item flex items-center p-3 rounded-lg">
+          <i class="fas fa-comments mr-3 text-blue-800"></i>
+          <span>Messages</span>
+        </a>
+        <a href="profil.html" class="menu-item flex items-center p-3 rounded-lg">
+          <i class="fas fa-user mr-3 text-blue-800"></i>
+          <span>Profil</span>
+        </a>
+        <a href="evaluation.html" class="menu-item flex items-center p-3 rounded-lg">
+          <i class="fas fa-star mr-3 text-blue-800"></i>
+          <span>Évaluations</span>
+        </a>
+        <a href="parametre.html" class="active-menu-item flex items-center p-3 rounded-lg">
+          <i class="fas fa-cog mr-3 text-blue-800"></i>
+          <span>Paramètres</span>
+        </a>
+        <a href="recherche.html" class="menu-item flex items-center p-3 rounded-lg">
+          <i class="fas fa-search mr-3 text-blue-800"></i>
+          <span>Recherche</span>
+        </a>
+        <a href="login/connection.html" class="menu-item flex items-center p-3 rounded-lg text-red-600">
+          <i class="fas fa-sign-out-alt mr-3"></i>
+          <span>Déconnexion</span>
+        </a>
+      </nav>
+    </div>
+  </div>
+  
+  <!-- Main Content -->
+  <div class="md:pl-64 flex flex-col flex-1">
+    <!-- Top Navigation Bar -->
+    <header class="bg-white shadow-sm sticky top-0 z-10">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex justify-between h-16 items-center">
+          <h1 class="text-xl font-bold text-gray-900 md:hidden">Paramètres</h1>
+          <div class="flex items-center space-x-4">
+            <div class="relative">
+              <button class="relative p-1 rounded-full hover:bg-gray-100 transition-colors">
+                <i class="fas fa-bell text-gray-500 text-xl"></i>
+                <span class="absolute top-0 right-0 block h-2 w-2 rounded-full bg-red-500"></span>
+              </button>
+            </div>
+            <div>
+              <button class="inline-flex items-center justify-center h-9 w-9 rounded-full bg-blue-100 text-blue-500 hover:bg-blue-200 transition-colors">
+                <i class="fas fa-question"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+    
+    <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+      <!-- Breadcrumbs -->
+      <nav class="text-sm mb-4 text-gray-500">
+        <ol class="list-none p-0 inline-flex">
+          <li class="flex items-center">
+            <a href="Vendeur.html" class="hover:text-blue-600 transition-colors">Mon kiosque</a>
+            <svg class="fill-current w-3 h-3 mx-2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><path d="M285.476 272.971L91.132 467.314c-9.373 9.373-24.569 9.373-33.941 0l-22.667-22.667c-9.357-9.357-9.375-24.522-.04-33.901L188.505 256 34.484 101.255c-9.335-9.379-9.317-24.544.04-33.901l22.667-22.667c9.373-9.373 24.569-9.373 33.941 0L285.475 239.03c9.373 9.372 9.373 24.568.001 33.941z"/></svg>
+          </li>
+          <li class="flex items-center">
+            <span class="text-gray-700 font-medium">Paramètres</span>
+          </li>
+        </ol>
+      </nav>
+      
+      <!-- Settings Tabs -->
+      <div class="bg-white rounded-xl shadow-sm mb-6 overflow-hidden">
+        <div class="border-b border-gray-200 overflow-x-auto">
+          <nav class="-mb-px flex space-x-8 px-6" aria-label="Tabs">
+            <button class="tab-active whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm" id="tab-general">
+              Général
+            </button>
+            <button class="text-gray-500 hover:text-gray-700 whitespace-nowrap py-4 px-1 border-b-2 border-transparent font-medium text-sm" id="tab-boutique">
+              Boutique
+            </button>
+            <button class="text-gray-500 hover:text-gray-700 whitespace-nowrap py-4 px-1 border-b-2 border-transparent font-medium text-sm" id="tab-paiement">
+              Paiement & Facturation
+            </button>
+            <button class="text-gray-500 hover:text-gray-700 whitespace-nowrap py-4 px-1 border-b-2 border-transparent font-medium text-sm" id="tab-livraison">
+              Livraison & Logistique
+            </button>
+            <button class="text-gray-500 hover:text-gray-700 whitespace-nowrap py-4 px-1 border-b-2 border-transparent font-medium text-sm" id="tab-securite">
+              Sécurité
+            </button>
+            <button class="text-gray-500 hover:text-gray-700 whitespace-nowrap py-4 px-1 border-b-2 border-transparent font-medium text-sm" id="tab-notifications">
+              Notifications
+            </button>
+            <button class="text-gray-500 hover:text-gray-700 whitespace-nowrap py-4 px-1 border-b-2 border-transparent font-medium text-sm" id="tab-integrations">
+              Intégrations
+            </button>
+          </nav>
+        </div>
+      </div>
+      
+      <!-- Tab Content -->
+      <div class="space-y-6">
+        <!-- General Settings Tab (visible by default) -->
+        <div id="content-general" class="fade-in">
+          <div class="bg-white rounded-xl shadow-sm p-6 mb-6 settings-card">
+            <h2 class="text-lg font-semibold text-gray-800 mb-4 flex items-center">
+              <i class="fas fa-user-circle mr-2 text-blue-500"></i> Informations personnelles
+            </h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Nom complet</label>
+                <input type="text" class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" value="Yoane pequene">
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Nom d'utilisateur</label>
+                <input type="text" class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" value="yoane_shop">
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                <input type="email" class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" value="vendeur@email.com">
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Numéro de téléphone</label>
+                <input type="tel" class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" value="+225 07 12 34 56 78">
+              </div>
+              <div class="md:col-span-2">
+                <label class="block text-sm font-medium text-gray-700 mb-1">Photo de profil</label>
+                <div class="flex flex-col sm:flex-row items-center space-y-4 sm:space-y-0 space-x-0 sm:space-x-4">
+                  <img id="profile-img-preview" src="https://via.placeholder.com/80" alt="Photo de profil" class="w-20 h-20 rounded-full object-cover border-2 border-gray-200">
+                  <div>
+                    <button id="change-photo-btn" class="bg-blue-50 hover:bg-blue-100 text-blue-600 px-4 py-2 rounded-md text-sm font-medium transition-colors">
+                      <i class="fas fa-upload mr-2"></i> Changer la photo
+                    </button>
+                    <input type="file" id="profile-photo-upload" accept="image/*" class="hidden">
+                    <p class="text-xs text-gray-500 mt-1">JPG, PNG ou GIF. 1MB max.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <div class="bg-white rounded-xl shadow-sm p-6 mb-6 settings-card">
+            <h2 class="text-lg font-semibold text-gray-800 mb-4 flex items-center">
+              <i class="fas fa-globe mr-2 text-blue-500"></i> Préférences régionales
+            </h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Langue</label>
+                <select class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                  <option selected>Français</option>
+                  <option>English</option>
+                  <option>Español</option>
+                </select>
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Devise</label>
+                <select class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                  <option selected>Franc CFA (FCFA)</option>
+                  <option>Euro (€)</option>
+                  <option>Dollar américain ($)</option>
+                </select>
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Fuseau horaire</label>
+                <select class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                  <option selected>GMT+0 (Abidjan, Accra)</option>
+                  <option>GMT+1 (Paris, Berlin)</option>
+                  <option>GMT-5 (New York, Toronto)</option>
+                  <option>GMT-8 (Los Angeles)</option>
+                  <option>GMT-7 (Denver)</option>
+                  <option>GMT-6 (Mexico City, Chicago)</option>
+                  <option>GMT-4 (Santiago, La Paz)</option>
+                  <option>GMT-3 (Buenos Aires)</option>
+                  <option>GMT+2 (Johannesburg, Caire)</option>
+                  <option>GMT+3 (Moscou, Nairobi)</option>
+                  <option>GMT+4 (Dubai)</option>
+                  <option>GMT+5 (Islamabad, Tachkent)</option>
+                  <option>GMT+5:30 (New Delhi, Colombo)</option>
+                  <option>GMT+6 (Dhaka)</option>
+                  <option>GMT+7 (Bangkok, Jakarta)</option>
+                  <option>GMT+8 (Shanghai, Perth)</option>
+                  <option>GMT+9 (Tokyo, Séoul)</option>
+                  <option>GMT+10 (Sydney, Vladivostok)</option>
+                  <option>GMT+11 (Nouméa)</option>
+                  <option>GMT+12 (Auckland, Fiji)</option>
+                </select>
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Format de date</label>
+                <select class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                  <option selected>JJ/MM/AAAA</option>
+                  <option>MM/JJ/AAAA</option>
+                  <option>AAAA-MM-JJ</option>
+                </select>
+              </div>
+            </div>
+          </div>
+          
+          <div class="bg-white rounded-xl shadow-sm p-6 mb-6 settings-card">
+            <h2 class="text-lg font-semibold text-gray-800 mb-4 flex items-center">
+              <i class="fas fa-palette mr-2 text-blue-500"></i> Apparence
+            </h2>
+            <div class="space-y-4">
+              <div class="flex items-center justify-between">
+                <div>
+                  <span class="font-medium text-gray-700">Mode sombre</span>
+                  <p class="text-sm text-gray-500">Activer le thème sombre pour l'interface</p>
+                </div>
+                <div class="relative inline-block w-12 mr-2 align-middle select-none">
+                  <input type="checkbox" id="darkMode" class="toggle-checkbox absolute block w-6 h-6 rounded-full bg-white border-4 appearance-none cursor-pointer transition-all duration-300" style="right: 0;">
+                  <label for="darkMode" class="toggle-label block overflow-hidden h-6 rounded-full bg-gray-300 cursor-pointer transition-all duration-300"></label>
+                </div>
+              </div>
+              <div class="flex items-center justify-between">
+                <div>
+                  <span class="font-medium text-gray-700">Animations réduites</span>
+                  <p class="text-sm text-gray-500">Réduire les animations de l'interface</p>
+                </div>
+                <div class="relative inline-block w-12 mr-2 align-middle select-none">
+                  <input type="checkbox" id="reduceMotion" class="toggle-checkbox absolute block w-6 h-6 rounded-full bg-white border-4 appearance-none cursor-pointer transition-all duration-300">
+                  <label for="reduceMotion" class="toggle-label block overflow-hidden h-6 rounded-full bg-gray-300 cursor-pointer transition-all duration-300"></label>
+                </div>
+              </div>
+              <div class="flex items-center justify-between">
+                <div>
+                  <span class="font-medium text-gray-700">Mode compact</span>
+                  <p class="text-sm text-gray-500">Afficher plus d'informations à l'écran</p>
+                </div>
+                <div class="relative inline-block w-12 mr-2 align-middle select-none">
+                  <input type="checkbox" id="compactMode" class="toggle-checkbox absolute block w-6 h-6 rounded-full bg-white border-4 appearance-none cursor-pointer transition-all duration-300">
+                  <label for="compactMode" class="toggle-label block overflow-hidden h-6 rounded-full bg-gray-300 cursor-pointer transition-all duration-300"></label>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Boutique Settings Tab (hidden by default) -->
+        <div id="content-boutique" class="hidden fade-in">
+          <div class="bg-white rounded-xl shadow-sm p-6 mb-6 settings-card">
+            <h2 class="text-lg font-semibold text-gray-800 mb-4 flex items-center">
+              <i class="fas fa-store mr-2 text-blue-500"></i> Informations de la boutique
+            </h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div class="md:col-span-2">
+                <label class="block text-sm font-medium text-gray-700 mb-1">Nom de la boutique</label>
+                <input type="text" class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" value="Yoane Shop">
+              </div>
+              <div class="md:col-span-2">
+                <label class="block text-sm font-medium text-gray-700 mb-1">Description de la boutique</label>
+                <textarea rows="3" class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">Boutique spécialisée dans les produits électroniques et accessoires de qualité à prix abordables.</textarea>
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Catégorie principale</label>
+                <select class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                  <option selected>Électronique</option>
+                  <option>Mode</option>
+                  <option>Maison & Jardin</option>
+                  <option>Sports & Loisirs</option>
+                  <option>Beauté & Santé</option>
+                </select>
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Sous-catégorie</label>
+                <select class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                  <option selected>Smartphones & Accessoires</option>
+                  <option>Ordinateurs & Tablettes</option>
+                  <option>Audio & Vidéo</option>
+                  <option>Gadgets</option>
+                </select>
+              </div>
+              <div class="md:col-span-2">
+                <label class="block text-sm font-medium text-gray-700 mb-1">Logo de la boutique</label>
+                <div class="flex flex-col sm:flex-row items-center space-y-4 sm:space-y-0 space-x-0 sm:space-x-4">
+                  <img src="https://via.placeholder.com/100" alt="Logo" class="w-24 h-24 rounded-lg object-cover border-2 border-gray-200">
+                  <div>
+                    <button class="bg-blue-50 hover:bg-blue-100 text-blue-600 px-4 py-2 rounded-md text-sm font-medium transition-colors">
+                      <i class="fas fa-upload mr-2"></i> Changer le logo
+                    </button>
+                    <p class="text-xs text-gray-500 mt-1">JPG, PNG ou GIF. 2MB max. Dimensions recommandées: 500x500px</p>
+                  </div>
+                </div>
+              </div>
+              <div class="md:col-span-2">
+                <label class="block text-sm font-medium text-gray-700 mb-1">Bannière de la boutique</label>
+                <div class="flex flex-col sm:flex-row items-center space-y-4 sm:space-y-0 space-x-0 sm:space-x-4">
+                  <img src="https://via.placeholder.com/300x100" alt="Banner" class="h-24 w-auto rounded-lg object-cover border-2 border-gray-200">
+                  <div>
+                    <button class="bg-blue-50 hover:bg-blue-100 text-blue-600 px-4 py-2 rounded-md text-sm font-medium transition-colors">
+                      <i class="fas fa-upload mr-2"></i> Changer la bannière
+                    </button>
+                    <p class="text-xs text-gray-500 mt-1">JPG, PNG ou GIF. 3MB max. Dimensions recommandées: 1200x300px</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <div class="bg-white rounded-xl shadow-sm p-6 mb-6 settings-card">
+            <h2 class="text-lg font-semibold text-gray-800 mb-4 flex items-center">
+              <i class="fas fa-tags mr-2 text-blue-500"></i> Paramètres des produits
+            </h2>
+            <div class="space-y-4">
+              <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between space-y-2 sm:space-y-0">
+                <div>
+                  <span class="font-medium text-gray-700">Afficher le stock restant</span>
+                  <p class="text-sm text-gray-500">Montrer aux acheteurs le nombre d'articles disponibles</p>
+                </div>
+                <div class="relative inline-block w-12 mr-2 align-middle select-none">
+                  <input type="checkbox" id="showStock" class="toggle-checkbox absolute block w-6 h-6 rounded-full bg-white border-4 appearance-none cursor-pointer transition-all duration-300" checked>
+                  <label for="showStock" class="toggle-label block overflow-hidden h-6 rounded-full bg-gray-300 cursor-pointer transition-all duration-300"></label>
+                </div>
+              </div>
+              <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between space-y-2 sm:space-y-0">
+                <div>
+                  <span class="font-medium text-gray-700">Autoriser les commentaires</span>
+                  <p class="text-sm text-gray-500">Permettre aux acheteurs de commenter vos produits</p>
+                </div>
+                <div class="relative inline-block w-12 mr-2 align-middle select-none">
+                  <input type="checkbox" id="allowComments" class="toggle-checkbox absolute block w-6 h-6 rounded-full bg-white border-4 appearance-none cursor-pointer transition-all duration-300" checked>
+                  <label for="allowComments" class="toggle-label block overflow-hidden h-6 rounded-full bg-gray-300 cursor-pointer transition-all duration-300"></label>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Mobile menu functionality
+    const mobileMenuButton = document.getElementById('mobileMenuButton');
+    const mobileMenu = document.getElementById('mobileMenu');
+    const mobileBackdrop = document.getElementById('mobileBackdrop');
+
+    if (mobileMenuButton && mobileMenu && mobileBackdrop) {
+      mobileMenuButton.addEventListener('click', () => {
+        mobileMenu.classList.toggle('open');
+        mobileBackdrop.classList.toggle('hidden');
+      });
+
+      mobileBackdrop.addEventListener('click', () => {
+        mobileMenu.classList.remove('open');
+        mobileBackdrop.classList.add('hidden');
+      });
+    }
+
+    // Settings Tabs functionality
+    const tabs = document.querySelectorAll('nav[aria-label="Tabs"] button');
+    const contents = document.querySelectorAll('[id^="content-"]');
+
+    tabs.forEach(tab => {
+      tab.addEventListener('click', () => {
+        // Hide all contents and deactivate all tabs
+        contents.forEach(content => content.classList.add('hidden'));
+        tabs.forEach(t => t.classList.remove('tab-active', 'text-gray-700'));
+        tabs.forEach(t => t.classList.add('text-gray-500', 'hover:text-gray-700', 'border-transparent'));
+
+        // Show the target content and activate the clicked tab
+        const targetId = tab.id.replace('tab-', 'content-');
+        const targetContent = document.getElementById(targetId);
+        if (targetContent) {
+          targetContent.classList.remove('hidden');
+          targetContent.classList.add('fade-in');
+        }
+        tab.classList.add('tab-active', 'text-gray-700');
+        tab.classList.remove('text-gray-500', 'hover:text-gray-700', 'border-transparent');
+      });
+    });
+
+    // Trigger click on General tab on page load to show default content
+    document.addEventListener('DOMContentLoaded', () => {
+      const generalTab = document.getElementById('tab-general');
+      if (generalTab) {
+        generalTab.click();
+      }
+    });
+
+    // Profile Picture Change functionality
+    const changePhotoBtn = document.getElementById('change-photo-btn');
+    const profilePhotoUpload = document.getElementById('profile-photo-upload');
+    const profileImgPreview = document.getElementById('profile-img-preview');
+
+    if (changePhotoBtn && profilePhotoUpload && profileImgPreview) {
+        changePhotoBtn.addEventListener('click', () => {
+            profilePhotoUpload.click(); // Trigger the file input click
+        });
+
+        profilePhotoUpload.addEventListener('change', (event) => {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    profileImgPreview.src = e.target.result; // Set the image source to the data URL
+                    // Here you would typically upload the file to your backend
+                    console.log('New Profile Picture selected:', file.name);
+                };
+                reader.readAsDataURL(file); // Read the file as a data URL
+            }
+        });
+    }
+
+  </script>
+</body>
+</html>

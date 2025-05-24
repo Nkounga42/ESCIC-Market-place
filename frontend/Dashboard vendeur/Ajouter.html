@@ -1,0 +1,899 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ajouter un article - ESCIC-Market</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .menu-item {
+            transition: all 0.2s ease;
+        }
+        .menu-item:hover {
+            background-color: #EFF6FF;
+            border-left: 3px solid #3B82F6;
+        }
+        .active-menu-item {
+            background-color: #EFF6FF;
+            border-left: 3px solid #3B82F6;
+            color: #1E40AF;
+        }
+        .chat-bubble {
+            border-radius: 1rem;
+            max-width: 70%;
+        }
+        .chat-bubble.sender {
+            background-color: #3B82F6;
+            color: white;
+            border-bottom-right-radius: 0.25rem;
+        }
+        .chat-bubble.receiver {
+            background-color: #E5E7EB;
+            color: #1F2937;
+            border-bottom-left-radius: 0.25rem;
+        }
+        .mobile-menu {
+            transform: translateX(-100%);
+            transition: transform 0.3s ease;
+        }
+        .mobile-menu.open {
+            transform: translateX(0);
+        }
+        .backdrop {
+            background-color: rgba(0, 0, 0, 0.5);
+            transition: opacity 0.3s ease;
+        }
+        body {
+            font-family: 'Nunito', sans-serif;
+        }
+        .form-card {
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+        }
+        .form-card:hover {
+            box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+        }
+        .valid-field {
+            border-color: #10B981;
+        }
+        .invalid-field {
+            border-color: #EF4444;
+        }
+        .image-preview {
+            transition: all 0.2s ease;
+        }
+        .image-preview:hover {
+            transform: scale(1.03);
+        }
+        .progress-bar {
+            transition: width 0.5s ease;
+        }
+        .category-icon {
+            transition: all 0.2s ease;
+        }
+        .category-icon:hover {
+            transform: scale(1.1);
+        }
+
+        /* Nouveaux styles pour peaufiner Ajouter.html */
+        .form-section-card {
+            background-color: #ffffff;
+            border-radius: 0.75rem; /* Tailwind rounded-lg */
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06); /* Tailwind shadow-md */
+            padding: 1.5rem; /* Tailwind p-6 */
+            margin-bottom: 1.5rem; /* Tailwind mb-6 */
+        }
+
+        .form-label {
+            display: block;
+            font-size: 0.875rem; /* Tailwind text-sm */
+            font-weight: 500; /* Tailwind font-medium */
+            color: #374151; /* Tailwind text-gray-700 */
+            margin-bottom: 0.5rem; /* Tailwind mb-2 */
+        }
+
+        .form-input,
+        .form-select,
+        .form-textarea {
+            display: block;
+            width: 100%;
+            padding: 0.625rem 0.75rem; /* Tailwind py-2 px-3 */
+            border: 1px solid #d1d5db; /* Tailwind border-gray-300 */
+            border-radius: 0.375rem; /* Tailwind rounded-md */
+            box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05); /* Tailwind shadow-sm */
+            font-size: 0.9375rem; /* Slightly larger text */
+            line-height: 1.5;
+            transition: all 0.15s ease-in-out;
+        }
+
+        .form-input:focus,
+        .form-select:focus,
+        .form-textarea:focus {
+            outline: none;
+            border-color: #3b82f6; /* Tailwind focus:border-blue-500 */
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.3); /* Tailwind focus:ring-blue-500 with adjusted opacity */
+        }
+
+        .file-upload-area {
+            border: 2px dashed #d1d5db; /* Tailwind border-gray-300 */
+            border-radius: 0.5rem; /* Tailwind rounded-lg */
+            padding: 1.5rem; /* Tailwind p-6 */
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .file-upload-area.highlight {
+            border-color: #3b82f6; /* Tailwind border-blue-500 */
+            background-color: #eff6ff; /* Tailwind bg-blue-50 */
+        }
+
+        .image-preview-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); /* Responsive grid */
+            gap: 0.75rem; /* Tailwind gap-3 */
+            margin-top: 1rem; /* Tailwind mt-4 */
+        }
+
+        .image-preview-item {
+            position: relative;
+            aspect-ratio: 1 / 1; /* Make previews square */
+            overflow: hidden;
+            border-radius: 0.5rem; /* Tailwind rounded-md */
+            box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+        }
+
+        .image-preview-item img {
+            display: block;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .image-delete-button {
+            position: absolute;
+            top: 0.25rem; /* Tailwind top-1 */
+            right: 0.25rem; /* Tailwind right-1 */
+            background-color: rgba(239, 68, 68, 0.8); /* Tailwind bg-red-500 with opacity */
+            color: white;
+            border-radius: 9999px; /* Tailwind rounded-full */
+            width: 1.5rem; /* Tailwind w-6 */
+            height: 1.5rem; /* Tailwind h-6 */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0; /* Hidden by default */
+            transition: opacity 0.2s ease;
+            cursor: pointer;
+        }
+
+         .image-preview-item:hover .image-delete-button {
+             opacity: 1;
+         }
+
+         .submit-button {
+            background-color: #3b82f6; /* Tailwind bg-blue-600 */
+            color: white; /* Tailwind text-white */
+            padding: 0.75rem 1.5rem; /* Tailwind px-6 py-3 */
+            border-radius: 0.5rem; /* Tailwind rounded-lg */
+            font-weight: 500; /* Tailwind font-medium */
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+         }
+
+         .submit-button:hover {
+            background-color: #2563eb; /* Tailwind hover:bg-blue-700 */
+            box-shadow: 0 4px 6px rgba(59, 130, 246, 0.3); /* Add a subtle shadow on hover */
+         }
+
+         .submit-button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+         }
+
+         .alert-info {
+            background-color: #eff6ff; /* Tailwind bg-blue-50 */
+            border-left: 4px solid #3b82f6; /* Tailwind border-blue-400 */
+            color: #1e40af; /* Tailwind text-blue-700 */
+            padding: 1rem; /* Tailwind p-4 */
+            border-radius: 0.375rem; /* Tailwind rounded-md */
+            margin-top: 1rem; /* Tailwind mt-4 */
+            display: flex;
+            align-items: flex-start;
+         }
+
+          .alert-info .icon {
+             color: #3b82f6; /* Tailwind text-blue-500 */
+             margin-right: 0.75rem; /* Tailwind mr-3 */
+             font-size: 1.25rem; /* Tailwind text-xl */
+          }
+
+          .alert-info .content {
+             flex-grow: 1;
+          }
+
+          .alert-info .title {
+             font-weight: 500; /* Tailwind font-medium */
+             margin-bottom: 0.25rem;
+          }
+
+          .alert-info .text {
+             font-size: 0.875rem; /* Tailwind text-sm */
+             color: #1e40af; /* Tailwind text-blue-700 */
+          }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <!-- Mobile Menu Button -->
+    <button id="mobileMenuButton" class="md:hidden fixed top-4 left-4 z-50 bg-white p-2 rounded-full shadow-lg z-50">
+        <i class="fas fa-bars text-blue-800 text-xl"></i>
+    </button>
+    <!-- Mobile Menu Backdrop -->
+    <div id="mobileBackdrop" class="fixed inset-0 bg-black bg-opacity-50 z-40 hidden"></div>
+    <!-- Mobile Menu -->
+    <div id="mobileMenu" class="mobile-menu fixed inset-y-0 left-0 z-50 w-64 bg-white shadow-lg overflow-y-auto">
+        <div class="p-4 border-b border-gray-200">
+            <div class="flex items-center">
+                <img src="https://via.placeholder.com/40" alt="Profile" class="w-10 h-10 rounded-full mr-3">
+                <div>
+                    <p class="font-semibold">Yoane pequene</p>
+                    <p class="text-xs text-gray-500">Vendeur actif</p>
+                </div>
+            </div>
+        </div>
+        <nav class="flex-1 p-2">
+            <a href="Vendeur.html" class="menu-item flex items-center p-3 rounded-lg">
+              <i class="fas fa-home mr-3 text-blue-800"></i>
+              <span>Mon kiosque</span>
+            </a>
+            <a href="Ajouter.html" class="menu-item flex items-center p-3 rounded-lg">
+                <i class="fas fa-plus-circle mr-3 text-blue-800"></i>
+              <span>Ajouter un article</span>
+            </a>
+            <a href="Message.html" class="menu-item flex items-center p-3 rounded-lg">
+                <i class="fas fa-comments mr-3 text-blue-800"></i>
+              <span>Messages</span>
+            </a>
+            <a href="profil.html" class="active-menu-item flex items-center p-3 rounded-lg">
+                <i class="fas fa-user mr-3 text-blue-800"></i>
+              <span>Profil</span>
+            </a>
+            <a href="evaluation.html" class="menu-item flex items-center p-3 rounded-lg">
+                <i class="fas fa-star mr-3 text-blue-800"></i>
+              <span>Évaluations</span>
+            </a>
+            <a href="parametre.html" class="menu-item flex items-center p-3 rounded-lg">
+                <i class="fas fa-cog mr-3 text-blue-800"></i>
+              <span>Paramètres</span>
+            </a>
+            <a href="recherche.html" class="menu-item flex items-center p-3 rounded-lg">
+                <i class="fas fa-search mr-3 text-blue-800"></i>
+              <span>Recherche</span>
+            </a>
+            <a href="login/connection.html" class="menu-item flex items-center p-3 rounded-lg text-red-600">
+              <i class="fas fa-sign-out-alt mr-3"></i>
+              <span>Déconnexion</span>
+            </a>
+          </nav>
+    </div>
+    <!-- Desktop Sidebar -->
+    <div class="hidden md:flex md:w-64 md:flex-col md:fixed md:inset-y-0">
+        <div class="flex flex-col flex-grow border-r border-gray-200 bg-white overflow-y-auto">
+            <div class="p-4 border-b border-gray-200">
+                <div class="flex items-center">
+                    <img src="https://via.placeholder.com/40" alt="Profile" class="w-10 h-10 rounded-full mr-3">
+                    <div>
+                        <p class="font-semibold">Yoane pequene</p>
+                        <p class="text-xs text-gray-500">Vendeur actif</p>
+                    </div>
+                </div>
+            </div>
+            <nav class="flex-1 p-2">
+                <a href="Vendeur.html" class="menu-item flex items-center p-3 rounded-lg">
+                    <i class="fas fa-home mr-3 text-blue-800"></i>
+                    <span>Mon kiosque</span>
+                </a>
+                <a href="Ajouter.html" class="menu-item active-menu-item flex items-center p-3 rounded-lg">
+                    <i class="fas fa-plus-circle mr-3 text-blue-800"></i>
+                    <span>Ajouter un nouvel article</span>
+                </a>
+                <a href="Message.html" class="menu-item flex items-center p-3 rounded-lg">
+                    <i class="fas fa-comments mr-3 text-blue-800"></i>
+                    <span>Messages</span>
+                </a>
+                 <a href="profil.html" class="menu-item flex items-center p-3 rounded-lg">
+                    <i class="fas fa-user mr-3 text-blue-800"></i>
+                    <span>Profil</span>
+                </a>
+                <a href="evaluation.html" class="menu-item flex items-center p-3 rounded-lg">
+                    <i class="fas fa-star mr-3 text-blue-800"></i>
+                    <span>Évaluations</span>
+                </a>
+                <a href="parametre.html" class="menu-item flex items-center p-3 rounded-lg">
+                    <i class="fas fa-cog mr-3 text-blue-800"></i>
+                    <span>Paramètres</span>
+                </a>
+                   <a href="recherche.html" class="menu-item flex items-center p-3 rounded-lg">
+                    <i class="fas fa-search mr-3 text-blue-800"></i>
+                    <span>Recherche</span>
+                </a>
+                <a href="connection.html" class="menu-item flex items-center p-3 rounded-lg mt-4 text-red-500">
+                    <i class="fas fa-sign-out-alt mr-3"></i>
+                    <span>Déconnexion</span>
+                </a>
+             
+            </nav>
+        </div>
+    </div>
+    <!-- Main Content -->
+    <div class="md:pl-64 flex flex-col flex-1">
+        
+        <!-- Page Header - Réduit -->
+        <div class="text-center mb-6 py-4 bg-white shadow-sm md:hidden">
+            <h1 class="text-2xl font-bold text-gray-900">Ajouter un nouvel article</h1>
+        </div>
+        <!-- Progress Bar - Intégrée dans le formulaire -->
+        <div class="max-w-3xl mx-auto w-full px-4 py-6 lg:p-8">
+            <div class="form-section-card">
+                <!-- En-tête du formulaire -->
+                <div class="bg-blue-50 p-4 rounded-t-lg border-b border-blue-100">
+                     <!-- Breadcrumbs -->
+        <nav class="text-sm mb-4 text-gray-500">
+            <ol class="list-none p-0 inline-flex">
+              <li class="flex items-center">
+                <a href="Vendeur.html" class="hover:text-blue-600 transition-colors">Mon kiosque</a>
+                <svg class="fill-current w-3 h-3 mx-2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><path d="M285.476 272.971L91.132 467.314c-9.373 9.373-24.569 9.373-33.941 0l-22.667-22.667c-9.357-9.357-9.375-24.522-.04-33.901L188.505 256 34.484 101.255c-9.335-9.379-9.317-24.544.04-33.901l22.667-22.667c9.373-9.373 24.569-9.373 33.941 0L285.475 239.03c9.373 9.372 9.373 24.568.001 33.941z"/></svg>
+              </li>
+              <li class="flex items-center">
+                <span class="text-gray-700 font-medium">Ajouter un article</span>
+              </li>
+            </ol>
+          </nav>
+                    <div class="flex justify-between items-center">
+                        <h2 class="text-lg font-semibold text-blue-800">
+                            <i class="fas fa-plus-circle mr-2"></i> Informations de l'article
+                        </h2>
+                    </div>
+                     <!-- Progress Bar - Peut être retirée si le formulaire est sur une seule page -->
+                     <!--
+                    <div class="w-full bg-gray-200 rounded-full h-1.5 mt-2">
+                        <div class="progress-bar bg-blue-600 h-1.5 rounded-full" style="width:100%"></div>
+                    </div>
+                     -->
+                </div>
+
+                <!-- Contenu du formulaire -->
+                <div class="p-5 space-y-6">
+                    <!-- Onglets du formulaire - Inutiles si une seule étape -->
+                    <!--
+                    <div class="border-b border-gray-200 mb-4">
+                        <nav class="flex -mb-px">
+                            <a href="Ajouter.html" class="border-blue-500 text-blue-600 whitespace-nowrap py-2 px-1 border-b-2 font-medium text-sm">
+                                Informations de base
+                            </a>
+                        </nav>
+                    </div>
+                    -->
+
+                    <!-- Formulaire compact -->
+                    <form id="add-product-form">
+                        <!-- Section Informations de base -->
+                        <div class="space-y-4">
+                            <!-- Nom et Catégorie -->
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                    <label for="product-name" class="form-label">Nom du produit <span class="text-red-500">*</span></label>
+                                    <input type="text" id="product-name" class="form-input" placeholder="Ex : Calculatrice FX-991EX">
+                                </div>
+
+                                <div>
+                                    <label for="product-category" class="form-label">Catégorie <span class="text-red-500">*</span></label>
+                                    <select id="product-category" class="form-select">
+                                        <option value="">Sélectionner une catégorie</option>
+                                        <option value="books"> Livres</option>
+                                        <option value="clothes"> Vêtements</option>
+                                        <option value="electronics"> Électronique</option>
+                                        <option value="snacks"> Food</option>
+                                        <option value="accessories"> Accessoires</option>
+                                        <option value="other">Autre</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <!-- Prix et Quantité -->
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                    <label for="product-price" class="form-label">Prix (FCFA) <span class="text-red-500">*</span></label>
+                                    <div class="relative rounded-md shadow-sm">
+                                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                            <span class="text-gray-500 text-sm">FCFA</span>
+                                        </div>
+                                        <input type="number" id="product-price" class="form-input pl-16 pr-12" placeholder="0" min="0">
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <label for="product-quantity" class="form-label">Quantité</label>
+                                    <input type="number" id="product-quantity" class="form-input" value="1" min="1">
+                                </div>
+                            </div>
+
+                            <!-- Description -->
+                             <div>
+                                <label for="product-description" class="form-label">Description <span class="text-red-500">*</span></label>
+                                <textarea id="product-description" rows="4" class="form-textarea" placeholder="Ex : Calculatrice presque neuve, très utile pour les maths financières. Achetée en 2024."></textarea>
+                            </div>
+
+                             <!-- Lieu de remise -->
+                            <div>
+                                <label for="delivery-location" class="form-label">Lieu de remise <span class="text-red-500">*</span></label>
+                                <select id="delivery-location" class="form-select">
+                                    <option value="">Sélectionner un lieu de remise</option>
+                                    <option value="library">Devant la bibliothèque </option>
+                                    <option value="cafeteria">Cafétéria </option>
+                                    <option value="hall">Hall principal </option>
+                                    <option value="other">Autre</option>
+                                </select>
+
+                                <!-- Champ "Autre lieu" -->
+                                <div id="other-location-container" class="mt-2 hidden">
+                                    <input type="text" id="other-location" class="form-input" placeholder="Ex : Devant le bâtiment B">
+                                </div>
+                            </div>
+                        </div>
+
+                         <!-- Section Photos du produit -->
+                         <div class="form-section-card">
+                             <h3 class="text-lg font-semibold text-gray-800 mb-4 flex items-center">
+                                 <i class="fas fa-camera mr-2 text-blue-500"></i> Photos du produit <span class="text-red-500 ml-1">*</span>
+                             </h3>
+                             <div>
+                                 <label class="form-label">Ajouter jusqu'à 4 photos :</label>
+                                 <div class="file-upload-area" id="drop-area">
+                                     <div class="flex flex-col items-center justify-center p-4">
+                                         <svg class="mx-auto h-12 w-12 text-gray-400" stroke="currentColor" fill="none" viewBox="0 0 48 48" aria-hidden="true">
+                                             <path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                                         </svg>
+                                         <p class="mt-2 text-sm text-gray-600">Glisser-déposer des images ici, ou</p>
+                                         <label for="file-upload" class="mt-3 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 cursor-pointer">
+                                             <i class="fas fa-cloud-upload-alt mr-2"></i> Sélectionner des fichiers
+                                         </label>
+                                         <input id="file-upload" type="file" class="hidden" accept="image/*" multiple>
+                                     </div>
+                                 </div>
+
+                                 <!-- Miniatures d'images -->
+                                 <div class="image-preview-container grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 mt-4">
+                                     <!-- Les images apparaîtront ici -->
+                                 </div>
+                             </div>
+                         </div>
+
+                        <!-- Bouton de soumission -->
+                        <div class="mt-6 flex justify-end">
+                            <button type="submit" id="submit-button" class="submit-button w-full sm:w-auto">
+                                <i class="fas fa-paper-plane mr-2"></i> Publier mon article
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Conseils (optionnel) -->
+            <div class="alert-info mt-6">
+                 <div class="icon">
+                     <i class="fas fa-lightbulb"></i>
+                 </div>
+                 <div class="content">
+                     <p class="title">Conseil pour une vente rapide :</p>
+                     <p class="text">
+                         Prends des photos nettes sous un bon éclairage et rédige une description précise et honnête de ton article. Mentionne l'état, les caractéristiques et toute information utile pour l'acheteur.
+                     </p>
+                 </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Success Modal -->
+    <div id="success-modal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4">
+        <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity"></div>
+        <div class="bg-white rounded-lg overflow-hidden shadow-xl transform transition-all sm:max-w-lg sm:w-full w-full">
+            <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+                <div class="sm:flex sm:items-start">
+                    <div class="mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-green-100 sm:mx-0 sm:h-10 sm:w-10">
+                        <i class="fas fa-check text-green-600"></i>
+                    </div>
+                    <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
+                        <h3 class="text-lg leading-6 font-medium text-gray-900" id="modal-title">Article publié avec succès !</h3>
+                        <div class="mt-2">
+                            <p class="text-sm text-gray-500">Ton article est maintenant visible sur ESCIC-Market ! Tu recevras une notification dès qu'un étudiant souhaite le réserver.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+                <button id="add-another" type="button" class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm">
+                    <i class="fas fa-plus mr-2"></i> Ajouter un autre article
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // DOM Elements
+        const fileUpload = document.getElementById('file-upload');
+        const dropArea = document.getElementById('drop-area');
+        const imagePreviews = document.getElementById('image-previews');
+        const addAnotherPhotoBtn = document.getElementById('add-another-photo');
+        const deliveryLocation = document.getElementById('delivery-location');
+        const otherLocationContainer = document.getElementById('other-location-container');
+        const submitButton = document.getElementById('submit-button');
+        const successModal = document.getElementById('success-modal');
+        const addAnotherBtn = document.getElementById('add-another');
+        
+        // Variables
+        let uploadedFiles = [];
+        
+        // Event Listeners
+        
+        // Drag and drop functionality
+        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+            dropArea.addEventListener(eventName, preventDefaults, false);
+        });
+        
+        function preventDefaults(e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+        
+        ['dragenter', 'dragover'].forEach(eventName => {
+            dropArea.addEventListener(eventName, highlight, false);
+        });
+        
+        ['dragleave', 'drop'].forEach(eventName => {
+            dropArea.addEventListener('dragleave', unhighlight, false);
+        });
+        
+        function highlight() {
+            dropArea.classList.add('border-blue-500', 'bg-blue-50');
+        }
+        
+        function unhighlight() {
+            dropArea.classList.remove('border-blue-500', 'bg-blue-50');
+        }
+        
+        dropArea.addEventListener('drop', handleDrop, false);
+        
+        function handleDrop(e) {
+            const dt = e.dataTransfer;
+            const files = dt.files;
+            handleFiles(files);
+        }
+        
+        fileUpload.addEventListener('change', function() {
+            handleFiles(this.files);
+        });
+        
+        addAnotherPhotoBtn.addEventListener('click', function() {
+            fileUpload.click();
+        });
+        
+        deliveryLocation.addEventListener('change', function() {
+            if (this.value === 'other') {
+                otherLocationContainer.classList.remove('hidden');
+            } else {
+                otherLocationContainer.classList.add('hidden');
+            }
+        });
+        
+        // Validation complète du formulaire avant soumission
+        submitButton.addEventListener('click', function(e) {
+            // Empêcher la soumission par défaut
+            e.preventDefault();
+            
+            // Vérifier les champs obligatoires
+            const productName = document.getElementById('product-name').value.trim();
+            const productCategory = document.getElementById('product-category').value;
+            const productPrice = document.getElementById('product-price').value;
+            const productDescription = document.getElementById('product-description').value.trim();
+            const deliveryLoc = document.getElementById('delivery-location').value;
+            
+            // Vérifier si des images ont été téléchargées
+            const hasImages = uploadedFiles.length > 0;
+            
+            // Tableau pour stocker les messages d'erreur
+            let errors = [];
+            
+            // Valider chaque champ
+            if (!productName) errors.push('Nom du produit requis');
+            if (!productCategory) errors.push('Catégorie requise');
+            if (!productPrice || productPrice <= 0) errors.push('Prix valide requis');
+            if (!productDescription) errors.push('Description requise');
+            if (!deliveryLoc) errors.push('Lieu de remise requis');
+            if (!hasImages) errors.push('Au moins une image est requise');
+            
+            // Si des erreurs existent, les afficher
+            if (errors.length > 0) {
+                alert('Veuillez corriger les erreurs suivantes:\n' + errors.join('\n'));
+                return;
+            }
+            
+            // Si tout est valide, montrer l'indicateur de chargement
+            submitButton.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Publication en cours...';
+            submitButton.disabled = true;
+            
+            // Simuler l'appel API (à remplacer par votre vrai appel API)
+            setTimeout(() => {
+                // Afficher la modal de succès
+                successModal.classList.remove('hidden');
+                
+                // Réinitialiser le bouton
+                submitButton.innerHTML = '<i class="fas fa-paper-plane mr-2"></i> Publier mon article';
+                submitButton.disabled = false;
+            }, 1500);
+        });
+        
+        addAnotherBtn.addEventListener('click', function() {
+            successModal.classList.add('hidden');
+            // Reset form (in a real app, you might want to keep some fields)
+            document.getElementById('product-name').value = '';
+            document.getElementById('product-category').value = '';
+            document.getElementById('product-price').value = '';
+            document.getElementById('product-quantity').value = '1';
+            document.getElementById('product-description').value = '';
+            document.getElementById('delivery-location').value = '';
+            document.getElementById('other-location').value = '';
+            document.getElementById('availability').value = '';
+            
+            // Clear images
+            uploadedFiles = [];
+            imagePreviews.innerHTML = '';
+            
+            // Scroll to top
+            window.scrollTo(0, 0);
+        });
+        
+        // Functions
+        function handleFiles(files) {
+            const dataTransfer = new DataTransfer();
+
+            // Add existing files to DataTransfer object
+            uploadedFiles.forEach(file => dataTransfer.items.add(file));
+
+            // Add new files, checking limits
+            let filesToAdd = 0;
+            for (let i = 0; i < files.length; i++) {
+                if (uploadedFiles.length + filesToAdd < 4) {
+                    dataTransfer.items.add(files[i]);
+                    filesToAdd++;
+                } else {
+                    alert('Vous ne pouvez ajouter que 4 photos maximum.');
+                    break;
+                }
+            }
+
+            uploadedFiles = Array.from(dataTransfer.files);
+            updatePreview();
+        }
+        
+        function updatePreview() {
+             imagePreviews.innerHTML = ''; // Clear current previews
+
+            uploadedFiles.forEach(file => {
+                const reader = new FileReader();
+                reader.readAsDataURL(file);
+                reader.onloadend = function() {
+                    const previewDiv = document.createElement('div');
+                    previewDiv.className = 'image-preview-item group'; // Add group class for hover effects
+
+                    const img = document.createElement('img');
+                    img.src = reader.result;
+                    img.alt = file.name;
+                    // img.className = 'image-preview w-full h-32 object-cover rounded-md'; // Old class
+
+                    const deleteBtn = document.createElement('button');
+                    deleteBtn.className = 'image-delete-button'; // Use new class
+                    deleteBtn.innerHTML = '<i class="fas fa-times text-xs"></i>';
+                    deleteBtn.addEventListener('click', function() {
+                        // Remove file from the uploadedFiles array
+                        const index = uploadedFiles.indexOf(file);
+                        if (index > -1) {
+                            uploadedFiles.splice(index, 1);
+                        }
+                        previewDiv.remove(); // Remove the preview element
+                         // Optional: re-validate form or image count here
+                    });
+
+                    previewDiv.appendChild(img);
+                    previewDiv.appendChild(deleteBtn);
+                    imagePreviews.appendChild(previewDiv);
+                };
+            });
+        }
+        
+        // Auto-save draft (Bonus Feature)
+        setInterval(function() {
+            const formData = {
+                productName: document.getElementById('product-name').value,
+                category: document.getElementById('product-category').value,
+                price: document.getElementById('product-price').value,
+                quantity: document.getElementById('product-quantity').value,
+                description: document.getElementById('product-description').value,
+                location: document.getElementById('delivery-location').value,
+                otherLocation: document.getElementById('other-location').value,
+                availability: document.getElementById('availability').value,
+                // Note: In a real app, you'd need to handle file uploads differently
+            };
+            
+            localStorage.setItem('draftProduct', JSON.stringify(formData));
+            console.log('Brouillon enregistré');
+        }, 10000); // Auto-save every 10 seconds
+        
+        // Load draft if exists
+        window.addEventListener('load', function() {
+            const draft = localStorage.getItem('draftProduct');
+            if (draft) {
+                const formData = JSON.parse(draft);
+                document.getElementById('product-name').value = formData.productName || '';
+                document.getElementById('product-category').value = formData.category || '';
+                document.getElementById('product-price').value = formData.price || '';
+                document.getElementById('product-quantity').value = formData.quantity || '1';
+                document.getElementById('product-description').value = formData.description || '';
+                document.getElementById('delivery-location').value = formData.location || '';
+                document.getElementById('other-location').value = formData.otherLocation || '';
+                document.getElementById('availability').value = formData.availability || '';
+                
+                if (formData.location === 'other') {
+                    otherLocationContainer.classList.remove('hidden');
+                }
+                
+                // In a real app, you'd also need to handle file uploads
+            }
+        });
+        
+        // Form validation - Refine validation to work with new structure/classes
+         const form = document.getElementById('add-product-form');
+         const productNameInput = document.getElementById('product-name');
+         const productCategorySelect = document.getElementById('product-category');
+         const productPriceInput = document.getElementById('product-price');
+         const productDescriptionTextarea = document.getElementById('product-description');
+         const deliveryLocationSelect = document.getElementById('delivery-location');
+         const otherLocationInput = document.getElementById('other-location');
+         const submitBtn = document.getElementById('submit-button');
+
+         // Function to update validation state
+         const updateValidationState = (element, isValid) => {
+             if (isValid) {
+                 element.classList.remove('invalid-field');
+                 // element.classList.add('valid-field'); // Optional: add a valid state style
+             } else {
+                 element.classList.add('invalid-field');
+                 // element.classList.remove('valid-field');
+             }
+         };
+
+         // Real-time validation listeners
+         productNameInput.addEventListener('input', () => {
+             updateValidationState(productNameInput, productNameInput.value.trim().length > 0);
+             checkFormValidity();
+         });
+
+         productCategorySelect.addEventListener('change', () => {
+             updateValidationState(productCategorySelect, productCategorySelect.value !== '');
+              checkFormValidity();
+         });
+
+         productPriceInput.addEventListener('input', () => {
+             updateValidationState(productPriceInput, parseFloat(productPriceInput.value) > 0);
+              checkFormValidity();
+         });
+
+         productDescriptionTextarea.addEventListener('input', () => {
+             updateValidationState(productDescriptionTextarea, productDescriptionTextarea.value.trim().length > 0);
+              checkFormValidity();
+         });
+
+         deliveryLocationSelect.addEventListener('change', () => {
+              updateValidationState(deliveryLocationSelect, deliveryLocationSelect.value !== '');
+              if (deliveryLocationSelect.value === 'other') {
+                 otherLocationContainer.classList.remove('hidden');
+                 // Optional: add validation for the 'other' field if it becomes visible
+              } else {
+                 otherLocationContainer.classList.add('hidden');
+                  // Optional: remove validation for the 'other' field if it becomes hidden
+              }
+              checkFormValidity();
+         });
+
+         // Function to check overall form validity and update submit button state
+         const checkFormValidity = () => {
+             const isNameValid = productNameInput.value.trim().length > 0;
+             const isCategoryValid = productCategorySelect.value !== '';
+             const isPriceValid = parseFloat(productPriceInput.value) > 0;
+             const isDescriptionValid = productDescriptionTextarea.value.trim().length > 0;
+             const isLocationValid = deliveryLocationSelect.value !== '';
+             const isOtherLocationValid = deliveryLocationSelect.value !== 'other' || otherLocationInput.value.trim().length > 0;
+             const hasImages = uploadedFiles.length > 0;
+
+             const isFormValid = isNameValid && isCategoryValid && isPriceValid && isDescriptionValid && isLocationValid && isOtherLocationValid && hasImages;
+
+             submitBtn.disabled = !isFormValid;
+         };
+
+        // Initial check on page load
+         document.addEventListener('DOMContentLoaded', () => {
+             checkFormValidity();
+         });
+
+        // Submission handling (Modify to use the new form validity check)
+        form.addEventListener('submit', function(e) {
+            e.preventDefault(); // Prevent default form submission
+
+             if (!submitBtn.disabled) { // Only proceed if the button is enabled (form is valid)
+                 // Show loading indicator
+                 submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Publication en cours...';
+                 submitBtn.disabled = true; // Disable button during submission
+
+                 // Simulate API call (replace with your actual API call)
+                 setTimeout(() => {
+                     // Handle successful submission (e.g., show success modal)
+                     successModal.classList.remove('hidden');
+
+                     // Reset form and state after successful submission
+                     form.reset(); // Reset form fields
+                     uploadedFiles = [];
+                     updatePreview(); // Clear image previews
+                     otherLocationContainer.classList.add('hidden'); // Hide 'other' location input
+                     checkFormValidity(); // Re-check validity for the empty form
+
+                     // Reset submit button
+                     submitBtn.innerHTML = '<i class="fas fa-paper-plane mr-2"></i> Publier mon article';
+                 }, 1500);
+             } else {
+                 // If button is disabled, show an alert indicating missing fields
+                 // This part might be redundant if real-time validation is clear, but good as a fallback
+                 alert('Veuillez remplir tous les champs obligatoires et ajouter au moins une image.');
+             }
+        });
+
+        // Mobile menu toggle
+        const mobileMenuButton = document.getElementById('mobileMenuButton');
+        const mobileMenu = document.getElementById('mobileMenu');
+        const mobileBackdrop = document.getElementById('mobileBackdrop');
+        
+        if(mobileMenuButton && mobileMenu && mobileBackdrop) {
+            mobileMenuButton.addEventListener('click', function() {
+                mobileMenu.classList.toggle('open');
+                mobileBackdrop.classList.toggle('hidden');
+            });
+            
+            mobileBackdrop.addEventListener('click', function() {
+                mobileMenu.classList.remove('open');
+                mobileBackdrop.classList.add('hidden');
+            });
+        }
+        
+        // Activer les liens de la barre latérale
+        document.addEventListener('DOMContentLoaded', function() {
+            // Récupérer tous les liens du menu
+            const menuItems = document.querySelectorAll('.menu-item');
+            
+            // Ajouter un écouteur d'événement à chaque lien
+            menuItems.forEach(item => {
+                item.addEventListener('click', function(e) {
+                    // Supprimer la classe active de tous les liens
+                    menuItems.forEach(i => i.classList.remove('active-menu-item'));
+                    
+                    // Ajouter la classe active au lien cliqué
+                    this.classList.add('active-menu-item');
+                });
+            });
+        });
+    </script>
+</body>
+</html>

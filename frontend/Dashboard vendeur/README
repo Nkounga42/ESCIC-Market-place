@@ -1,0 +1,6 @@
+Récupère toutes les données du formulaire
+Valide l'email et le mot de passe
+Envoie les données à l'API
+Gère la création d'une demande de vendeur si nécessaire
+Redirige vers la page de connexion en cas de succès
+Affiche les erreurs en cas de problème
