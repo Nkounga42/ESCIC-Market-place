@@ -1,0 +1,771 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Messagerie - ESCIC-Market</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Nunito', sans-serif;
+            /* Ajout d'une couleur d'arrière-plan plus douce pour toute la page */
+            background-color: #f0f2f5; 
+        }
+        /* Styles généraux pour les éléments cliquables pour une meilleure indication visuelle */
+        .clickable-item {
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        /* Styles de la liste de conversations */
+        .conversation-item {
+            transition: all 0.2s ease;
+            border-left: 3px solid transparent;
+            /* Ombre légère pour une meilleure séparation */
+            box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05); 
+            margin-bottom: 8px; /* Espacement entre les conversations */
+            border-radius: 8px; /* Bords légèrement arrondis */
+            overflow: hidden; /* Pour que le border-left s'applique bien */
+        }
+        .conversation-item:hover {
+            background-color: #f1f5f9; /* Changement de couleur au survol plus doux */
+            border-left: 3px solid #3B82F6;
+            transform: translateY(-2px); /* Léger effet de soulèvement au survol */
+        }
+        .conversation-active {
+            background-color: #e2e8f0; /* Couleur pour la conversation active, plus distincte */
+            border-left: 3px solid #3B82F6;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Ombre plus prononcée pour l'active */
+        }
+
+        /* Styles des messages */
+        .message-bubble {
+            padding: 12px 18px; /* Remplissage légèrement augmenté */
+            border-radius: 20px; /* Rayon de bordure plus rond */
+            word-wrap: break-word; /* Assure que les longs mots se cassent */
+            max-width: 75%; /* Légèrement réduit pour un meilleur espacement */
+            font-size: 0.95rem; /* Taille de police légèrement plus grande */
+            line-height: 1.4; /* Hauteur de ligne pour une meilleure lisibilité */
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1); /* Ombre légère pour les bulles */
+        }
+
+        .message-self {
+            background-color: #2563eb; /* Bleu plus profond */
+            color: white;
+            border-radius: 20px 20px 0 20px; /* Coins personnalisés */
+            align-self: flex-end;
+        }
+        .message-other {
+            background-color: #edf2f7; /* Gris clair plus doux */
+            color: #1e293b;
+            border-radius: 20px 20px 20px 0; /* Coins personnalisés */
+            align-self: flex-start;
+        }
+        .online-dot {
+            width: 9px; /* Légèrement plus grand */
+            height: 9px;
+            background-color: #10b981;
+            border-radius: 50%;
+            border: 2px solid white; /* Bordure blanche pour la visibilité */
+            position: absolute;
+            bottom: 0;
+            right: 0;
+        }
+        .unread-badge {
+            min-width: 22px; /* Largeur minimale pour les chiffres à deux chiffres */
+            height: 22px;
+            background-color: #ef4444; /* Rouge pour les non-lus, plus visible */
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 0.75rem; /* Taille de police légèrement plus grande */
+            font-weight: bold; /* Texte en gras */
+            padding: 2px; /* Remplissage supplémentaire */
+        }
+        .emoji-picker {
+            position: absolute;
+            bottom: 70px; /* Ajusté pour laisser de l'espace */
+            right: 20px;
+            display: none;
+            background-color: white;
+            border-radius: 12px; /* Bords plus ronds */
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15); /* Ombre plus prononcée */
+            padding: 12px; /* Remplissage plus grand */
+            z-index: 50; /* S'assurer qu'il est au-dessus du reste */
+        }
+        .emoji-picker span {
+            font-size: 1.5rem; /* Émojis plus grands */
+            padding: 6px;
+            border-radius: 6px;
+            transition: background-color 0.15s ease;
+        }
+        .emoji-picker span:hover {
+            background-color: #e2e8f0; /* Couleur de survol plus douce */
+        }
+
+        /* Styles pour la barre latérale */
+        .menu-item {
+            transition: all 0.2s ease;
+            padding: 12px; /* Remplissage augmenté */
+            border-radius: 8px; /* Bords arrondis */
+            margin-bottom: 4px; /* Espacement entre les éléments de menu */
+            font-weight: 500; /* Texte semi-gras */
+            color: #4a5568; /* Couleur de texte par défaut plus douce */
+        }
+        .menu-item:hover {
+            background-color: #e0e7ff; /* Bleu plus clair au survol */
+            border-left: 3px solid #3B82F6;
+            color: #1a202c; /* Texte plus foncé au survol */
+        }
+        .active-menu-item {
+            background-color: #e0e7ff;
+            border-left: 3px solid #3B82F6;
+            color: #1e40af;
+            font-weight: 700; /* Texte gras pour l'actif */
+        }
+        .mobile-menu {
+            transform: translateX(-100%);
+            transition: transform 0.3s ease-in-out; /* Transition plus fluide */
+        }
+        .mobile-menu.open {
+            transform: translateX(0);
+        }
+        .backdrop {
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease;
+        }
+        .backdrop.visible {
+            opacity: 1;
+            visibility: visible;
+        }
+        .message-input {
+            border-radius: 25px; /* Très rond */
+            padding: 10px 18px; /* Ajustement du padding */
+            transition: all 0.2s ease;
+            font-size: 1rem;
+        }
+        .message-input:focus {
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.4); /* Ombre de focus plus prononcée */
+            border-color: #3b82f6;
+        }
+        .message-time {
+            font-size: 0.7rem;
+            color: #6b7280; /* Couleur de texte des heures plus douce */
+            opacity: 0.8; /* Légèrement moins opaque */
+        }
+        .typing-indicator {
+            display: flex;
+            align-items: center;
+            margin-top: 5px;
+            background-color: #edf2f7; /* Fond comme les messages des autres */
+            padding: 8px 15px; /* Remplissage pour la bulle */
+            border-radius: 20px 20px 20px 0; /* Bords comme les messages */
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+        }
+        .typing-dot {
+            width: 7px; /* Légèrement plus grand */
+            height: 7px;
+            background-color: #94a3b8;
+            border-radius: 50%;
+            margin: 0 2px; /* Espacement entre les points */
+            animation: typing 1.4s infinite ease-in-out;
+        }
+        .typing-dot:nth-child(1) { animation-delay: 0s; }
+        .typing-dot:nth-child(2) { animation-delay: 0.2s; }
+        .typing-dot:nth-child(3) { animation-delay: 0.4s; }
+        @keyframes typing {
+            0%, 60%, 100% { transform: translateY(0); }
+            30% { transform: translateY(-4px); } /* Léger ajustement de l'animation */
+        }
+
+        /* Améliorations spécifiques pour le conteneur de chat sur mobile */
+        @media (max-width: 768px) {
+            .chat-container {
+                display: none;
+                position: absolute; /* Permet au chat de se superposer */
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                z-index: 20; /* Assure qu'il est au-dessus de la liste */
+            }
+            .chat-active {
+                display: flex !important; /* Utiliser !important pour forcer l'affichage */
+                flex-direction: column; /* S'assurer que le contenu du chat est en colonne */
+            }
+            .conversation-list {
+                width: 100%; /* La liste prend toute la largeur sur mobile */
+            }
+            .conversation-hidden {
+                display: none !important; /* Masquer la liste des conversations */
+            }
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <nav class="bg-white shadow-md fixed top-0 w-full z-20"> <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center">
+                    <button id="mobile-menu-button" class="md:hidden mr-2 text-gray-600 hover:text-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 rounded-md p-1"> <i class="fas fa-bars text-xl"></i>
+                    </button>
+                    <a href="#" class="flex-shrink-0 flex items-center">
+                        <i class="fas fa-store text-blue-600 text-2xl mr-2"></i> <span class="font-extrabold text-blue-800 text-xl tracking-tight">ESCIC-Market</span> </a>
+                </div>
+                
+                <div class="flex items-center">
+                    <div class="relative ml-3">
+                        <div>
+                            <button type="button" class="bg-gray-800 flex text-sm rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-white" id="user-menu-button" aria-expanded="false" aria-haspopup="true">
+                                <span class="sr-only">Open user menu</span>
+                                <img class="h-8 w-8 rounded-full object-cover" src="https://randomuser.me/api/portraits/men/32.jpg" alt="Photo de profil">
+                            </button>
+                        </div>
+                        <div id="user-dropdown" class="origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg py-1 bg-white ring-1 ring-black ring-opacity-5 focus:outline-none hidden" role="menu" aria-orientation="vertical" aria-labelledby="user-menu-button" tabindex="-1">
+                            <a href="profil.html" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" role="menuitem" tabindex="-1" id="user-menu-item-0">Votre Profil</a>
+                            <a href="parametre.html" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" role="menuitem" tabindex="-1" id="user-menu-item-1">Paramètres</a>
+                            <a href="connection.html" class="block px-4 py-2 text-sm text-red-700 hover:bg-red-100" role="menuitem" tabindex="-1" id="user-menu-item-2">Déconnexion</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="flex h-screen pt-16 pb-0"> <div id="sidebar" class="hidden md:block bg-white w-64 border-r border-gray-200 h-full flex-shrink-0 overflow-y-auto"> <div class="h-20 flex items-center px-6 border-b border-gray-200"> <div class="flex items-center space-x-3">
+                    <img class="h-10 w-10 rounded-full object-cover border-2 border-blue-400" src="https://randomuser.me/api/portraits/men/32.jpg" alt="Photo de profil"> <div>
+                        <p class="text-base font-semibold text-gray-800">Yoane Pequene</p> <p class="text-xs text-gray-600">Étudiant en BFSDA 1</p> </div>
+                </div>
+            </div>
+            <div class="py-4">
+                <nav class="flex-1 p-2">
+                    <a href="Vendeur.html" class="menu-item flex items-center p-3 rounded-lg">
+                      <i class="fas fa-home mr-3 text-blue-600 text-lg"></i> <span>Mon kiosque</span>
+                    </a>
+                    <a href="Ajouter.html" class="menu-item flex items-center p-3 rounded-lg">
+                      <i class="fas fa-plus-circle mr-3 text-blue-600 text-lg"></i>
+                      <span>Ajouter un nouvel article</span>
+                    </a>
+                    <a href="Message.html" class="active-menu-item flex items-center p-3 rounded-lg">
+                      <i class="fas fa-comments mr-3 text-blue-700 text-lg"></i> <span>Messages</span>
+                    </a>
+                    <a href="profil.html" class="menu-item flex items-center p-3 rounded-lg">
+                      <i class="fas fa-user mr-3 text-blue-600 text-lg"></i>
+                      <span>Profil</span>
+                    </a>
+                    <a href="evaluation.html" class="menu-item flex items-center p-3 rounded-lg">
+                      <i class="fas fa-star mr-3 text-blue-600 text-lg"></i>
+                      <span>Évaluations</span>
+                    </a>
+                    <a href="parametre.html" class="menu-item flex items-center p-3 rounded-lg">
+                      <i class="fas fa-cog mr-3 text-blue-600 text-lg"></i>
+                      <span>Paramètres</span>
+                    </a>
+                    <a href="recherche.html" class="menu-item flex items-center p-3 rounded-lg">
+                        <i class="fas fa-search mr-3 text-blue-600 text-lg"></i>
+                        <span>Recherche</span>
+                    </a>
+                    <a href="connection.html" class="menu-item flex items-center p-3 rounded-lg mt-6 text-red-600 hover:bg-red-50 hover:text-red-700"> <i class="fas fa-sign-out-alt mr-3 text-lg"></i>
+                      <span>Déconnexion</span>
+                    </a>
+                  </nav>
+            </div>
+        </div>
+
+        <div id="mobile-menu" class="mobile-menu fixed inset-y-0 left-0 z-40 w-64 bg-white shadow-xl md:hidden"> <div class="h-20 flex items-center justify-between px-6 border-b border-gray-200">
+                <div class="flex items-center space-x-3">
+                    <img class="h-10 w-10 rounded-full object-cover border-2 border-blue-400" src="https://randomuser.me/api/portraits/men/32.jpg" alt="Photo de profil">
+                    <div>
+                        <p class="text-base font-semibold text-gray-800">Yoane Pequene</p>
+                        <p class="text-xs text-gray-600">Étudiant en BFSDA 1</p>
+                    </div>
+                </div>
+                <button id="close-mobile-menu" class="text-gray-600 hover:text-red-500 focus:outline-none focus:ring-2 focus:ring-red-300 rounded-md p-1"> <i class="fas fa-times text-xl"></i>
+                </button>
+            </div>
+            <div class="py-4">
+                <nav class="flex-1 p-2">
+                    <a href="Vendeur.html" class="menu-item flex items-center p-3 rounded-lg">
+                      <i class="fas fa-home mr-3 text-blue-600 text-lg"></i>
+                      <span>Mon kiosque</span>
+                    </a>
+                    <a href="Ajouter.html" class="menu-item flex items-center p-3 rounded-lg">
+                      <i class="fas fa-plus-circle mr-3 text-blue-600 text-lg"></i>
+                      <span>Ajouter un nouvel article</span>
+                    </a>
+                    <a href="Message.html" class="active-menu-item flex items-center p-3 rounded-lg">
+                      <i class="fas fa-comments mr-3 text-blue-700 text-lg"></i>
+                      <span>Messages</span>
+                    </a>
+                    <a href="profil.html" class="menu-item flex items-center p-3 rounded-lg">
+                      <i class="fas fa-user mr-3 text-blue-600 text-lg"></i>
+                      <span>Profil</span>
+                    </a>
+                    <a href="evaluation.html" class="menu-item flex items-center p-3 rounded-lg">
+                      <i class="fas fa-star mr-3 text-blue-600 text-lg"></i>
+                      <span>Évaluations</span>
+                    </a>
+                    <a href="parametre.html" class="menu-item flex items-center p-3 rounded-lg">
+                      <i class="fas fa-cog mr-3 text-blue-600 text-lg"></i>
+                      <span>Paramètres</span>
+                    </a>
+                    <a href="recherche.html" class="menu-item flex items-center p-3 rounded-lg">
+                        <i class="fas fa-search mr-3 text-blue-600 text-lg"></i>
+                        <span>Recherche</span>
+                    </a>
+                    <a href="connection.html" class="menu-item flex items-center p-3 rounded-lg mt-6 text-red-600 hover:bg-red-50 hover:text-red-700">
+                      <i class="fas fa-sign-out-alt mr-3 text-lg"></i>
+                      <span>Déconnexion</span>
+                    </a>
+                  </nav>
+            </div>
+        </div>
+        <div id="backdrop" class="backdrop fixed inset-0 bg-black bg-opacity-60 z-30 md:hidden"></div> <div class="flex-1 flex flex-col overflow-hidden">
+            <div class="flex-1 flex overflow-hidden rounded-lg shadow-lg m-4 bg-white"> <div class="conversation-list w-full md:w-1/3 lg:w-1/4 bg-white border-r border-gray-200 overflow-y-auto p-2"> <div class="p-3 border-b border-gray-200 sticky top-0 bg-white z-10">
+                        <div class="relative">
+                            <input type="text" placeholder="Rechercher une conversation..." class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"> <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                <i class="fas fa-search text-gray-400"></i>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="py-2"> <div class="conversation-item conversation-active p-3 cursor-pointer clickable-item" data-chat-id="jean-mickemy">
+                            <div class="flex items-center">
+                                <div class="relative flex-shrink-0">
+                                    <img src="https://randomuser.me/api/portraits/women/12.jpg" alt="Avatar" class="w-12 h-12 rounded-full object-cover border border-gray-200">
+                                    <div class="online-dot absolute bottom-0 right-0"></div>
+                                </div>
+                                <div class="ml-3 flex-1 min-w-0"> <div class="flex justify-between items-center">
+                                        <h3 class="text-sm font-semibold text-gray-900 truncate">Jean Mickemy</h3> <span class="text-xs text-gray-500">10:42</span>
+                                    </div>
+                                    <p class="text-xs text-gray-600 truncate mt-1">Bonjour, je suis intéressée par votre calculatrice. Est-elle toujours disponible ?</p> </div>
+                            </div>
+                        </div>
+                        
+                        <div class="conversation-item p-3 cursor-pointer clickable-item" data-chat-id="thalis">
+                            <div class="flex items-center">
+                                <div class="relative flex-shrink-0">
+                                    <img src="https://randomuser.me/api/portraits/men/2.jpg" alt="Avatar" class="w-12 h-12 rounded-full object-cover border border-gray-200">
+                                </div>
+                                <div class="ml-3 flex-1 min-w-0">
+                                    <div class="flex justify-between items-center">
+                                        <h3 class="text-sm font-semibold text-gray-900 truncate">Thalis</h3>
+                                        <span class="text-xs text-gray-500">Hier</span>
+                                    </div>
+                                    <p class="text-xs text-gray-600 truncate mt-1">Merci pour l'info, je passerai demain.</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="conversation-item p-3 cursor-pointer clickable-item" data-chat-id="exauce">
+                            <div class="flex items-center">
+                                <div class="relative flex-shrink-0">
+                                    <img src="https://randomuser.me/api/portraits/men/3.jpg" alt="Avatar" class="w-12 h-12 rounded-full object-cover border border-gray-200">
+                                </div>
+                                <div class="ml-3 flex-1 min-w-0">
+                                    <div class="flex justify-between items-center">
+                                        <h3 class="text-sm font-semibold text-gray-900 truncate">Exaucé</h3>
+                                        <div class="unread-badge">2</div>
+                                    </div>
+                                    <p class="text-xs font-medium text-gray-700 truncate mt-1">J'ai une question sur le livre de programmation</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="conversation-item p-3 cursor-pointer clickable-item" data-chat-id="billy-jo">
+                            <div class="flex items-center">
+                                <div class="relative flex-shrink-0">
+                                    <img src="https://randomuser.me/api/portraits/men/4.jpg" alt="Avatar" class="w-12 h-12 rounded-full object-cover border border-gray-200">
+                                </div>
+                                <div class="ml-3 flex-1 min-w-0">
+                                    <div class="flex justify-between items-center">
+                                        <h3 class="text-sm font-semibold text-gray-900 truncate">Billy JO</h3>
+                                        <span class="text-xs text-gray-500">Lun</span>
+                                    </div>
+                                    <p class="text-xs text-gray-600 truncate mt-1">D'accord man, à bientôt !</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="conversation-item p-3 cursor-pointer clickable-item" data-chat-id="paterne">
+                            <div class="flex items-center">
+                                <div class="relative flex-shrink-0">
+                                    <img src="https://randomuser.me/api/portraits/men/5.jpg" alt="Avatar" class="w-12 h-12 rounded-full object-cover border border-gray-200">
+                                    <div class="online-dot absolute bottom-0 right-0"></div>
+                                </div>
+                                <div class="ml-3 flex-1 min-w-0">
+                                    <div class="flex justify-between items-center">
+                                        <h3 class="text-sm font-semibold text-gray-900 truncate">Paterne</h3>
+                                        <span class="text-xs text-gray-500">Dim</span>
+                                    </div>
+                                    <p class="text-xs text-gray-600 truncate mt-1">Super, merci pour la réduction !</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="conversation-item p-3 cursor-pointer clickable-item" data-chat-id="florentin">
+                            <div class="flex items-center">
+                                <div class="relative flex-shrink-0">
+                                    <img src="https://randomuser.me/api/portraits/men/6.jpg" alt="Avatar" class="w-12 h-12 rounded-full object-cover border border-gray-200">
+                                </div>
+                                <div class="ml-3 flex-1 min-w-0">
+                                    <div class="flex justify-between items-center">
+                                        <h3 class="text-sm font-semibold text-gray-900 truncate">Florentin</h3>
+                                        <div class="unread-badge">1</div>
+                                    </div>
+                                    <p class="text-xs font-medium text-gray-700 truncate mt-1">Est-ce que tu as d'autres parfum ?</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="chat-container w-full md:w-2/3 lg:w-3/4 flex flex-col bg-gray-50"> <div class="border-b border-gray-200 p-3 flex items-center sticky top-0 bg-white z-10 shadow-sm"> <button class="md:hidden mr-3 text-gray-600 hover:text-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 rounded-md p-1" id="back-to-conversations">
+                            <i class="fas fa-arrow-left text-lg"></i>
+                        </button>
+                        <div class="relative flex-shrink-0">
+                            <img src="https://randomuser.me/api/portraits/women/12.jpg" alt="Avatar" class="w-10 h-10 rounded-full object-cover border border-gray-200">
+                            <div class="online-dot absolute bottom-0 right-0"></div>
+                        </div>
+                        <div class="ml-3">
+                            <h3 class="text-base font-semibold text-gray-900">Jean Mickemy</h3> <p class="text-xs text-green-600 font-medium">En ligne</p> </div>
+                        <div class="ml-auto flex space-x-3"> <button class="text-gray-500 hover:text-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-300 rounded-full w-9 h-9 flex items-center justify-center">
+                                <i class="fas fa-phone text-lg"></i>
+                            </button>
+                            <button class="text-gray-500 hover:text-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-300 rounded-full w-9 h-9 flex items-center justify-center">
+                                <i class="fas fa-video text-lg"></i>
+                            </button>
+                            <button class="text-gray-500 hover:text-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-300 rounded-full w-9 h-9 flex items-center justify-center">
+                                <i class="fas fa-ellipsis-v text-lg"></i>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="flex-1 p-4 overflow-y-auto space-y-4" id="chat-messages"> <div class="flex justify-center mb-4">
+                            <span class="text-xs bg-gray-200 text-gray-600 px-3 py-1 rounded-full font-medium">Aujourd'hui</span> </div>
+                        
+                        <div class="flex items-start">
+                            <img src="https://randomuser.me/api/portraits/women/12.jpg" alt="Avatar" class="w-8 h-8 rounded-full object-cover flex-shrink-0 mt-1 mr-2 border border-gray-200">
+                            <div>
+                                <div class="message-bubble message-other mb-1">
+                                    <p>Bonjour, je suis intéressée par votre calculatrice. Est-elle toujours disponible ?</p>
+                                </div>
+                                <span class="message-time">10:30</span>
+                            </div>
+                        </div>
+                        
+                        <div class="flex flex-row-reverse items-start">
+                            <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="Avatar" class="w-8 h-8 rounded-full object-cover flex-shrink-0 mt-1 ml-2 border border-gray-200">
+                            <div class="flex flex-col items-end">
+                                <div class="message-bubble message-self mb-1">
+                                    <p>Bonjour Jean ! Oui, la calculatrice est toujours disponible. Elle est en très bon état.</p>
+                                </div>
+                                <div class="flex items-center">
+                                    <span class="message-time mr-1">10:32</span>
+                                    <i class="fas fa-check-double text-blue-300 text-xs"></i> </div>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-start">
+                            <img src="https://randomuser.me/api/portraits/women/12.jpg" alt="Avatar" class="w-8 h-8 rounded-full object-cover flex-shrink-0 mt-1 mr-2 border border-gray-200">
+                            <div>
+                                <div class="message-bubble message-other mb-1">
+                                    <p>Super ! Est-ce qu'on peut se retrouver demain à la bibliothèque pour que je puisse la voir ?</p>
+                                </div>
+                                <span class="message-time">10:35</span>
+                            </div>
+                        </div>
+                        
+                        <div class="flex flex-row-reverse items-start">
+                            <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="Avatar" class="w-8 h-8 rounded-full object-cover flex-shrink-0 mt-1 ml-2 border border-gray-200">
+                            <div class="flex flex-col items-end">
+                                <div class="message-bubble message-self mb-1">
+                                    <p>Bien sûr ! Je serai disponible entre 14h et 16h. Ça te convient ?</p>
+                                </div>
+                                <div class="flex items-center">
+                                    <span class="message-time mr-1">10:38</span>
+                                    <i class="fas fa-check-double text-blue-300 text-xs"></i>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-start">
+                            <img src="https://randomuser.me/api/portraits/women/12.jpg" alt="Avatar" class="w-8 h-8 rounded-full object-cover flex-shrink-0 mt-1 mr-2 border border-gray-200">
+                            <div>
+                                <div class="message-bubble message-other mb-1">
+                                    <p>Parfait pour 14h30 ! Et quel est le prix final ?</p>
+                                </div>
+                                <span class="message-time">10:40</span>
+                            </div>
+                        </div>
+                        
+                        <div class="flex flex-row-reverse items-start">
+                            <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="Avatar" class="w-8 h-8 rounded-full object-cover flex-shrink-0 mt-1 ml-2 border border-gray-200">
+                            <div class="flex flex-col items-end">
+                                <div class="message-bubble message-self mb-1">
+                                    <p>Je la vends à 5000 FCFA, mais je peux te faire 4500 FCFA.</p>
+                                </div>
+                                <div class="flex items-center">
+                                    <span class="message-time mr-1">10:41</span>
+                                    <i class="fas fa-check-double text-blue-300 text-xs"></i>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-start">
+                            <img src="https://randomuser.me/api/portraits/women/12.jpg" alt="Avatar" class="w-8 h-8 rounded-full object-cover flex-shrink-0 mt-1 mr-2 border border-gray-200">
+                            <div class="typing-indicator">
+                                <div class="typing-dot"></div>
+                                <div class="typing-dot"></div>
+                                <div class="typing-dot"></div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="border-t border-gray-200 p-3 bg-white sticky bottom-0 shadow-md"> <div class="flex items-center">
+                            <button class="text-gray-500 hover:text-blue-600 mr-2 w-10 h-10 flex items-center justify-center rounded-full transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-blue-300"> <i class="fas fa-paperclip text-xl"></i> </button>
+                            <div class="relative flex-1">
+                                <input type="text" placeholder="Écrivez votre message..." class="message-input w-full py-2 px-4 border border-gray-300 rounded-full focus:outline-none focus:border-blue-500 text-base pr-10"> <button class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-300 rounded-full p-1"> <i class="far fa-smile text-xl"></i> </button>
+                            </div>
+                            <button class="ml-2 bg-blue-600 text-white rounded-full w-11 h-11 flex items-center justify-center hover:bg-blue-700 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-blue-300"> <i class="fas fa-paper-plane text-lg"></i> </button>
+                        </div>
+                    </div>
+                    
+                    <div class="emoji-picker bg-white rounded-lg shadow-lg p-3 border border-gray-200">
+                        <div class="grid grid-cols-8 gap-2"> <span class="cursor-pointer hover:bg-gray-100 p-1 rounded-md text-center text-2xl">😊</span>
+                            <span class="cursor-pointer hover:bg-gray-100 p-1 rounded-md text-center text-2xl">😂</span>
+                            <span class="cursor-pointer hover:bg-gray-100 p-1 rounded-md text-center text-2xl">❤️</span>
+                            <span class="cursor-pointer hover:bg-gray-100 p-1 rounded-md text-center text-2xl">👍</span>
+                            <span class="cursor-pointer hover:bg-gray-100 p-1 rounded-md text-center text-2xl">🙏</span>
+                            <span class="cursor-pointer hover:bg-gray-100 p-1 rounded-md text-center text-2xl">😍</span>
+                            <span class="cursor-pointer hover:bg-gray-100 p-1 rounded-md text-center text-2xl">😭</span>
+                            <span class="cursor-pointer hover:bg-gray-100 p-1 rounded-md text-center text-2xl">🔥</span>
+                            <span class="cursor-pointer hover:bg-gray-100 p-1 rounded-md text-center text-2xl">😎</span>
+                            <span class="cursor-pointer hover:bg-gray-100 p-1 rounded-md text-center text-2xl">🤩</span>
+                            <span class="cursor-pointer hover:bg-gray-100 p-1 rounded-md text-center text-2xl">🎉</span>
+                            <span class="cursor-pointer hover:bg-gray-100 p-1 rounded-md text-center text-2xl">💯</span>
+                            <span class="cursor-pointer hover:bg-gray-100 p-1 rounded-md text-center text-2xl">💡</span>
+                            <span class="cursor-pointer hover:bg-gray-100 p-1 rounded-md text-center text-2xl">🥳</span>
+                            <span class="cursor-pointer hover:bg-gray-100 p-1 rounded-md text-center text-2xl">🤯</span>
+                            <span class="cursor-pointer hover:bg-gray-100 p-1 rounded-md text-center text-2xl">🤔</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Script pour le menu mobile
+        const mobileMenuButton = document.getElementById('mobile-menu-button');
+        const closeMobileMenuButton = document.getElementById('close-mobile-menu');
+        const mobileMenu = document.getElementById('mobile-menu');
+        const backdrop = document.getElementById('backdrop');
+
+        mobileMenuButton.addEventListener('click', () => {
+            mobileMenu.classList.add('open');
+            backdrop.classList.add('visible');
+        });
+
+        closeMobileMenuButton.addEventListener('click', () => {
+            mobileMenu.classList.remove('open');
+            backdrop.classList.remove('visible');
+        });
+
+        backdrop.addEventListener('click', () => {
+            mobileMenu.classList.remove('open');
+            backdrop.classList.remove('visible');
+        });
+
+        // Script pour le menu déroulant utilisateur
+        const userMenuButton = document.getElementById('user-menu-button');
+        const userDropdown = document.getElementById('user-dropdown');
+
+        userMenuButton.addEventListener('click', () => {
+            userDropdown.classList.toggle('hidden');
+        });
+
+        // Fermer le menu déroulant en cliquant ailleurs
+        document.addEventListener('click', (e) => {
+            if (!userMenuButton.contains(e.target) && !userDropdown.contains(e.target)) {
+                userDropdown.classList.add('hidden');
+            }
+        });
+
+        // Script pour la messagerie mobile
+        const backToConversationsButton = document.getElementById('back-to-conversations');
+        const conversationList = document.querySelector('.conversation-list');
+        const chatContainer = document.querySelector('.chat-container');
+        const conversationItems = document.querySelectorAll('.conversation-item');
+        const chatMessagesContainer = document.getElementById('chat-messages');
+
+
+        if (backToConversationsButton) {
+            backToConversationsButton.addEventListener('click', () => {
+                conversationList.classList.remove('conversation-hidden');
+                chatContainer.classList.remove('chat-active');
+            });
+        }
+
+        conversationItems.forEach(item => {
+            item.addEventListener('click', () => {
+                // Remove active class from all items and add to the clicked one
+                conversationItems.forEach(conv => conv.classList.remove('conversation-active'));
+                item.classList.add('conversation-active');
+
+                // Simulate loading chat for the clicked conversation
+                const chatId = item.dataset.chatId; // Get chat ID from data attribute
+                loadChatMessages(chatId); // Call function to load messages
+
+                if (window.innerWidth < 768) {
+                    conversationList.classList.add('conversation-hidden');
+                    chatContainer.classList.add('chat-active');
+                }
+            });
+        });
+
+        // Fonction pour faire défiler automatiquement vers le bas des messages
+        function scrollToBottom() {
+            chatMessagesContainer.scrollTop = chatMessagesContainer.scrollHeight;
+        }
+
+        // Appeler la fonction au chargement de la page et après l'ajout de messages
+        document.addEventListener('DOMContentLoaded', scrollToBottom);
+
+        // Exemple (vous devrez l'intégrer avec votre backend)
+        function loadChatMessages(chatId) {
+            // Ici, vous feriez une requête AJAX ou fetch pour obtenir les messages
+            // basés sur le chatId. Pour l'exemple, nous allons juste simuler.
+            console.log(`Chargement des messages pour la conversation : ${chatId}`);
+            // Mettre à jour le contenu de chatMessagesContainer et l'en-tête du chat
+            // en fonction du chatId.
+            // Par exemple, si chatId === 'jean-mickemy', vous mettez les messages de Jean Mickemy.
+            // Si chatId === 'exauce', vous mettez ceux d'Exaucé, etc.
+
+            // Mettre à jour l'en-tête du chat
+            const chatHeaderAvatar = chatContainer.querySelector('.chat-container > .border-b img');
+            const chatHeaderName = chatContainer.querySelector('.chat-container > .border-b h3');
+            const chatHeaderStatus = chatContainer.querySelector('.chat-container > .border-b p');
+
+            // Simuler la mise à jour des infos de l'en-tête
+            if (chatId === 'jean-mickemy') {
+                chatHeaderAvatar.src = "https://randomuser.me/api/portraits/women/12.jpg";
+                chatHeaderName.textContent = "Jean Mickemy";
+                chatHeaderStatus.textContent = "En ligne";
+                chatHeaderStatus.classList.remove('text-red-600');
+                chatHeaderStatus.classList.add('text-green-600');
+            } else if (chatId === 'thalis') {
+                chatHeaderAvatar.src = "https://randomuser.me/api/portraits/men/2.jpg";
+                chatHeaderName.textContent = "Thalis";
+                chatHeaderStatus.textContent = "Hors ligne";
+                chatHeaderStatus.classList.remove('text-green-600');
+                chatHeaderStatus.classList.add('text-red-600');
+            }
+            // Ajoutez d'autres cas pour les autres conversations
+            else if (chatId === 'exauce') {
+                chatHeaderAvatar.src = "https://randomuser.me/api/portraits/men/3.jpg";
+                chatHeaderName.textContent = "Exaucé";
+                chatHeaderStatus.textContent = "Hors ligne";
+                chatHeaderStatus.classList.remove('text-green-600');
+                chatHeaderStatus.classList.add('text-red-600');
+            }
+            else if (chatId === 'billy-jo') {
+                chatHeaderAvatar.src = "https://randomuser.me/api/portraits/men/4.jpg";
+                chatHeaderName.textContent = "Billy JO";
+                chatHeaderStatus.textContent = "Hors ligne";
+                chatHeaderStatus.classList.remove('text-green-600');
+                chatHeaderStatus.classList.add('text-red-600');
+            }
+            else if (chatId === 'paterne') {
+                chatHeaderAvatar.src = "https://randomuser.me/api/portraits/men/5.jpg";
+                chatHeaderName.textContent = "Paterne";
+                chatHeaderStatus.textContent = "En ligne";
+                chatHeaderStatus.classList.remove('text-red-600');
+                chatHeaderStatus.classList.add('text-green-600');
+            }
+            else if (chatId === 'florentin') {
+                chatHeaderAvatar.src = "https://randomuser.me/api/portraits/men/6.jpg";
+                chatHeaderName.textContent = "Florentin";
+                chatHeaderStatus.textContent = "Hors ligne";
+                chatHeaderStatus.classList.remove('text-green-600');
+                chatHeaderStatus.classList.add('text-red-600');
+            }
+
+            // Ici vous effaceriez les messages existants et ajouteriez les nouveaux
+            // Pour l'instant, on laisse les messages statiques pour la démo
+            // Mais en production, vous mettriez à jour innerHTML ou ajouteriez des éléments
+            // chatMessagesContainer.innerHTML = ''; // Effacer les anciens messages
+            // newMessages.forEach(message => { /* ajouter le message */ });
+            scrollToBottom(); // Faire défiler vers le bas après le chargement des messages
+        }
+
+
+        // Script pour le sélecteur d'émojis
+        const emojiButton = document.querySelector('.message-input + button'); // Cible le bouton avec l'icône sourire
+        const emojiPicker = document.querySelector('.emoji-picker');
+        const messageInput = document.querySelector('.message-input');
+        const emojiSpans = document.querySelectorAll('.emoji-picker span');
+
+        emojiButton.addEventListener('click', (e) => {
+            e.stopPropagation(); // Empêche le clic de se propager et de fermer l'émoticône immédiatement
+            emojiPicker.style.display = emojiPicker.style.display === 'grid' ? 'none' : 'grid'; // Utiliser 'grid' car c'est un grid layout
+        });
+
+        emojiSpans.forEach(span => {
+            span.addEventListener('click', () => {
+                messageInput.value += span.textContent;
+                emojiPicker.style.display = 'none';
+                messageInput.focus();
+            });
+        });
+
+        // Fermer le sélecteur d'émojis en cliquant ailleurs
+        document.addEventListener('click', (e) => {
+            if (!emojiPicker.contains(e.target) && e.target !== emojiButton) {
+                emojiPicker.style.display = 'none';
+            }
+        });
+
+        // Faire défiler au chargement de la page si des messages sont déjà présents
+        window.addEventListener('load', scrollToBottom);
+
+        // Amélioration: Ajouter une fonctionnalité de "send message" (simple pour l'exemple)
+        const sendMessageButton = document.querySelector('.message-input + button + button');
+        sendMessageButton.addEventListener('click', () => {
+            const messageText = messageInput.value.trim();
+            if (messageText) {
+                const newMessageDiv = document.createElement('div');
+                newMessageDiv.className = 'flex flex-row-reverse items-start';
+                newMessageDiv.innerHTML = `
+                    <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="Avatar" class="w-8 h-8 rounded-full object-cover flex-shrink-0 mt-1 ml-2 border border-gray-200">
+                    <div class="flex flex-col items-end">
+                        <div class="message-bubble message-self mb-1">
+                            <p>${messageText}</p>
+                        </div>
+                        <div class="flex items-center">
+                            <span class="message-time mr-1">${new Date().toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}</span>
+                            <i class="fas fa-check-double text-blue-300 text-xs"></i>
+                        </div>
+                    </div>
+                `;
+                chatMessagesContainer.appendChild(newMessageDiv);
+                messageInput.value = ''; // Clear input
+                scrollToBottom(); // Scroll to new message
+            }
+        });
+
+        // Permettre l'envoi de message avec la touche Entrée
+        messageInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter' && !e.shiftKey) { // Empêche l'envoi si Shift+Entrée (pour saut de ligne)
+                e.preventDefault(); // Empêche le saut de ligne par défaut
+                sendMessageButton.click(); // Simule le clic sur le bouton d'envoi
+            }
+        });
+
+    </script>
+</body>
+</html
