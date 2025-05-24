@@ -131,8 +131,8 @@
 </head>
 <body class="min-h-screen flex flex-col">
     <!-- Header -->
-    <header class="py-6">
-        <div class="container mx-auto px-4 text-center">
+    <header class="py-6 px-4 sm:px-6 lg:px-8">
+        <div class="container mx-auto text-center">
             <div class="flex justify-center mb-2">
                 <div class="logo w-16 h-16 bg-gradient-to-br from-blue-800 to-blue-600 rounded-full flex items-center justify-center text-white font-bold text-2xl shadow-md cursor-pointer">
                     <i class="fas fa-store"></i>
@@ -145,9 +145,9 @@
 
     <!-- Main Content -->
     <main class="flex-grow flex items-center justify-center px-4 py-8">
-        <div class="w-full max-w-md bg-white rounded-2xl shadow-lg overflow-hidden bg-overlay card-hover">
+        <div class="w-full max-w-sm md:max-w-md bg-white rounded-2xl shadow-lg overflow-hidden bg-overlay card-hover">
             <!-- Login Card -->
-            <div class="p-8">
+            <div class="p-6 sm:p-8">
                 <h2 class="text-2xl font-bold text-blue-900 mb-6 text-center">Connexion à ESCIC-Market</h2>
                 
                 <!-- Error Message -->
@@ -216,7 +216,7 @@
                 </div>
                 
                 <!-- Social Login Buttons -->
-                <div class="grid grid-cols-2 gap-3 mb-6">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-6">
                     <button class="flex items-center justify-center py-2 px-4 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors">
                         <i class="fab fa-google text-red-500 mr-2"></i>
                         <span class="text-sm font-medium">Google</span>
@@ -231,7 +231,7 @@
                 <div class="mt-6 text-center">
                     <p class="text-gray-500 text-sm">
                         Pas encore inscrit ? 
-                        <a href="../signup/Inscription.html" class="text-green-600 hover:text-green-700 font-medium transition-colors">
+                        <a href="Inscription.html" class="text-green-600 hover:text-green-700 font-medium transition-colors">
                             Créer un compte
                         </a>
                     </p>

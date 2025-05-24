@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Évaluations du vendeur - ESCIC-Market</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Poppins', sans-serif;
+      background-color: #f8fafc;
+    }
+    .menu-item {
+      transition: all 0.2s ease;
+    }
+    .menu-item:hover {
+      background-color: #EFF6FF;
+      border-left: 3px solid #3B82F6;
+    }
+    .active-menu-item {
+      background-color: #EFF6FF;
+      border-left: 3px solid #3B82F6;
+      color: #1E40AF;
+    }
+    .mobile-menu {
+      transform: translateX(-100%);
+      transition: transform 0.3s ease;
+    }
+    .mobile-menu.open {
+      transform: translateX(0);
+    }
+    
+    /* Animations et transitions */
+    .fade-in {
+      animation: fadeIn 0.5s ease-out forwards;
+    }
+    
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    .scale-in {
+      animation: scaleIn 0.3s ease-out forwards;
+    }
+    
+    @keyframes scaleIn {
+      from { transform: scale(0.95); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
+    
+    .review-card {
+      transition: all 0.3s ease;
+      border-left: 3px solid transparent;
+    }
+    
+    .review-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 10px 15px rgba(0, 0, 0, 0.05);
+      border-left: 3px solid #3B82F6;
+    }
+    
+    .star-rating {
+      display: inline-flex;
+      align-items: center;
+    }
+    
+    .star-rating i {
+      transition: all 0.2s ease;
+    }
+    
+    .review-card:hover .star-rating i {
+      transform: scale(1.1);
+    }
+    
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      padding: 0.25rem 0.75rem;
+      border-radius: 9999px;
+      font-size: 0.75rem;
+      font-weight: 500;
+    }
+    
+    .badge-blue {
+      background-color: rgba(59, 130, 246, 0.1);
+      color: #3b82f6;
+    }
+    
+    .badge-green {
+      background-color: rgba(16, 185, 129, 0.1);
+      color: #10b981;
+    }
+    
+    .badge-yellow {
+      background-color: rgba(245, 158, 11, 0.1);
+      color: #f59e0b;
+    }
+    
+    .badge-red {
+      background-color: rgba(239, 68, 68, 0.1);
+      color: #ef4444;
+    }
+    
+    .btn-primary {
+      background-color: #3b82f6;
+      color: white;
+      transition: all 0.3s ease;
+    }
+    
+    .btn-primary:hover {
+      background-color: #2563eb;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 6px rgba(37, 99, 235, 0.2);
+    }
+    
+    .btn-secondary {
+      background-color: #f3f4f6;
+      color: #4b5563;
+      transition: all 0.3s ease;
+    }
+    
+    .btn-secondary:hover {
+      background-color: #e5e7eb;
+      transform: translateY(-2px);
+    }
+    
+    .progress-bar {
+      transition: width 1s ease-in-out;
+    }
+    
+    .tab-button {
+      position: relative;
+      transition: all 0.3s ease;
+    }
+    
+    .tab-button::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      width: 0;
+      height: 2px;
+      background-color: #3b82f6;
+      transition: all 0.3s ease;
+      transform: translateX(-50%);
+    }
+    
+    .tab-button:hover::after {
+      width: 80%;
+    }
+    
+    .tab-button.active::after {
+      width: 100%;
+    }
+    
+    .pulse {
+      animation: pulse 2s infinite;
+    }
+    
+    @keyframes pulse {
+      0% { box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.4); }
+      70% { box-shadow: 0 0 0 10px rgba(59, 130, 246, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(59, 130, 246, 0); }
+    }
+  </style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+  <!-- Mobile Menu Button -->
+  <button id="mobileMenuButton" class="md:hidden fixed top-4 left-4 z-50 bg-white p-2 rounded-full shadow-lg">
+    <i class="fas fa-bars text-blue-800 text-xl"></i>
+  </button>
+  <!-- Mobile Menu Backdrop -->
+  <div id="mobileBackdrop" class="fixed inset-0 bg-black bg-opacity-50 z-40 hidden"></div>
+  <!-- Mobile Menu -->
+  <div id="mobileMenu" class="mobile-menu fixed inset-y-0 left-0 z-50 w-64 bg-white shadow-lg overflow-y-auto">
+    <div class="p-4 border-b border-gray-200">
+      <div class="flex items-center">
+        <img src="https://via.placeholder.com/40" alt="Profile" class="w-10 h-10 rounded-full mr-3">
+        <div>
+          <p class="font-semibold">Yoane pequene</p>
+          <p class="text-xs text-gray-500">Vendeur actif</p>
+        </div>
+      </div>
+    </div>
+    <nav class="flex-1 p-2">
+      <a href="Vendeur.html" class="menu-item flex items-center p-3 rounded-lg">
+        <i class="fas fa-home mr-3 text-blue-800"></i>
+        <span>Mon kiosque</span>
+      </a>
+      <a href="Ajouter.html" class="menu-item flex items-center p-3 rounded-lg">
+        <i class="fas fa-plus-circle mr-3 text-blue-800"></i>
+        <span>Ajouter un article</span>
+      </a>
+      <a href="Message.html" class="menu-item flex items-center p-3 rounded-lg">
+        <i class="fas fa-comments mr-3 text-blue-800"></i>
+        <span>Messages</span>
+      </a>
+      <a href="profil.html" class="menu-item flex items-center p-3 rounded-lg">
+        <i class="fas fa-user mr-3 text-blue-800"></i>
+        <span>Profil</span>
+      </a>
+      <a href="evaluation.html" class="active-menu-item flex items-center p-3 rounded-lg">
+        <i class="fas fa-star mr-3 text-blue-800"></i>
+        <span>Évaluations</span>
+      </a>
+      <a href="parametre.html" class="menu-item flex items-center p-3 rounded-lg">
+        <i class="fas fa-cog mr-3 text-blue-800"></i>
+        <span>Paramètres</span>
+      </a>
+      <a href="recherche.html" class="menu-item flex items-center p-3 rounded-lg">
+        <i class="fas fa-search mr-3 text-blue-800"></i>
+        <span>Recherche</span>
+      </a>
+      <a href="login/connection.html" class="menu-item flex items-center p-3 rounded-lg text-red-600">
+        <i class="fas fa-sign-out-alt mr-3"></i>
+        <span>Déconnexion</span>
+      </a>
+    </nav>
+  </div>
+  <!-- Desktop Sidebar -->
+  <div class="hidden md:flex md:w-64 md:flex-col md:fixed md:inset-y-0">
+    <div class="flex flex-col flex-grow border-r border-gray-200 bg-white overflow-y-auto">
+      <div class="p-4 border-b border-gray-200">
+        <div class="flex items-center">
+          <img src="https://via.placeholder.com/40" alt="Profile" class="w-10 h-10 rounded-full mr-3">
+          <div>
+            <p class="font-semibold">Yoane pequene</p>
+            <p class="text-xs text-gray-500">Vendeur actif</p>
+          </div>
+        </div>
+      </div>
+      <nav class="flex-1 p-2">
+        <a href="Vendeur.html" class="menu-item flex items-center p-3 rounded-lg">
+          <i class="fas fa-home mr-3 text-blue-800"></i>
+          <span>Mon kiosque</span>
+        </a>
+        <a href="Ajouter.html" class="menu-item flex items-center p-3 rounded-lg">
+          <i class="fas fa-plus-circle mr-3 text-blue-800"></i>
+          <span>Ajouter un article</span>
+        </a>
+        <a href="Message.html" class="menu-item flex items-center p-3 rounded-lg">
+          <i class="fas fa-comments mr-3 text-blue-800"></i>
+          <span>Messages</span>
+        </a>
+         <a href="profil.html" class="menu-item flex items-center p-3 rounded-lg">
+          <i class="fas fa-user mr-3 text-blue-800"></i>
+          <span>Profil</span>
+        </a>
+        <a href="evaluation.html" class="active-menu-item flex items-center p-3 rounded-lg">
+          <i class="fas fa-star mr-3 text-blue-800"></i>
+          <span>Évaluations</span>
+        </a>
+        <a href="parametre.html" class="menu-item flex items-center p-3 rounded-lg">
+          <i class="fas fa-cog mr-3 text-blue-800"></i>
+          <span>Paramètres</span>
+        </a>
+       
+       
+        <a href="recherche.html" class="menu-item flex items-center p-3 rounded-lg">
+            <i class="fas fa-search mr-3 text-blue-800"></i>
+            <span>Recherche</span>
+        </a>
+        <a href="connection.html" class="menu-item flex items-center p-3 rounded-lg mt-4 text-red-500">
+          <i class="fas fa-sign-out-alt mr-3"></i>
+          <span>Déconnexion</span>
+        </a>
+      </nav>
+    </div>
+  </div>
+  <!-- Main Content Area -->
+  <div class="md:pl-64 flex flex-col min-h-screen">
+    <!-- Top Navigation Bar -->
+    <header class="bg-white shadow-sm sticky top-0 z-10">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex justify-between h-16 items-center">
+          <h1 class="text-xl font-bold text-gray-900 md:hidden">Évaluations</h1>
+          <div class="flex items-center space-x-4">
+            <div class="relative">
+              <button class="relative p-1 rounded-full hover:bg-gray-100 transition-colors">
+                <i class="fas fa-bell text-gray-500 text-xl"></i>
+                <span class="absolute top-0 right-0 block h-2 w-2 rounded-full bg-red-500 pulse-effect"></span>
+              </button>
+            </div>
+            <div>
+              <button class="inline-flex items-center justify-center h-9 w-9 rounded-full bg-blue-100 text-blue-500 hover:bg-blue-200 transition-colors">
+                <i class="fas fa-cog"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="flex-1 p-4 md:p-6 bg-gray-50">
+      <div class="max-w-4xl mx-auto">
+        <!-- Breadcrumbs -->
+        <nav class="text-sm mb-4 text-gray-500">
+          <ol class="list-none p-0 inline-flex">
+            <li class="flex items-center">
+              <a href="Vendeur.html" class="hover:text-blue-600 transition-colors">Mon kiosque</a>
+              <svg class="fill-current w-3 h-3 mx-2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><path d="M285.476 272.971L91.132 467.314c-9.373 9.373-24.569 9.373-33.941 0l-22.667-22.667c-9.357-9.357-9.375-24.522-.04-33.901L188.505 256 34.484 101.255c-9.335-9.379-9.317-24.544.04-33.901l22.667-22.667c9.373-9.373 24.569-9.373 33.941 0L285.475 239.03c9.373 9.372 9.373 24.568.001 33.941z"/></svg>
+            </li>
+            <li class="flex items-center">
+              <span class="text-gray-700 font-medium">Évaluations</span>
+            </li>
+          </ol>
+        </nav>
+   
+    
+    <div class="max-w-6xl mx-auto mt-6 px-4 sm:px-6 lg:px-8">
+      <!-- Page Header -->
+      <div class="bg-white rounded-xl shadow-sm p-6 mb-6 fade-in">
+        <div class="flex flex-col md:flex-row md:items-center md:justify-between">
+          <div class="flex items-center mb-4 md:mb-0">
+            <div class="bg-yellow-100 p-3 rounded-lg mr-4">
+              <i class="fas fa-star text-yellow-500 text-2xl"></i>
+            </div>
+            <div>
+              <h1 class="text-2xl font-bold text-gray-900">Mes évaluations</h1>
+              <p class="text-gray-500">Gérez votre réputation et suivez vos avis clients</p>
+            </div>
+          </div>
+          <div class="flex flex-col sm:flex-row space-y-2 sm:space-y-0 space-x-0 sm:space-x-2">
+            <button class="btn-secondary px-4 py-2 rounded-lg text-sm font-medium flex items-center justify-center">
+              <i class="fas fa-download mr-2"></i> Exporter
+            </button>
+            <button class="btn-primary px-4 py-2 rounded-lg text-sm font-medium flex items-center justify-center">
+              <i class="fas fa-chart-line mr-2"></i> Statistiques
+            </button>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Rating Summary Card -->
+      <div class="bg-white rounded-xl shadow-sm p-6 mb-6 scale-in">
+        <div class="flex flex-col md:flex-row">
+          <!-- Left: Rating Score -->
+          <div class="md:w-1/3 flex flex-col items-center justify-center p-4 border-b md:border-b-0 md:border-r border-gray-200 text-center">
+            <div class="text-center">
+              <div class="relative inline-block">
+                <span class="text-6xl font-bold text-gray-900">4.7</span>
+              </div>
+              <div class="flex items-center justify-center mt-2">
+                <i class="fas fa-star text-yellow-400 text-xl"></i>
+                <i class="fas fa-star text-yellow-400 text-xl"></i>
+                <i class="fas fa-star text-yellow-400 text-xl"></i>
+                <i class="fas fa-star text-yellow-400 text-xl"></i>
+                <i class="fas fa-star-half-alt text-yellow-400 text-xl"></i>
+              </div>
+              <p class="text-gray-500 mt-2">Basé sur <span class="font-semibold">23</span> avis</p>
+              <div class="mt-3 flex items-center justify-center space-x-2">
+                <span class="badge badge-blue">Top 10%</span>
+                <span class="badge badge-green">Vendeur vérifié</span>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Right: Rating Distribution -->
+          <div class="md:w-2/3 p-4">
+            <h3 class="text-lg font-semibold mb-4">Distribution des notes</h3>
+            <!-- Rating Bars -->
+            <div class="space-y-3">
+              <div class="flex items-center">
+                <span class="w-10 text-sm font-medium text-gray-700">5 <i class='fas fa-star text-yellow-400'></i></span>
+                <div class="flex-1 bg-gray-200 rounded-full h-3 mx-2 overflow-hidden">
+                  <div class="bg-yellow-400 h-3 rounded-full progress-bar" style="width: 70%"></div>
+                </div>
+                <span class="w-12 text-right text-gray-700 text-sm font-medium">16 <span class="text-gray-500 text-xs">(70%)</span></span>
+              </div>
+              <div class="flex items-center">
+                <span class="w-10 text-sm font-medium text-gray-700">4 <i class='fas fa-star text-yellow-400'></i></span>
+                <div class="flex-1 bg-gray-200 rounded-full h-3 mx-2 overflow-hidden">
+                  <div class="bg-yellow-400 h-3 rounded-full progress-bar" style="width: 20%"></div>
+                </div>
+                <span class="w-12 text-right text-gray-700 text-sm font-medium">5 <span class="text-gray-500 text-xs">(20%)</span></span>
+              </div>
+              <div class="flex items-center">
+                <span class="w-10 text-sm font-medium text-gray-700">3 <i class='fas fa-star text-yellow-400'></i></span>
+                <div class="flex-1 bg-gray-200 rounded-full h-3 mx-2 overflow-hidden">
+                  <div class="bg-yellow-400 h-3 rounded-full progress-bar" style="width: 7%"></div>
+                </div>
+                <span class="w-12 text-right text-gray-700 text-sm font-medium">1 <span class="text-gray-500 text-xs">(7%)</span></span>
+              </div>
+              <div class="flex items-center">
+                <span class="w-10 text-sm font-medium text-gray-700">2 <i class='fas fa-star text-yellow-400'></i></span>
+                <div class="flex-1 bg-gray-200 rounded-full h-3 mx-2 overflow-hidden">
+                  <div class="bg-yellow-400 h-3 rounded-full progress-bar" style="width: 2%"></div>
+                </div>
+                <span class="w-12 text-right text-gray-700 text-sm font-medium">0 <span class="text-gray-500 text-xs">(2%)</span></span>
+              </div>
+              <div class="flex items-center">
+                <span class="w-10 text-sm font-medium text-gray-700">1 <i class='fas fa-star text-yellow-400'></i></span>
+                <div class="flex-1 bg-gray-200 rounded-full h-3 mx-2 overflow-hidden">
+                  <div class="bg-yellow-400 h-3 rounded-full progress-bar" style="width: 1%"></div>
+                </div>
+                <span class="w-12 text-right text-gray-700 text-sm font-medium">1 <span class="text-gray-500 text-xs">(1%)</span></span>
+              </div>
+            </div>
+            
+            <!-- Rating Metrics -->
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-6">
+              <div class="bg-gray-50 p-3 rounded-lg text-center">
+                <p class="text-xs text-gray-500">Réactivité</p>
+                <p class="font-bold text-blue-600">4.9 <i class="fas fa-star text-yellow-400 text-xs"></i></p>
+              </div>
+              <div class="bg-gray-50 p-3 rounded-lg text-center">
+                <p class="text-xs text-gray-500">Qualité produits</p>
+                <p class="font-bold text-blue-600">4.6 <i class="fas fa-star text-yellow-400 text-xs"></i></p>
+              </div>
+              <div class="bg-gray-50 p-3 rounded-lg text-center">
+                <p class="text-xs text-gray-500">Communication</p>
+                <p class="font-bold text-blue-600">4.8 <i class="fas fa-star text-yellow-400 text-xs"></i></p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Reviews Section -->
+      <div class="bg-white rounded-xl shadow-sm p-6 mb-6 fade-in">
+        <!-- Filter and Search -->
+        <div class="flex flex-col md:flex-row justify-between mb-6 space-y-3 md:space-y-0">
+          <!-- Tabs -->
+          <div class="flex border-b border-gray-200 w-full md:w-auto">
+            <button class="tab-button active flex-1 text-center py-2 px-4 text-sm font-medium text-gray-700 hover:text-gray-900 focus:outline-none">Toutes les évaluations</button>
+            <button class="tab-button flex-1 text-center py-2 px-4 text-sm font-medium text-gray-700 hover:text-gray-900 focus:outline-none">Avec commentaires</button>
+            <button class="tab-button flex-1 text-center py-2 px-4 text-sm font-medium text-gray-700 hover:text-gray-900 focus:outline-none">Avec réponses</button>
+          </div>
+          <!-- Search and Sort -->
+          <div class="flex flex-col sm:flex-row items-center space-y-2 sm:space-y-0 space-x-0 sm:space-x-2 w-full md:w-auto">
+            <div class="relative w-full sm:w-auto">
+              <input type="text" placeholder="Rechercher un avis..." class="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent w-full">
+              <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <i class="fas fa-search text-gray-400"></i>
+              </div>
+            </div>
+            <select class="border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent w-full sm:w-auto">
+              <option>Plus récent</option>
+              <option>Plus ancien</option>
+              <option>Note: élevée à faible</option>
+              <option>Note: faible à élevée</option>
+            </select>
+          </div>
+        </div>
+        
+        <!-- Reviews List -->
+        <div class="space-y-4">
+          <!-- Review 1 -->
+          <div class="review-card bg-gray-50 rounded-lg p-4 scale-in" style="animation-delay: 0.1s">
+            <div class="flex flex-col sm:flex-row items-start">
+              <img src="https://randomuser.me/api/portraits/women/32.jpg" alt="avatar" class="w-12 h-12 rounded-full mr-0 sm:mr-4 mb-4 sm:mb-0 object-cover border-2 border-white shadow flex-shrink-0">
+              <div class="flex-1 w-full">
+                <div class="flex flex-wrap items-center justify-between mb-1">
+                  <div>
+                    <span class="font-semibold text-gray-900">Moni ginette</span>
+                    <span class="ml-2 badge badge-green">Achat vérifié</span>
+                  </div>
+                  <span class="text-sm text-gray-500">Il y a 2 jours</span>
+                </div>
+                <div class="flex items-center mb-2">
+                  <div class="star-rating mr-2">
+                    <i class="fas fa-star text-yellow-400"></i>
+                    <i class="fas fa-star text-yellow-400"></i>
+                    <i class="fas fa-star text-yellow-400"></i>
+                    <i class="fas fa-star text-yellow-400"></i>
+                    <i class="fas fa-star-half-alt text-yellow-400"></i>
+                  </div>
+                  <span class="text-sm font-medium text-gray-700">4.5</span>
+                </div>
+                <div class="mb-3">
+                  <p class="text-gray-700">Vendeur très réactif, produit conforme à la description. Je recommande !</p>
+                </div>
+                <div class="flex items-center text-sm text-gray-500">
+                  <span class="mr-4"><i class="fas fa-shopping-bag mr-1"></i> Baskets Nike</span>
+                  <span><i class="fas fa-calendar-alt mr-1"></i> Acheté le 31/05/2025</span>
+                </div>
+                <div class="mt-3 flex flex-col sm:flex-row items-center justify-between space-y-2 sm:space-y-0">
+                  <div class="flex space-x-2">
+                    <button class="text-gray-500 hover:text-blue-600 text-sm flex items-center">
+                      <i class="far fa-thumbs-up mr-1"></i> Utile (3)
+                    </button>
+                    <button class="text-gray-500 hover:text-blue-600 text-sm flex items-center">
+                      <i class="far fa-comment mr-1"></i> Répondre
+                    </button>
+                  </div>
+                  <div>
+                    <button class="text-gray-500 hover:text-blue-600 text-sm">
+                      <i class="fas fa-ellipsis-h"></i>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Review 2 with Seller Response -->
+          <div class="review-card bg-gray-50 rounded-lg p-4 scale-in" style="animation-delay: 0.2s">
+            <div class="flex flex-col sm:flex-row items-start">
+              <img src="https://randomuser.me/api/portraits/men/45.jpg" alt="avatar" class="w-12 h-12 rounded-full mr-0 sm:mr-4 mb-4 sm:mb-0 object-cover border-2 border-white shadow flex-shrink-0">
+              <div class="flex-1 w-full">
+                <div class="flex flex-wrap items-center justify-between mb-1">
+                  <div>
+                    <span class="font-semibold text-gray-900">Pavel</span>
+                    <span class="ml-2 badge badge-green">Achat vérifié</span>
+                  </div>
+                  <span class="text-sm text-gray-500">Il y a 1 semaine</span>
+                </div>
+                <div class="flex items-center mb-2">
+                  <div class="star-rating mr-2">
+                    <i class="fas fa-star text-yellow-400"></i>
+                    <i class="fas fa-star text-yellow-400"></i>
+                    <i class="fas fa-star text-yellow-400"></i>
+                    <i class="fas fa-star text-yellow-400"></i>
+                    <i class="fas fa-star text-yellow-400"></i>
+                  </div>
+                  <span class="text-sm font-medium text-gray-700">5.0</span>
+                </div>
+                <div class="mb-3">
+                  <p class="text-gray-700">Super expérience, livraison rapide et vendeur très sympa. Le livre était en parfait état et exactement comme décrit. Je n'hésiterai pas à acheter à nouveau chez ce vendeur !</p>
+                </div>
+                <div class="flex items-center text-sm text-gray-500">
+                  <span class="mr-4"><i class="fas fa-shopping-bag mr-1"></i> Livre Python</span>
+                  <span><i class="fas fa-calendar-alt mr-1"></i> Acheté le 21/05/2025</span>
+                </div>
+                <div class="mt-3 flex flex-col sm:flex-row items-center justify-between space-y-2 sm:space-y-0">
+                  <div class="flex space-x-2">
+                    <button class="text-gray-500 hover:text-blue-600 text-sm flex items-center">
+                      <i class="far fa-thumbs-up mr-1"></i> Utile (3)
+                    </button>
+                    <button class="text-gray-500 hover:text-blue-600 text-sm flex items-center">
+                      <i class="far fa-comment mr-1"></i> Répondre
+                    </button>
+                  </div>
+                  <div>
+                    <button class="text-gray-500 hover:text-blue-600 text-sm">
+                      <i class="fas fa-ellipsis-h"></i>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+</body>
+</html>
+         
